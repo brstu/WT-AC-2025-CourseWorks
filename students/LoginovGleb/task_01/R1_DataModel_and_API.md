@@ -128,6 +128,7 @@ API — верхнеуровневые ресурсы и операции
 - Тесты: unit + интеграционные для трекинга статусов
 - Kubernetes deployment
 - CI/CD pipeline
+
 ---
 
 ## Подробные операции API, схемы и поведение
@@ -186,12 +187,14 @@ Applications
 - POST `/applications` — создать заявку
 
   - Payload:
+
   ```json
   {
     "formId": "uuid",
     "data": { "field1": "value1", "field2": "value2" }
   }
   ```
+
   - Response: `201 {id, status: "draft"}`
 
 - GET `/applications/{id}` — детали заявки
@@ -212,12 +215,14 @@ Applications
 - PUT `/applications/{id}/status` — изменить статус (Moderator/Admin)
 
   - Payload:
+
   ```json
   {
     "statusId": "uuid",
     "comment": "Причина изменения статуса"
   }
   ```
+
   - Response: `200 {id, status, comment}`
 
 Attachments
@@ -241,6 +246,7 @@ History (аудит изменений статуса)
 - GET `/applications/{id}/history` — история изменений статуса
 
   - Response:
+
   ```json
   [
     {

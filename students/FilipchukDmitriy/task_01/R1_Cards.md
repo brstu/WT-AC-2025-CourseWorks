@@ -5,28 +5,28 @@
 - username: string, только алфавит и цифры, не пустое → ошибка: «Введите корректное имя пользователя.»
 - password: string, не пустое → ошибка: «Введите пароль.»
 
-2. Карточка тетради (Notebook)
+1. Карточка тетради (Notebook)
 
 - id: UUID, автогенерируется
 - title: string, не пустое → ошибка: «Введите название тетради.»
 - description: string, опционально
 - owner_id: reference -> User.id, не пустое → ошибка: «Владелец не указан.»
 
-3. Карточка заметки (Note)
+1. Карточка заметки (Note)
 
 - id: UUID
 - notebook_id: reference -> Notebook.id, не пустое → ошибка: «Выберите тетрадь.»
 - title: string, не пустое → ошибка: «Введите заголовок заметки.»
 - content: text, опционально
 
-4. Карточка метки (Label)
+1. Карточка метки (Label)
 
 - id: UUID
 - name: string, не пустое → ошибка: «Введите название метки.»
 - color: string, опционально (формат HEX)
 - owner_id: reference -> User.id, не пустое
 
-5. Карточка доступа (Share)
+1. Карточка доступа (Share)
 
 - id: UUID
 - notebook_id: reference -> Notebook.id, не пустое → ошибка: «Выберите тетрадь.»
@@ -34,7 +34,7 @@
 - permission: enum [read, write], не пустое → ошибка: «Укажите уровень доступа.»
 - created_at: datetime
 
-6. Связь заметки и метки (NoteLabel)
+1. Связь заметки и метки (NoteLabel)
 
 - note_id: reference -> Note.id, не пустое
 - label_id: reference -> Label.id, не пустое

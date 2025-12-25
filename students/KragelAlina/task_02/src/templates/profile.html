@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваш профиль - Что посмотреть?</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Что посмотреть?</h1>
+        <nav>
+            <button id="home-btn">Главная</button>
+            <button id="logout-btn">Выйти</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="profile-section">
+            <h2>Ваш профиль</h2>
+            
+            <!-- Ваши списки -->
+            <div class="profile-tab">
+                <h3>📋 Ваши списки</h3>
+                <ul id="user-lists" class="items-grid"></ul>
+                <div id="lists-pagination" class="pagination">
+                    <button id="lists-prev-page" class="pagination-btn">← Назад</button>
+                    <span id="lists-page-info" class="pagination-info"></span>
+                    <button id="lists-next-page" class="pagination-btn">Вперед →</button>
+                </div>
+            </div>
+            
+            <!-- Ваши отзывы -->
+            <div class="profile-tab">
+                <h3>💬 Ваши отзывы</h3>
+                <ul id="user-reviews" class="items-grid"></ul>
+                <div id="reviews-pagination" class="pagination">
+                    <button id="reviews-prev-page" class="pagination-btn">← Назад</button>
+                    <span id="reviews-page-info" class="pagination-info"></span>
+                    <button id="reviews-next-page" class="pagination-btn">Вперед →</button>
+                </div>
+            </div>
+            
+            <!-- Ваши рейтинги -->
+            <div class="profile-tab">
+                <h3>⭐ Ваши рейтинги</h3>
+                <ul id="user-ratings" class="items-grid"></ul>
+                <div id="ratings-pagination" class="pagination">
+                    <button id="ratings-prev-page" class="pagination-btn">← Назад</button>
+                    <span id="ratings-page-info" class="pagination-info"></span>
+                    <button id="ratings-next-page" class="pagination-btn">Вперед →</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Что посмотреть?</p>
+    </footer>
+
+    <script src="/static/profile.js"></script>
+</body>
+</html>

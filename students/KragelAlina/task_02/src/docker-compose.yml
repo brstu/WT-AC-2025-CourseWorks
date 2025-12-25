@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://user:password@localhost:5432/what_to_watch
+      JWT_SECRET_KEY: your_secret_key_here

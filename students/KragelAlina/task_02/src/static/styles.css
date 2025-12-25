@@ -137,6 +137,24 @@ button:disabled {
     transform: none;
 }
 
+nav button {
+    padding: 10px 24px;
+    background-color: rgb(255 255 255 / 20%);
+    color: #fff;
+    border: 2px solid rgb(255 255 255 / 40%);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+nav button:hover {
+    background-color: rgb(255 255 255 / 30%);
+    border-color: rgb(255 255 255 / 80%);
+    transform: translateY(-2px);
+}
+
 .delete-btn {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
     padding: 6px 12px;
@@ -146,7 +164,7 @@ button:disabled {
 }
 
 .delete-btn:hover {
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+    box-shadow: 0 4px 12px rgb(255 107 107 / 40%);
 }
 
 /* Сообщения */
@@ -264,10 +282,6 @@ li:hover {
 #pagination input[type="number"]::-webkit-inner-spin-button {
     appearance: none;
     margin: 0;
-}
-
-#pagination input[type="number"] {
-    appearance: textfield;
 }
 
 #page-info {
@@ -423,7 +437,7 @@ li:hover {
 .modal-form-group textarea:focus {
     outline: none;
     border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
 }
 
 .modal-form-group textarea {
@@ -643,6 +657,10 @@ footer {
         gap: 8px;
     }
 
+    button {
+        padding: 10px 16px;
+    }
+
     nav button {
         padding: 8px 16px;
         font-size: 12px;
@@ -657,9 +675,5 @@ footer {
     textarea {
         padding: 10px 12px;
         font-size: 16px;
-    }
-
-    button {
-        padding: 10px 16px;
     }
 }

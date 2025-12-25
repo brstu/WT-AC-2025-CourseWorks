@@ -1,19 +1,19 @@
 # Вариант 43 — Карточки (обязательные поля и валидации)
 
-1. Форма аутентификации
+## 1. Форма аутентификации
 
-- username: string, только алфавит, не пустое → ошибка: «Введите корректное имя пользователя (только буквы).»
+- username: string, только алфавит и цифры, не пустое → ошибка: «Введите корректное имя пользователя.»
 - email: string, формат email, не пустое → ошибка: «Введите корректный email.»
 - password: string, минимум 6 символов, не пустое → ошибка: «Введите пароль (минимум 6 символов).»
 
-1. Карточка категории (Category)
+## 2. Карточка категории (Category)
 
 - id: UUID, автогенерируется
 - name: string, не пустое → ошибка: «Введите название категории.»
 - description: string, опционально
 - icon: string, опционально
 
-1. Карточка запроса помощи (HelpRequest)
+## 3. Карточка запроса помощи (HelpRequest)
 
 - id: UUID, автогенерируется
 - user_id: reference -> User.id, не пустое → ошибка: «Пользователь не определён.»
@@ -25,18 +25,19 @@
 - location_lng: number, опционально
 - location_address: string, не пустое → ошибка: «Укажите адрес или локацию.»
 
-1. Карточка профиля волонтёра (VolunteerProfile)
+## 4. Карточка профиля волонтёра (VolunteerProfile)
 
 - id: UUID, автогенерируется
-- user_id: reference -> User.id, не пустое → ошибка: «Пользователь не определён.»
+- user_id: reference -> User.id, unique (1:1), не пустое → ошибка: «Пользователь не определён.»
 - bio: string, опционально, максимум 500 символов
-- rating: number, автоматически рассчитывается
-- total_helps: number, default: 0
-- categories: array, опционально
+- rating: number, автоматически рассчитывается из Review
+- total_helps: number, автоматически рассчитывается (count completed assignments)
 - location_lat: number, опционально
 - location_lng: number, опционально
 
-1. Карточка назначения (Assignment)
+**Проверка при создании:** У пользователя ещё нет VolunteerProfile.
+
+## 5. Карточка назначения (Assignment)
 
 - id: UUID, автогенерируется
 - request_id: reference -> HelpRequest.id, не пустое → ошибка: «Запрос помощи не определён.»
@@ -45,7 +46,12 @@
 - assigned_at: datetime, автогенерируется
 - completed_at: datetime, опционально
 
-1. Карточка отзыва (Review)
+**Проверки при создании:**
+- Request.status должен быть 'new'
+- У user должен быть VolunteerProfile
+- Нет активного Assignment на этот request
+
+## 6. Карточка отзыва (Review)
 
 - id: UUID, автогенерируется
 - assignment_id: reference -> Assignment.id, не пустое → ошибка: «Назначение не определено.»
@@ -55,10 +61,12 @@
 - comment: string, опционально, максимум 1000 символов
 - created_at: datetime, автогенерируется
 
-1. Сообщение в чате (заглушка)
+**Проверки при создании:**
+- Assignment.status === 'completed'
+- Assignment.request.user_id === currentUser.id (отзыв оставляет автор запроса)
+- Отзыв на этот Assignment ещё не существует
 
-- id: UUID, автогенерируется
-- assignment_id: reference -> Assignment.id, не пустое
-- sender_id: reference -> User.id, не пустое
-- message: string, не пустое, максимум 500 символов → ошибка: «Введите сообщение (максимум 500 символов).»
-- created_at: datetime, автогенерируется
+## 7. Чат (UI-заглушка)
+
+**Примечание:** Чат реализуется как UI-заглушка без таблицы в БД.
+В MVP эндпоинты `/chats` возвращают заглушки — функциональность "coming soon".

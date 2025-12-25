@@ -18,7 +18,7 @@ erDiagram
    username varchar
    email varchar
    password_hash varchar
-   role varchar
+   role varchar "admin | user"
   }
   CATEGORY {
    id int PK
@@ -87,7 +87,7 @@ CREATE TABLE users (
  username TEXT UNIQUE NOT NULL,
  email TEXT UNIQUE NOT NULL,
  password_hash TEXT NOT NULL,
- role TEXT NOT NULL CHECK (role IN ('admin','user','volunteer'))
+ role TEXT NOT NULL CHECK (role IN ('admin','user'))
 );
 
 CREATE TABLE categories (

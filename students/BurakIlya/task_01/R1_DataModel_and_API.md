@@ -6,7 +6,7 @@
   - id: UUID
   - username: string (unique)
   - password_hash: string
-  - role: enum [admin, user, volunteer]
+  - role: enum [admin, user] — только 2 роли; волонтёр = user с VolunteerProfile
   - email: string
 
 - Category
@@ -30,11 +30,10 @@
 
 - VolunteerProfile
   - id: UUID
-  - user_id: reference -> User.id
+  - user_id: reference -> User.id (unique, 1:1)
   - bio: string
-  - rating: number (avg)
-  - total_helps: number
-  - categories: array (references to Category.id)
+  - rating: number (avg, calculated)
+  - total_helps: number (calculated)
   - location_lat: number (optional)
   - location_lng: number (optional)
 
@@ -95,18 +94,18 @@ API — верхнеуровневые ресурсы и операции
   - DELETE /categories/{id} (admin)
 
 - /requests
-  - GET /requests (list, filter by status, category, location)
+  - GET /requests (list, filter by status, category, location; волонтёры видят все new, users — только свои)
   - POST /requests (user)
   - GET /requests/{id}
-  - PUT /requests/{id} (owner or admin)
-  - DELETE /requests/{id} (owner or admin)
+  - PUT /requests/{id} (owner или admin)
+  - DELETE /requests/{id} (owner при status=new, или admin)
 
 - /volunteers
-  - GET /volunteers (list, filter by category, rating)
-  - POST /volunteers (admin)
+  - GET /volunteers (list, filter by rating)
+  - POST /volunteers (user создаёт себе профиль, admin может создать любому)
   - GET /volunteers/{id}
-  - PUT /volunteers/{id} (admin or self)
-  - DELETE /volunteers/{id} (admin)
+  - PUT /volunteers/{id} (self или admin)
+  - DELETE /volunteers/{id} (self или admin)
 
 - /assignments
   - GET /assignments (filter by request, volunteer, status)
@@ -140,7 +139,7 @@ API — верхнеуровневые ресурсы и операции
 
 - Ответы в формате: `{ "status": "ok" | "error", "data"?: ..., "error"?: {code, message, fields?} }`
 - Пагинация: `limit` и `offset` (по умолчанию limit=50).
-- Аутентификация: `Authorization: Bearer <jwt>`; роли: `admin`, `user`, `volunteer`.
+- Аутентификация: `Authorization: Bearer <jwt>`; роли: `admin`, `user` (волонтёр = user с VolunteerProfile).
 
 Примеры ошибок (JSON)
 
@@ -176,46 +175,64 @@ Categories
 HelpRequests
 
 - GET `/requests?status=&categoryId=&userId=&lat=&lng=&radius=&limit=&offset=` — список запросов
+  - User без VolunteerProfile: только свои запросы
+  - User с VolunteerProfile: свои + все со status=new
+  - Admin: все запросы
 - POST `/requests` — User (payload: `{title,description,categoryId,location:{lat,lng,address}}`)
-- GET `/requests/{id}` — детали запроса
+- GET `/requests/{id}` — детали запроса (проверка доступа)
 - PUT `/requests/{id}` — User (owner) или Admin
-- DELETE `/requests/{id}` — User (owner, если status=new) или Admin
+- DELETE `/requests/{id}` — User (owner, **только если status=new**) или Admin
 
 Volunteers (профили)
 
-- GET `/volunteers?categoryId=&rating=&limit=&offset=` — список волонтёров
-- POST `/volunteers` — Admin `{userId, bio, categories:[]}` → `201 {id}`
+- GET `/volunteers?rating=&limit=&offset=` — список волонтёров
+- POST `/volunteers` — User (создаёт себе) или Admin (любому): `{userId?, bio}` → `201 {id}`
+  - Если userId не указан, берётся currentUser.id
+  - Проверка: у user ещё нет VolunteerProfile
 - GET `/volunteers/{id}` — детали профиля
-- PUT `/volunteers/{id}` — Admin или self
-- DELETE `/volunteers/{id}` — Admin
+- PUT `/volunteers/{id}` — self или Admin
+- DELETE `/volunteers/{id}` — self или Admin
 
 Assignments
 
-- POST `/assignments` — Volunteer или Admin
-  - Payload: `{requestId, volunteerId?}` (если volunteerId не указан, берётся текущий пользователь)
+- POST `/assignments` — User с VolunteerProfile или Admin
+  - Payload: `{requestId, volunteerId?}` (если volunteerId не указан, берётся currentUser.id)
+  - **Проверки безопасности:**
+    - User должен иметь VolunteerProfile
+    - Request.status должен быть 'new'
+    - Нет активного Assignment на этот request
   - Response: `201 {id, requestId, volunteerId, status, assignedAt}`
+  - Side effect: Request.status → 'assigned'
 
 - GET `/assignments?requestId=&volunteerId=&status=&limit=&offset=` — список назначений
 - GET `/assignments/{id}` — детали назначения
-- PUT `/assignments/{id}` — Volunteer (assigned) или Admin
+- PUT `/assignments/{id}` — Volunteer (свой) или Admin
   - Payload: `{status}` — изменить статус (in_progress, completed, cancelled)
+  - **Проверка:** assignment.volunteer_id === currentUser.id или role=admin
 - DELETE `/assignments/{id}` — Admin
 
 Reviews
 
 - POST `/reviews` — User (после completed Assignment)
   - Payload: `{assignmentId, rating, comment}`
+  - **Проверки безопасности:**
+    - Assignment.status === 'completed'
+    - Assignment.request.user_id === currentUser.id (отзыв оставляет автор запроса)
+    - Отзыв на этот Assignment ещё не существует
   - Response: `201 {id, assignmentId, rating, comment, createdAt}`
+  - Side effect: пересчёт rating и total_helps у VolunteerProfile
 
 - GET `/reviews?volunteerId=&limit=&offset=` — список отзывов
 - GET `/reviews/{id}` — детали отзыва
 - PUT `/reviews/{id}` — User (owner) или Admin
 - DELETE `/reviews/{id}` — Admin
 
-Чат (заглушка)
+Чат (UI-заглушка, без таблицы в БД)
 
-- GET `/chats/{assignmentId}/messages` — список сообщений (заглушка, возвращает [])
-- POST `/chats/{assignmentId}/messages` — отправить сообщение (заглушка, возвращает ok)
+- GET `/chats/{assignmentId}/messages` — заглушка, возвращает `{data: [], message: "Chat coming soon"}`
+- POST `/chats/{assignmentId}/messages` — заглушка, возвращает `{status: "ok", message: "Chat coming soon"}`
+
+**Примечание:** Таблица messages не создаётся в MVP. Эндпоинты существуют только для демонстрации UI.
 
 Статистика и отчёты
 

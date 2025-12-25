@@ -104,6 +104,18 @@ button {
     transition: all 0.3s ease;
 }
 
+nav button {
+    padding: 10px 24px;
+    background-color: rgb(255 255 255 / 20%);
+    color: #fff;
+    border: 2px solid rgb(255 255 255 / 40%);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
 button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgb(102 126 234 / 40%);
@@ -119,24 +131,6 @@ button:disabled {
     transform: none;
 }
 
-nav button {
-    padding: 10px 24px;
-    background-color: rgb(255 255 255 / 20%);
-    color: #fff;
-    border: 2px solid rgb(255 255 255 / 40%);
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-nav button:hover {
-    background-color: rgb(255 255 255 / 30%);
-    border-color: rgb(255 255 255 / 80%);
-    transform: translateY(-2px);
-}
-
 .modal-form-group button {
     padding: 12px 24px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -147,6 +141,12 @@ nav button:hover {
     font-size: 14px;
     font-weight: 600;
     transition: all 0.3s ease;
+}
+
+nav button:hover {
+    background-color: rgb(255 255 255 / 30%);
+    border-color: rgb(255 255 255 / 80%);
+    transform: translateY(-2px);
 }
 
 .delete-btn {
@@ -276,6 +276,14 @@ li:hover {
     font-family: inherit;
 }
 
+.modal-form-group input[type="number"]:focus,
+.modal-form-group select:focus,
+.modal-form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
+}
+
 #pagination input[type="number"] {
     width: 120px;
     padding: 8px 12px;
@@ -297,14 +305,6 @@ li:hover {
     border: 2px solid #e0e0e0;
     border-radius: 6px;
     font-size: 14px;
-}
-
-.modal-form-group input[type="number"]:focus,
-.modal-form-group select:focus,
-.modal-form-group textarea:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
 }
 
 #pagination input[type="number"]:focus {
@@ -453,18 +453,6 @@ li:hover {
     display: flex;
     flex-direction: column;
     gap: 12px;
-}
-
-.modal-form-group button {
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s ease;
 }
 
 /* Поиск и фильтры */

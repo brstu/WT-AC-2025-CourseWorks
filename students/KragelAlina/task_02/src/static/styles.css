@@ -104,21 +104,6 @@ button {
     transition: all 0.3s ease;
 }
 
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgb(102 126 234 / 40%);
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
 nav button {
     padding: 10px 24px;
     background-color: rgb(255 255 255 / 20%);
@@ -135,6 +120,21 @@ nav button:hover {
     background-color: rgb(255 255 255 / 30%);
     border-color: rgb(255 255 255 / 80%);
     transform: translateY(-2px);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgb(102 126 234 / 40%);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .delete-btn {
@@ -247,32 +247,6 @@ li:hover {
     gap: 8px;
 }
 
-#pagination input[type="number"] {
-    width: 120px;
-    padding: 8px 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-#pagination input[type="number"]:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
-}
-
-#pagination input[type="number"]::-webkit-outer-spin-button,
-#pagination input[type="number"]::-webkit-inner-spin-button {
-    appearance: none;
-    margin: 0;
-}
-
-#page-info {
-    font-weight: 600;
-    color: #667eea;
-    min-width: 120px;
-    text-align: center;
-}
-
 .modal-form-group input[type="number"],
 .modal-form-group select,
 .modal-form-group textarea {
@@ -298,6 +272,18 @@ li:hover {
     box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
 }
 
+.modal-form-group button {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
 #admin-section input[type="number"] {
     flex: 1;
     min-width: 150px;
@@ -311,6 +297,32 @@ li:hover {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
+}
+
+#pagination input[type="number"] {
+    width: 120px;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+#pagination input[type="number"]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
+}
+
+#pagination input[type="number"]::-webkit-outer-spin-button,
+#pagination input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+#page-info {
+    font-weight: 600;
+    color: #667eea;
+    min-width: 120px;
+    text-align: center;
 }
 
 /* Вкладки профиля */
@@ -473,21 +485,6 @@ li:hover {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-}
-
-#admin-section input[type="number"] {
-    flex: 1;
-    min-width: 150px;
-    padding: 10px 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-#admin-section input[type="number"]:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgb(102 126 234 / 10%);
 }
 
 #admin-section button {

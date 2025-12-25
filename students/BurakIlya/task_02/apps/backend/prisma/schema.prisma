@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum HelpRequestStatus {
+  new
+  assigned
+  in_progress
+  completed
+  cancelled
+}
+
+enum AssignmentStatus {
+  assigned
+  in_progress
+  completed
+  cancelled
+}
+
+model User {
+  id           String            @id @default(uuid())
+  email        String            @unique
+  username     String            @unique
+  passwordHash String
+  role         Role              @default(user)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  requests     HelpRequest[]
+  volunteer    VolunteerProfile?
+  assignments     Assignment[]      @relation("UserAssignments")
+  reviewsLeft     Review[]          @relation("UserReviews")
+  reviewsReceived Review[]          @relation("VolunteerReviews")
+  refreshTokens   RefreshToken[]
+}
+
+model Category {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  description String?
+  icon        String?
+  requests    HelpRequest[]
+}
+
+model HelpRequest {
+  id              String            @id @default(uuid())
+  userId          String
+  categoryId      String
+  title           String
+  description     String
+  status          HelpRequestStatus @default(new)
+  locationLat     Float?
+  locationLng     Float?
+  locationAddress String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category  @relation(fields: [categoryId], references: [id])
+  assignments Assignment[]
+}
+
+model VolunteerProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  bio         String?
+  rating      Float    @default(0)
+  totalHelps  Int      @default(0)
+  locationLat Float?
+  locationLng Float?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Assignment {
+  id           String            @id @default(uuid())
+  requestId    String
+  volunteerId  String
+  status       AssignmentStatus @default(assigned)
+  assignedAt   DateTime         @default(now())
+  completedAt  DateTime?
+
+  request   HelpRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  volunteer User        @relation("UserAssignments", fields: [volunteerId], references: [id])
+  review    Review?
+
+  @@index([volunteerId])
+  @@index([requestId])
+}
+
+model Review {
+  id           String   @id @default(uuid())
+  assignmentId String   @unique
+  userId       String
+  volunteerId  String
+  rating       Int
+  comment      String?
+  createdAt    DateTime @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  user       User       @relation("UserReviews", fields: [userId], references: [id])
+  volunteer  User       @relation("VolunteerReviews", fields: [volunteerId], references: [id])
+
+  @@index([volunteerId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  jtiHash   String   @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}

@@ -8,14 +8,18 @@
   - email: string (unique)
   - password_hash: string
   - role: enum [admin, teacher, student]
+  - created_at: datetime
+  - updated_at: datetime
 
 - Room
   - id: UUID
-  - name: string
+  - name: string (unique)
   - description: string
   - capacity: number
   - equipment: string
   - location: string
+  - created_at: datetime
+  - updated_at: datetime
 
 - Booking
   - id: UUID
@@ -23,64 +27,95 @@
   - user_id: reference -> User.id
   - start_time: datetime
   - end_time: datetime
-  - purpose: string
+  - purpose: string (max 500)
   - status: enum [active, cancelled]
+  - created_at: datetime
+  - updated_at: datetime
 
-- Role
+- RefreshToken
   - id: UUID
   - user_id: reference -> User.id
-  - role_name: enum [admin, teacher, student]
+  - token: string (unique)
+  - expires_at: datetime
+  - created_at: datetime
+
+- AuditLog
+  - id: UUID
+  - entity_type: enum [user, room, booking]
+  - entity_id: UUID
+  - action: enum [created, updated, cancelled, deleted]
+  - user_id: reference -> User.id
+  - changes: JSON
+  - reason: string (optional)
+  - created_at: datetime
 
 Связи (ER-эскиз)
 
 - User 1..* Booking (пользователь создаёт бронирования)
 - Room 1..* Booking (аудитория имеет бронирования)
-- User 1..1 Role (пользователь имеет роль)
+- User 1..* RefreshToken (пользователь имеет refresh tokens)
+- User 1..* AuditLog (пользователь выполняет действия)
 
 Обязательные поля и ограничения (кратко)
 
 - unique(User.username)
 - unique(User.email)
 - unique(Room.name)
+- unique(RefreshToken.token)
 - Booking.room_id → Room.id (FK, not null)
 - Booking.user_id → User.id (FK, not null)
 - Booking.start_time < Booking.end_time
-- Role.user_id → User.id (FK, not null)
+- Booking: CHECK (EXTRACT(EPOCH FROM (end_time - start_time)) / 3600 <= 4) -- макс. 4 часа
+- RefreshToken.user_id → User.id (FK, not null, ON DELETE CASCADE)
+- AuditLog.user_id → User.id (FK, not null)
+- Index: bookings(room_id, start_time, end_time, status) для проверки конфликтов
 
 API — верхнеуровневые ресурсы и операции
 
+**Формат спецификации**: Method Path (Required Role) - Description
+
 - /users
-  - GET /users (admin)
-  - POST /users (admin)
-  - GET /users/{id}
-  - PUT /users/{id}
-  - DELETE /users/{id}
+  - GET /users (admin) - список всех пользователей
+  - POST /users (admin) - создание пользователя
+  - GET /users/{id} (admin | self) - получение пользователя
+  - PUT /users/{id} (admin | self) - обновление пользователя
+  - DELETE /users/{id} (admin) - удаление пользователя
 
 - /rooms
-  - GET /rooms (list, filter by capacity/equipment)
-  - POST /rooms (admin)
-  - GET /rooms/{id}
-  - PUT /rooms/{id} (admin)
-  - DELETE /rooms/{id} (admin)
+  - GET /rooms (any) - список аудиторий с фильтрацией
+  - POST /rooms (admin) - создание аудитории
+  - GET /rooms/{id} (any) - получение аудитории
+  - PUT /rooms/{id} (admin) - обновление аудитории
+  - DELETE /rooms/{id} (admin) - удаление аудитории
 
 - /bookings
-  - GET /bookings (filter by room/user/date)
-  - POST /bookings (create with conflict check)
-  - GET /bookings/{id}
-  - PUT /bookings/{id} (reschedule)
-  - DELETE /bookings/{id} (cancel)
+  - GET /bookings (any) - список бронирований с фильтрацией
+  - POST /bookings (authenticated) - создание с проверкой конфликтов и лимитов
+  - GET /bookings/{id} (any) - получение бронирования
+  - PUT /bookings/{id} (owner | admin) - перенос бронирования
+  - DELETE /bookings/{id} (owner | admin) - отмена бронирования
 
 - /schedule
-  - GET /schedule?roomId=&date=&from=&to= (view schedule)
-  - GET /schedule/conflicts?roomId=&start=&end= (check conflicts)
+  - GET /schedule?roomId=&date=&from=&to= (any) - просмотр расписания
+  - GET /schedule/conflicts?roomId=&start=&end= (any) - проверка конфликтов
 
-Дополнительно (бонусы)
+Дополнительно (бонусы — НЕ обязательны для MVP)
 
-- GET /bookings/{id}/export/ical — экспорт в iCal формат
-- POST /bookings/bulk — массовое создание бронирований
-- WebSocket /ws/bookings — уведомления о новых/изменённых бронированиях
-- Документация API (OpenAPI/Swagger)
-- Тесты: unit + интеграционные для логики конфликтов
+- **[BONUS]** GET /bookings/{id}/export/ical — экспорт в iCal формат
+- **[BONUS]** POST /bookings/bulk — массовое создание бронирований
+- **[BONUS]** WebSocket /ws/bookings — уведомления о новых/изменённых бронированиях
+- **[RECOMMENDED]** Документация API (OpenAPI/Swagger)
+- **[RECOMMENDED]** Тесты: unit + интеграционные для логики конфликтов
+
+**Обязательные требования безопасности (MVP)**:
+
+- Helmet.js для HTTP заголовков безопасности
+- CORS с явным списком разрешённых origins
+- Rate limiting: 100 req/min для общих endpoints, 5 req/min для auth
+- Валидация всех входных данных (Zod)
+- Bcrypt для хеширования паролей (cost factor: 12)
+- JWT: accessToken (15 min), refreshToken (7 days)
+- Логирование всех критических операций (audit_log)
 
 ---
 
@@ -103,9 +138,28 @@ API — верхнеуровневые ресурсы и операции
 
 Auth
 
-- POST `/auth/register` — `{email, password, username, role?}` → `201 {id, email, username, role}`
-- POST `/auth/login` — `{email, password}` → `200 {accessToken, refreshToken, user}`
-- POST `/auth/refresh` — `{refreshToken}` → `200 {accessToken}`
+- POST `/auth/register` — регистрация нового пользователя
+  - Body: `{email, password, username, role?}` (role по умолчанию: 'student')
+  - Validation: email (unique, valid format), password (min 8 chars), username (unique, 3-50 chars)
+  - Response: `201 {id, email, username, role, createdAt}`
+  - Errors: 400 (validation), 409 (email/username exists)
+
+- POST `/auth/login` — вход в систему
+  - Body: `{email, password}`
+  - Response: `200 {accessToken, refreshToken, user: {id, email, username, role}}`
+  - Security: JWT accessToken (expires 15m), refreshToken (expires 7d, сохраняется в БД)
+  - Errors: 401 (invalid credentials), 429 (rate limit: 5 requests/min)
+
+- POST `/auth/refresh` — обновление токена
+  - Body: `{refreshToken}`
+  - Validation: token существует в БД и не истёк
+  - Response: `200 {accessToken}`
+  - Errors: 401 (invalid/expired token)
+
+- POST `/auth/logout` — выход из системы
+  - Body: `{refreshToken}`
+  - Action: удаление refreshToken из БД
+  - Response: `204 No Content`
 
 Users
 
@@ -126,7 +180,7 @@ Rooms
 Bookings (создание и управление)
 
 - POST `/bookings` — создание бронирования
-
+  - Auth: Bearer JWT (required)
   - Payload (пример):
 
   ```json
@@ -138,13 +192,57 @@ Bookings (создание и управление)
   }
   ```
 
-  - Response: `201 {id, roomId, userId, startTime, endTime, purpose, status}` или `409 {error: "conflict", conflicts: [...]}`
-  - Проверка: система проверяет конфликты перед созданием.
+  - **Валидация и проверки** (в порядке выполнения):
+    1. Поля: roomId (UUID, exists), startTime/endTime (ISO 8601, startTime < endTime)
+    2. Purpose: 1-500 символов, обязательно
+    3. **Длительность по роли**:
+       - student: макс. 2 часа → ошибка 403: "Студент может бронировать до 2 часов"
+       - teacher: макс. 4 часа → ошибка 403: "Преподаватель может бронировать до 4 часов"
+       - admin: без ограничений
+    4. **Проверка конфликтов** (SQL):
+
+       ```sql
+       SELECT id, start_time, end_time, user_id
+       FROM bookings
+       WHERE room_id = $roomId
+         AND status = 'active'
+         AND NOT (end_time <= $startTime OR start_time >= $endTime)
+       ```
+
+       Если найдены → 409 Conflict с массивом занятых слотов
+    5. Создание записи + запись в audit_log (action: 'created')
+  - Response: `201 {id, roomId, userId, startTime, endTime, purpose, status, createdAt}`
+  - Errors:
+    - 400: validation failed
+    - 403: duration limit exceeded
+    - 404: room not found
+    - 409: `{error: "conflict", message: "Room is already booked", conflicts: [{id, startTime, endTime, userId}]}`
 
 - GET `/bookings?roomId=&userId=&date=&status=&limit=&offset=` — список бронирований
+  - Auth: optional (без токена — только публичная информация)
+  - Filters: roomId, userId, date (YYYY-MM-DD), status
+  - Response: `200 {data: [...], total, limit, offset}`
+
 - GET `/bookings/{id}` — детали бронирования
-- PUT `/bookings/{id}` — перенос бронирования (payload: `{startTime?, endTime?}`)
+  - Auth: optional
+  - Response: `200 {id, room: {id, name}, user: {id, username}, startTime, endTime, purpose, status, createdAt}`
+
+- PUT `/bookings/{id}` — перенос бронирования
+  - Auth: Bearer JWT (required)
+  - Permission: userId === booking.userId OR role === 'admin'
+  - Payload: `{startTime, endTime}` (оба обязательны)
+  - Validation: те же проверки, что при создании (длительность, конфликты)
+  - Action: обновление + запись в audit_log (action: 'updated', changes: {old, new})
+  - Response: `200 {updated booking}`
+  - Errors: 403 (no permission), 404 (not found), 409 (conflict)
+
 - DELETE `/bookings/{id}` — отмена бронирования
+  - Auth: Bearer JWT (required)
+  - Permission: userId === booking.userId OR role === 'admin'
+  - Body (если admin): `{reason: string}` — причина отмены (обязательно для admin)
+  - Action: status → 'cancelled' + запись в audit_log (action: 'cancelled', reason)
+  - Response: `204 No Content`
+  - Errors: 403 (no permission), 404 (not found), 400 (reason required for admin)
 
 Schedule и конфликты
 
@@ -161,7 +259,14 @@ Export
 Statistics (Admin/Teacher)
 
 - GET `/statistics/rooms/{id}?from=&to=` — статистика использования аудитории
+  - Auth: Bearer JWT (admin only)
+  - Params: from/to (ISO 8601 dates, optional, default: last 30 days)
+  - Response: `200 {roomId, roomName, period: {from, to}, totalBookings, totalHours, utilizationPercent, topUsers: [{userId, username, bookingsCount}]}`
+  - Calculation: utilizationPercent = (totalHours / (period *24* 7)) * 100 (предполагаем работу 24/7)
+
 - GET `/statistics/users/{id}?from=&to=` — статистика бронирований пользователя
+  - Auth: Bearer JWT (admin OR self)
+  - Response: `200 {userId, username, period: {from, to}, totalBookings, totalHours, favoriteRooms: [{roomId, roomName, bookingsCount}]}`
 
 WebSocket (опционально)
 

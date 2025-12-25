@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  teacher
+  student
+}
+
+enum BookingStatus {
+  active
+  cancelled
+}
+
+enum EntityType {
+  user
+  room
+  booking
+}
+
+enum AuditAction {
+  created
+  updated
+  cancelled
+  deleted
+}
+
+model User {
+  id            String         @id @default(uuid())
+  username      String         @unique @db.VarChar(50)
+  email         String         @unique @db.VarChar(255)
+  passwordHash  String         @db.VarChar(255)
+  role          Role           @default(student)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  bookings      Booking[]
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+}
+
+model Room {
+  id          String    @id @default(uuid())
+  name        String    @unique @db.VarChar(100)
+  description String?
+  capacity    Int
+  equipment   String?
+  location    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  roomId    String
+  userId    String
+  startTime DateTime      @db.Timestamptz(6)
+  endTime   DateTime      @db.Timestamptz(6)
+  purpose   String        @db.VarChar(500)
+  status    BookingStatus @default(active)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, startTime, endTime, status])
+  @@index([userId])
+}
+
+model RefreshToken {
+  id               String   @id @default(uuid())
+  userId           String
+  tokenHash        String   @unique
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  replacedByTokenId String?
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  entityType EntityType
+  entityId   String
+  action     AuditAction
+  userId     String
+  changes    Json?
+  reason     String?
+  createdAt  DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}

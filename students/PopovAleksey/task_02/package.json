@@ -1,0 +1,13 @@
+{
+  "name": "room-booking-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm --workspace apps/backend run dev\" \"npm --workspace apps/frontend run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

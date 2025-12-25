@@ -1,0 +1,32 @@
+# dependencies
+node_modules
+
+# builds
+dist
+build
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
+apps/frontend/dist
+apps/frontend/.vite
+
+# Prisma
+apps/backend/prisma/dev.db
+
+# IDE
+.vscode
+.idea

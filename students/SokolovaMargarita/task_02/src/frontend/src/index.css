@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import url("tailwindcss");
 
 @layer components {
   .app-shell {
@@ -15,11 +15,6 @@
     @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition
            focus:outline-none focus:ring-2 cursor-pointer
            bg-white text-green-700 border border-green-200 hover:bg-green-50 focus:ring-green-300;
-  }
-
-  .input {
-    @apply w-full rounded-lg bg-white border border-zinc-200 px-3 py-2 outline-none transition
-           focus:border-green-500 focus:ring-2 focus:ring-green-200;
   }
 
   .input {

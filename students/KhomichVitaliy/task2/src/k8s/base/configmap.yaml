@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-config
+  namespace: taskmanager
+data:
+  schema.prisma: |
+    generator client {
+      provider = "prisma-client-js"
+    }
+
+    datasource db {
+      provider = "postgresql"
+      url      = env("DATABASE_URL")
+    }
+
+    model User {
+      id           String        @id @default(cuid())
+      email        String        @unique
+      username     String        @unique
+      password     String
+      name         String?
+      role         Role          @default(USER)
+      avatarUrl    String?
+      
+      createdProjects Project[]   @relation("ProjectCreator")
+      assignedIssues  Issue[]     @relation("IssueAssignee")
+      createdIssues   Issue[]     @relation("IssueCreator")
+      comments       Comment[]
+      
+      createdAt    DateTime      @default(now())
+      updatedAt    DateTime      @updatedAt
+      
+      @@map("users")
+    }
+
+    model Project {
+      id          String        @id @default(cuid())
+      name        String
+      description String?
+      color       String        @default("#3b82f6")
+      
+      creator     User          @relation("ProjectCreator", fields: [creatorId], references: [id])
+      creatorId   String
+      
+      issues      Issue[]
+      
+      createdAt   DateTime      @default(now())
+      updatedAt   DateTime      @updatedAt
+      
+      @@map("projects")
+    }
+
+    model Issue {
+      id          String        @id @default(cuid())
+      title       String
+      description String?
+      status      IssueStatus   @default(TODO)
+      priority    Priority      @default(MEDIUM)
+      dueDate     DateTime?
+      
+      project     Project       @relation(fields: [projectId], references: [id])
+      projectId   String
+      
+      creator     User          @relation("IssueCreator", fields: [creatorId], references: [id])
+      creatorId   String
+      
+      assignee    User?         @relation("IssueAssignee", fields: [assigneeId], references: [id])
+      assigneeId  String?
+      
+      labels      Label[]       @relation("IssueLabels")
+      comments    Comment[]
+      
+      createdAt   DateTime      @default(now())
+      updatedAt   DateTime      @updatedAt
+      
+      @@map("issues")
+    }
+
+    model Comment {
+      id          String        @id @default(cuid())
+      content     String
+      
+      issue       Issue         @relation(fields: [issueId], references: [id])
+      issueId     String
+      
+      author      User          @relation(fields: [authorId], references: [id])
+      authorId    String
+      
+      createdAt   DateTime      @default(now())
+      updatedAt   DateTime      @updatedAt
+      
+      @@map("comments")
+    }
+
+    model Label {
+      id          String        @id @default(cuid())
+      name        String
+      color       String        @default("#6b7280")
+      
+      issues      Issue[]       @relation("IssueLabels")
+      
+      createdAt   DateTime      @default(now())
+      updatedAt   DateTime      @updatedAt
+      
+      @@map("labels")
+    }
+
+    enum Role {
+      USER
+      ADMIN
+    }
+
+    enum IssueStatus {
+      TODO
+      IN_PROGRESS
+      DONE
+      BLOCKED
+    }
+
+    enum Priority {
+      LOW
+      MEDIUM
+      HIGH
+      URGENT
+    }

@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    --border: #e2e8f0;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --sidebar-width: 280px;
+  }
+
+  .dark {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --border: #334155;
+    --primary: #60a5fa;
+    --primary-hover: #3b82f6;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900;
+    @apply dark:bg-gray-900 dark:text-gray-100;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+    @apply dark:bg-gray-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300;
+    @apply dark:bg-gray-600;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+    @apply dark:bg-gray-500;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-blue-500 text-white hover:bg-blue-600;
+    @apply focus:ring-blue-500;
+    @apply dark:bg-blue-600 dark:hover:bg-blue-700;
+  }
+
+  .btn-secondary {
+    @apply btn bg-gray-200 text-gray-700 hover:bg-gray-300;
+    @apply focus:ring-gray-500;
+    @apply dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-500 text-white hover:bg-red-600;
+    @apply focus:ring-red-500;
+    @apply dark:bg-red-600 dark:hover:bg-red-700;
+  }
+
+  .btn-success {
+    @apply btn bg-green-500 text-white hover:bg-green-600;
+    @apply focus:ring-green-500;
+    @apply dark:bg-green-600 dark:hover:bg-green-700;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+    @apply dark:border-gray-600 dark:bg-gray-800 dark:text-white;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200;
+    @apply dark:bg-gray-800 dark:border-gray-700;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .status-badge {
+    @apply badge;
+  }
+
+  .status-todo {
+    @apply bg-gray-100 text-gray-800;
+    @apply dark:bg-gray-700 dark:text-gray-300;
+  }
+
+  .status-in-progress {
+    @apply bg-blue-100 text-blue-800;
+    @apply dark:bg-blue-900 dark:text-blue-300;
+  }
+
+  .status-done {
+    @apply bg-green-100 text-green-800;
+    @apply dark:bg-green-900 dark:text-green-300;
+  }
+
+  .status-blocked {
+    @apply bg-red-100 text-red-800;
+    @apply dark:bg-red-900 dark:text-red-300;
+  }
+
+  .priority-badge {
+    @apply badge;
+  }
+
+  .priority-low {
+    @apply bg-gray-100 text-gray-800;
+    @apply dark:bg-gray-700 dark:text-gray-300;
+  }
+
+  .priority-medium {
+    @apply bg-yellow-100 text-yellow-800;
+    @apply dark:bg-yellow-900 dark:text-yellow-300;
+  }
+
+  .priority-high {
+    @apply bg-orange-100 text-orange-800;
+    @apply dark:bg-orange-900 dark:text-orange-300;
+  }
+
+  .priority-urgent {
+    @apply bg-red-100 text-red-800;
+    @apply dark:bg-red-900 dark:text-red-300;
+  }
+
+  .kanban-column {
+    @apply bg-gray-50 rounded-lg p-4 min-h-[500px] border border-gray-200;
+    @apply dark:bg-gray-800 dark:border-gray-700;
+  }
+
+  .kanban-item {
+    @apply card p-4 mb-3 cursor-move hover:shadow-md transition-shadow duration-200;
+  }
+
+  .dropdown-item {
+    @apply flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer;
+    @apply dark:text-gray-300 dark:hover:bg-gray-700;
+  }
+
+  /* Utility classes */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}

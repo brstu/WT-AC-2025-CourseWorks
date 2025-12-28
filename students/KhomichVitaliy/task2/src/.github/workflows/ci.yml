@@ -1,0 +1,152 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: taskmanager
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+      working-directory: apps/server
+    
+    - name: Run linter
+      run: npm run lint
+      working-directory: apps/server
+    
+    - name: Run unit tests
+      run: npm run test:unit
+      working-directory: apps/server
+      env:
+        DATABASE_URL: postgresql://user:password@localhost:5432/taskmanager
+        JWT_SECRET: test-secret-key-for-ci-pipeline-12345
+        NODE_ENV: test
+        CLIENT_URL: http://localhost:5173
+        LOG_LEVEL: error
+    
+    - name: Run integration tests
+      run: npm run test:integration
+      working-directory: apps/server
+      env:
+        DATABASE_URL: postgresql://user:password@localhost:5432/taskmanager
+        JWT_SECRET: test-secret-key-for-ci-pipeline-12345
+        NODE_ENV: test
+        CLIENT_URL: http://localhost:5173
+        LOG_LEVEL: error
+
+  build-docker:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build and push server image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./apps/server
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/server:${{ github.sha }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/server:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: Build and push web image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./apps/web
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/web:${{ github.sha }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/web:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  deploy-dev:
+    needs: build-docker
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Kustomize
+      run: |
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 5.2.0
+        sudo mv kustomize /usr/local/bin/
+    
+    - name: Deploy to Development
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG_DEV }}
+      run: |
+        echo "Deploying to development environment..."
+        kubectl apply -k k8s/overlays/dev --namespace=taskmanager-dev
+        kubectl rollout status deployment/server -n taskmanager-dev --timeout=300s
+        kubectl rollout status deployment/web -n taskmanager-dev --timeout=300s
+
+  deploy-prod:
+    needs: build-docker
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Kustomize
+      run: |
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 5.2.0
+        sudo mv kustomize /usr/local/bin/
+    
+    - name: Deploy to Production
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG_PROD }}
+      run: |
+        echo "Deploying to production environment..."
+        kubectl apply -k k8s/overlays/prod --namespace=taskmanager
+        kubectl rollout status deployment/server -n taskmanager --timeout=300s
+        kubectl rollout status deployment/web -n taskmanager --timeout=300s
+        echo "Deployment completed successfully"

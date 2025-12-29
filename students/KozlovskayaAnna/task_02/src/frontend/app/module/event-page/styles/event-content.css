@@ -1,3 +1,4 @@
+/* stylelint-disable-next-line at-rule-no-unknown */
 @reference '../../../globals.css';
 
 .event-content {
@@ -47,6 +48,7 @@
 
 .event-content > ol {
     @apply list-decimal;
+
     list-style-position: outside;
 }
 
@@ -70,16 +72,7 @@
 }
 
 .event-content > blockquote {
-    @apply relative
-        my-6 
-        pl-4 
-        border-l-4
-        border-gray-300
-        italic
-        text-gray-700
-        bg-gray-50
-        rounded-md
-        py-3;
+    @apply relative my-6 pl-4 border-l-4 border-gray-300 italic text-gray-700 bg-gray-50 rounded-md py-3;
 }
 
 .event-content > blockquote > p {
@@ -96,29 +89,13 @@
 }
 
 .event-content code {
-    @apply font-mono text-sm
-        bg-gray-100
-        px-1 py-0.5
-        rounded
-        text-rose-700
-        break-words;
-}
-
-.event-content pre code {
-    @apply bg-transparent px-0 py-0 text-inherit;
+    @apply font-mono text-sm bg-gray-100 px-1 py-0.5 rounded text-rose-700 break-words;
 }
 
 .event-content pre {
-    @apply font-mono text-sm
-        bg-gray-900
-        text-gray-100
-        rounded-lg
-        p-4
-        my-4
-        overflow-x-auto
-        leading-relaxed;
+    @apply font-mono text-sm bg-gray-900 text-gray-100 rounded-lg p-4 my-4 overflow-x-auto leading-relaxed;
 }
 
 .event-content pre code {
-    @apply block;
+    @apply bg-transparent px-0 py-0 text-inherit block;
 }

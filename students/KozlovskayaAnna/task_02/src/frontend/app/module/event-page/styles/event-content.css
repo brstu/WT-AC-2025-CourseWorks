@@ -68,6 +68,7 @@
 
 .event-content > ul li::before {
     content: '';
+
     @apply block absolute size-4 -left-4 top-1/2 -translate-y-1/2 opacity-70 bg-[url('/chevron-right.svg')] bg-cover;
 }
 

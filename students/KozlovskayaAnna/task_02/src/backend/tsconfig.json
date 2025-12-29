@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "types": [
+            "node",
+            "express",
+            "multer"
+        ],
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    }
+}

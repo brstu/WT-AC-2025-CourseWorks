@@ -1,0 +1,8 @@
+export type { IRes } from './api.interface'
+export { EResponseStatus } from './api.interface'
+export type { IUser, IUserAdmin } from './user.interface'
+export type { IEvent, IEventSpeaker, IEventAdmin } from './event.interface'
+export type { IAtendee } from './atendee.interface'
+export type { ISpeaker } from './speaker.interface'
+export type { IInvitationUser, IInvitationEvent, IInvitation } from './invitations.interface'
+export type { ITicket, ITicketEvent, ITicketUser } from './ticket.interface'

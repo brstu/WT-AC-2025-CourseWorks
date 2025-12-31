@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  server:
+    build: ./apps/server
+    env_file:
+      - .env
+    environment:
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@test.local}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-password123}
+    command: >
+      sh -c "npm install; npx prisma generate; i=0; until npx prisma migrate deploy; do i=$$((i+1)); if [ $$i -ge 30 ]; then echo 'DB not ready / migrate failed'; exit 1; fi; echo 'Waiting for db...'; sleep 2; done; npm run dev"
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    volumes:
+      - ./apps/server:/app
+      - /app/node_modules
+    depends_on:
+      - db
+
+  web:
+    build: ./apps/web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+
+volumes:
+  pgdata: {}  # Добавьте этот раздел для определения тома pgdata

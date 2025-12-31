@@ -1,0 +1,81 @@
+@baseUrl = http://localhost:3000
+@token = {{login.response.body.data.token}}
+
+### Health
+GET {{baseUrl}}/health
+
+### Register (first user becomes ADMIN if DB empty)
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@test.local",
+  "password": "password123"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@test.local",
+  "password": "password123"
+}
+
+### Who am I
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{token}}
+
+### Create queue (ADMIN)
+# @name createQueue
+POST {{baseUrl}}/queues
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Support",
+  "description": "Support queue"
+}
+
+### Create SLA for queue (ADMIN)
+# @name createSla
+POST {{baseUrl}}/sla
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "queueId": "{{createQueue.response.body.data.id}}",
+  "reactionTimeMinutes": 1,
+  "resolutionTimeMinutes": 2
+}
+
+### Create incident (ADMIN/USER)
+# @name createIncident
+POST {{baseUrl}}/incidents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Printer broken",
+  "description": "It is on fire",
+  "queueId": "{{createQueue.response.body.data.id}}"
+}
+
+### Add comment
+POST {{baseUrl}}/incidents/{{createIncident.response.body.data.id}}/comments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "We are investigating"
+}
+
+### List incidents
+GET {{baseUrl}}/incidents
+Authorization: Bearer {{token}}
+
+### Swagger UI
+# Open in browser: http://localhost:3000/docs
+GET {{baseUrl}}/openapi.json

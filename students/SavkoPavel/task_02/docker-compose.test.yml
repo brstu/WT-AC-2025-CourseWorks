@@ -1,0 +1,22 @@
+services:
+  db_test:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ims_test
+      POSTGRES_USER: ims_test
+      POSTGRES_PASSWORD: ims_test
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+
+  server_test:
+    build: ./apps/server
+    environment:
+      DATABASE_URL: postgresql://ims_test:ims_test@db_test:5432/ims_test
+      JWT_SECRET: test_jwt_secret
+    command: >
+      sh -c "i=0; until npx prisma migrate deploy; do i=$$((i+1)); if [ $$i -ge 30 ]; then echo 'DB not ready / migrate failed'; exit 1; fi; echo 'Waiting for db...'; sleep 2; done; npm test"
+    depends_on:
+      - db_test
+
+volumes:
+  pgdata_test: {}

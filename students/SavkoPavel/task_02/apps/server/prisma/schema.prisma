@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")  // Строка подключения из .env
+}
+
+model User {
+  id             String     @id @default(uuid())
+  email          String     @unique
+  password       String
+  role           Role       @default(USER)
+  createdAt      DateTime   @default(now())
+
+  createdIncidents Incident[] @relation("CreatedIncidents")   // Обратная связь для инцидентов, созданных пользователем
+  assignedIncidents Incident[] @relation("AssignedIncidents") // Обратная связь для инцидентов, назначенных пользователю
+  comments        Comment[]  @relation("AuthorComments")      // Обратная связь для комментариев, написанных пользователем
+
+  queueMemberships QueueMember[]
+}
+
+enum Role {
+  ADMIN
+  AGENT
+  USER
+}
+
+model Incident {
+  id          String           @id @default(uuid())
+  title       String
+  description String
+  status      IncidentStatus   @default(open)
+  priority    IncidentPriority @default(medium)
+
+  queueId     String
+  queue       Queue            @relation(fields: [queueId], references: [id])
+
+  slaId       String
+  sla         SLA              @relation(fields: [slaId], references: [id])
+
+  createdById String
+  createdBy   User             @relation("CreatedIncidents", fields: [createdById], references: [id])
+
+  assignedToId String?
+  assignedTo   User?            @relation("AssignedIncidents", fields: [assignedToId], references: [id])
+
+  comments    Comment[]
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+enum IncidentStatus {
+  open
+  in_progress
+  escalated
+  resolved
+}
+
+enum IncidentPriority {
+  low
+  medium
+  high
+  critical
+}
+
+model Queue {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  incidents   Incident[]
+  sla         SLA?
+
+  members     QueueMember[]
+}
+
+model QueueMember {
+  id        String   @id @default(uuid())
+  queueId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  queue Queue @relation(fields: [queueId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([queueId, userId])
+}
+
+model SLA {
+  id                   String   @id @default(uuid())
+  queueId              String   @unique
+  reactionTimeMinutes  Int
+  resolutionTimeMinutes Int
+
+  createdAt DateTime @default(now())
+
+  queue     Queue @relation(fields: [queueId], references: [id])
+
+  incidents Incident[] // Обратная связь к инцидентам
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  incidentId  String
+  message     String
+  authorId    String
+  createdAt   DateTime @default(now())
+
+  incident    Incident @relation(fields: [incidentId], references: [id])
+  author      User     @relation("AuthorComments", fields: [authorId], references: [id])
+}

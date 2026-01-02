@@ -2,6 +2,7 @@
 
 :root {
   color-scheme: light;
+
   --bg: #fff;
   --surface: #f7f7f8;
   --surface-2: #fff;
@@ -20,6 +21,7 @@
 
 html[data-theme="dark"] {
   color-scheme: dark;
+
   --bg: #0b1220;
   --surface: #0f1b2d;
   --surface-2: #0b1220;
@@ -207,12 +209,12 @@ html[data-theme="dark"] .btn-primary {
   color: #fff;
 }
 
-html[data-theme="dark"] .btn-danger {
-  color: #0b1220;
-}
-
 .btn-danger:hover {
   background: var(--danger-hover);
+}
+
+html[data-theme="dark"] .btn-danger {
+  color: #0b1220;
 }
 
 .btn-ghost {

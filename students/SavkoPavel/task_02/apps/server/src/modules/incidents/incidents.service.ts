@@ -1,5 +1,5 @@
-import { IncidentPriority, IncidentStatus } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
+import { IncidentPriority, IncidentStatus } from "./incidents.types";
 
 export async function listIncidents(params: {
   role: "ADMIN" | "AGENT" | "USER";

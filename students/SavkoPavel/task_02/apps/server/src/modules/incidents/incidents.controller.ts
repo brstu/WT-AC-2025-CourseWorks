@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
-import { IncidentPriority, IncidentStatus } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import * as incidentsService from "./incidents.service";
+import {
+  IncidentPriority,
+  IncidentStatus,
+  isIncidentPriority,
+  isIncidentStatus,
+} from "./incidents.types";
 
 function parseLimit(value: unknown) {
   const raw = typeof value === "string" ? parseInt(value, 10) : NaN;
@@ -27,8 +32,11 @@ function canEditIncidentAsUser(user: { userId: string; role: string }, incident:
 export async function list(req: Request, res: Response) {
   const user = (req as any).user as { userId: string; role: "ADMIN" | "AGENT" | "USER" };
 
-  const status = req.query.status as IncidentStatus | undefined;
-  const priority = req.query.priority as IncidentPriority | undefined;
+  const statusRaw = Array.isArray(req.query.status) ? req.query.status[0] : req.query.status;
+  const priorityRaw = Array.isArray(req.query.priority) ? req.query.priority[0] : req.query.priority;
+
+  const status = isIncidentStatus(statusRaw) ? statusRaw : undefined;
+  const priority = isIncidentPriority(priorityRaw) ? priorityRaw : undefined;
   const queueId = req.query.queueId as string | undefined;
 
   const incidents = await incidentsService.listIncidents({
@@ -80,6 +88,10 @@ export async function create(req: Request, res: Response) {
 
   if (!title || !description) {
     return res.status(400).json({ error: "TITLE_AND_DESCRIPTION_REQUIRED" });
+  }
+
+  if (priority !== undefined && !isIncidentPriority(priority)) {
+    return res.status(400).json({ error: "INVALID_PRIORITY" });
   }
 
   // очередь: либо заданная, либо первая очередь, где есть SLA
@@ -136,6 +148,13 @@ export async function update(req: Request, res: Response) {
     take?: boolean;
   };
 
+  if (status !== undefined && !isIncidentStatus(status)) {
+    return res.status(400).json({ error: "INVALID_STATUS" });
+  }
+  if (priority !== undefined && !isIncidentPriority(priority)) {
+    return res.status(400).json({ error: "INVALID_PRIORITY" });
+  }
+
   const data: any = {};
   if (status) data.status = status;
   if (priority) data.priority = priority;
@@ -187,7 +206,12 @@ export async function patch(req: Request, res: Response) {
       }
       data.description = description;
     }
-    if (priority !== undefined) data.priority = priority;
+    if (priority !== undefined) {
+      if (!isIncidentPriority(priority)) {
+        return res.status(400).json({ error: "INVALID_PRIORITY" });
+      }
+      data.priority = priority;
+    }
 
     if (Object.keys(data).length === 0) {
       return res.status(400).json({ error: "NO_FIELDS_TO_UPDATE" });
@@ -217,6 +241,13 @@ export async function patch(req: Request, res: Response) {
     description?: string;
     assignedToId?: string | null;
   };
+
+  if (status !== undefined && !isIncidentStatus(status)) {
+    return res.status(400).json({ error: "INVALID_STATUS" });
+  }
+  if (priority !== undefined && !isIncidentPriority(priority)) {
+    return res.status(400).json({ error: "INVALID_PRIORITY" });
+  }
 
   const data: any = {};
   if (status) data.status = status;

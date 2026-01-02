@@ -1,16 +1,10 @@
--- CreateEnum
-CREATE TYPE "IncidentStatus" AS ENUM ('open', 'in_progress', 'escalated', 'resolved');
-
--- CreateEnum
-CREATE TYPE "IncidentPriority" AS ENUM ('low', 'medium', 'high', 'critical');
-
 -- CreateTable
 CREATE TABLE "Incident" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "status" "IncidentStatus" NOT NULL DEFAULT 'open',
-    "priority" "IncidentPriority" NOT NULL DEFAULT 'medium',
+    "status" TEXT NOT NULL DEFAULT 'open',
+    "priority" TEXT NOT NULL DEFAULT 'medium',
     "queueId" TEXT NOT NULL,
     "slaId" TEXT NOT NULL,
     "createdById" TEXT NOT NULL,
@@ -18,6 +12,8 @@ CREATE TABLE "Incident" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
+    CONSTRAINT "Incident_status_check" CHECK ("status" IN ('open', 'in_progress', 'escalated', 'resolved')),
+    CONSTRAINT "Incident_priority_check" CHECK ("priority" IN ('low', 'medium', 'high', 'critical')),
     CONSTRAINT "Incident_pkey" PRIMARY KEY ("id")
 );
 

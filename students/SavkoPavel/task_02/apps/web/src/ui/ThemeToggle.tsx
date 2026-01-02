@@ -16,7 +16,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      className="btn btnGhost"
+      className="btn btn-ghost"
       onClick={() => setTheme((t) => toggleTheme(t))}
       title="Toggle theme"
     >

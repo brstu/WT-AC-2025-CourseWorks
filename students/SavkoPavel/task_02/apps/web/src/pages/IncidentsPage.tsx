@@ -129,7 +129,7 @@ export function IncidentsPage() {
 
       {canCreate ? (
         <div className="card section">
-          <h2 className="cardTitle">Create incident</h2>
+          <h2 className="card-title">Create incident</h2>
           <div className="divider" />
 
           <form onSubmit={createIncident} className="stack">
@@ -154,7 +154,7 @@ export function IncidentsPage() {
             </label>
             <div className="row" style={{ justifyContent: "space-between" }}>
               <button
-                className="btn btnPrimary"
+                className="btn btn-primary"
                 type="submit"
                 disabled={!title.trim() || !description.trim() || queues.length === 0}
               >
@@ -219,7 +219,7 @@ export function IncidentsPage() {
                         </button>
                       ) : null}
                       {canDelete ? (
-                        <button className="btn btnDanger" onClick={() => deleteIncident(i.id)}>
+                        <button className="btn btn-danger" onClick={() => deleteIncident(i.id)}>
                           Delete
                         </button>
                       ) : null}

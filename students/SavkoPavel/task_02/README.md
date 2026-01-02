@@ -53,6 +53,7 @@
 ## API (MVP)
 
 ### Auth
+
 - `POST /auth/register` `{ email, password }`
 - `POST /auth/login` `{ email, password }` → `{ token }`
 
@@ -65,6 +66,7 @@ $token = $resp.data.token
 ```
 
 ### Users (ADMIN)
+
 - `GET /users/me` (любой авторизованный пользователь)
 - `GET /users`
 - `GET /users/:id`
@@ -74,6 +76,7 @@ $token = $resp.data.token
 - `DELETE /users/:id`
 
 ### Queues
+
 - `GET /queues` (ADMIN, USER, AGENT)
 - `GET /queues/:id` (ADMIN, USER, AGENT)
 - `POST /queues` (ADMIN)
@@ -90,12 +93,14 @@ AGENT видит только те очереди и инциденты, где 
 - `DELETE /queues/:id/agents/:userId`
 
 ### SLA
+
 - `GET /sla` (ADMIN, AGENT)
 - `GET /sla/:id` (ADMIN, AGENT)
 - `POST /sla` (ADMIN) `{ queueId, reactionTimeMinutes, resolutionTimeMinutes }`
 - `PUT /sla/:id` (ADMIN)
 
 ### Incidents
+
 - `GET /incidents` (ADMIN/AGENT — все, USER — только свои)
   - фильтры: `status`, `priority`, `queueId`, `limit`, `offset`
 - `POST /incidents` (ADMIN, USER) `{ title, description, priority?, queueId? }`
@@ -111,6 +116,7 @@ AGENT видит только те очереди и инциденты, где 
 - `DELETE /incidents/:id` (только ADMIN)
 
 ### Comments
+
 - `GET /incidents/:id/comments`
 - `POST /incidents/:id/comments` `{ message }`
 

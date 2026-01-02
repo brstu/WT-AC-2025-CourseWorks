@@ -129,10 +129,10 @@ export function UsersPage() {
       {error ? <div className="error">{error}</div> : null}
 
       <div className="card section">
-        <h2 className="cardTitle">Create user</h2>
+        <h2 className="card-title">Create user</h2>
         <div className="divider" />
         <form onSubmit={createUser} className="stack">
-          <div className="grid2">
+          <div className="grid-2">
             <label>
               Email
               <input value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
@@ -157,7 +157,7 @@ export function UsersPage() {
           </label>
 
           <div className="row" style={{ justifyContent: "space-between" }}>
-            <button className="btn btnPrimary" type="submit" disabled={!email.trim() || password.length < 6}>
+            <button className="btn btn-primary" type="submit" disabled={!email.trim() || password.length < 6}>
               Create
             </button>
             <span className="small">Password must be at least 6 chars.</span>
@@ -167,7 +167,7 @@ export function UsersPage() {
 
       <div className="card section">
         <div className="row" style={{ justifyContent: "space-between", alignItems: "baseline" }}>
-          <h2 className="cardTitle">Users</h2>
+          <h2 className="card-title">Users</h2>
           <button className="btn" onClick={load} disabled={loading}>
             {loading ? "Loading..." : "Refresh"}
           </button>
@@ -224,10 +224,10 @@ export function UsersPage() {
                       </td>
                       <td>
                         <div className="row">
-                          <button className="btn btnPrimary" onClick={() => updateEmail(u.id)} disabled={!changed || !valid}>
+                          <button className="btn btn-primary" onClick={() => updateEmail(u.id)} disabled={!changed || !valid}>
                             Save email
                           </button>
-                          <button className="btn btnDanger" onClick={() => deleteUser(u.id)} disabled={u.id === myUserId}>
+                          <button className="btn btn-danger" onClick={() => deleteUser(u.id)} disabled={u.id === myUserId}>
                             Delete
                           </button>
                         </div>

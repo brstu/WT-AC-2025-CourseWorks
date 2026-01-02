@@ -1,11 +1,6 @@
 # Используем более легкий образ
 FROM node:20-slim
 
-# Установка OpenSSL, так как он требуется для работы с Prisma
-RUN apt-get update -y \
-  && apt-get install -y openssl \
-  && rm -rf /var/lib/apt/lists/*
-
 # Устанавливаем рабочую директорию
 WORKDIR /app
 

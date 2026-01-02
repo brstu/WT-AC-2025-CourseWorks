@@ -156,7 +156,7 @@ export function SlaPage() {
 
       {canEdit ? (
         <div className="card section">
-          <h2 className="cardTitle">Create SLA</h2>
+          <h2 className="card-title">Create SLA</h2>
           <div className="divider" />
           <form onSubmit={createSla} className="stack">
             <label>
@@ -170,7 +170,7 @@ export function SlaPage() {
                 ))}
               </select>
             </label>
-            <div className="grid2">
+            <div className="grid-2">
               <label>
                 Reaction time (minutes)
                 <input
@@ -192,7 +192,7 @@ export function SlaPage() {
             </div>
             <div className="row" style={{ justifyContent: "space-between" }}>
               <button
-                className="btn btnPrimary"
+                className="btn btn-primary"
                 type="submit"
                 disabled={!queueId.trim() || reactionTimeMinutes <= 0 || resolutionTimeMinutes <= 0 || queues.length === 0}
               >
@@ -266,7 +266,7 @@ export function SlaPage() {
 
                         {canEdit ? (
                           <div style={{ marginTop: 10 }}>
-                            <button className="btn btnPrimary" onClick={() => saveRow(r.id)} disabled={!changed || !valid}>
+                            <button className="btn btn-primary" onClick={() => saveRow(r.id)} disabled={!changed || !valid}>
                               Save
                             </button>
                           </div>

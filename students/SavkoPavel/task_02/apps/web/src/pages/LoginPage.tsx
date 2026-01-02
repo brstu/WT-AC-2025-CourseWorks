@@ -28,8 +28,8 @@ export function LoginPage() {
 
   return (
     <div className="container" style={{ maxWidth: 560 }}>
-      <div className="pageHeader">
-        <div className="pageTitle">
+      <div className="page-header">
+        <div className="page-title">
           <h1>Incident Management System</h1>
           <div className="subtle">Sign in to continue</div>
         </div>
@@ -40,7 +40,7 @@ export function LoginPage() {
 
       <div className="section">
         <div className="card">
-          <h2 className="cardTitle">Login</h2>
+          <h2 className="card-title">Login</h2>
           <div className="divider" />
 
           <form onSubmit={onSubmit} className="stack">
@@ -61,7 +61,7 @@ export function LoginPage() {
             {error ? <div className="error">{error}</div> : null}
 
             <div className="row" style={{ justifyContent: "space-between" }}>
-              <button className="btn btnPrimary" disabled={loading} type="submit">
+              <button className="btn btn-primary" disabled={loading} type="submit">
                 {loading ? "Signing in..." : "Login"}
               </button>
               <span className="small">

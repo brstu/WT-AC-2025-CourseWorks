@@ -13,8 +13,8 @@ export function PageLayout({
 }) {
   return (
     <div className="container">
-      <div className="pageHeader">
-        <div className="pageTitle">
+      <div className="page-header">
+        <div className="page-title">
           <h1>{title}</h1>
           {subtitle ? <div className="subtle">{subtitle}</div> : null}
         </div>

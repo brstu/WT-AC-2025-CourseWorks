@@ -28,8 +28,8 @@ export function RegisterPage() {
 
   return (
     <div className="container" style={{ maxWidth: 560 }}>
-      <div className="pageHeader">
-        <div className="pageTitle">
+      <div className="page-header">
+        <div className="page-title">
           <h1>Incident Management System</h1>
           <div className="subtle">Create your account</div>
         </div>
@@ -40,7 +40,7 @@ export function RegisterPage() {
 
       <div className="section">
         <div className="card">
-          <h2 className="cardTitle">Register</h2>
+          <h2 className="card-title">Register</h2>
           <div className="divider" />
 
           <form onSubmit={onSubmit} className="stack">
@@ -61,7 +61,7 @@ export function RegisterPage() {
             {error ? <div className="error">{error}</div> : null}
 
             <div className="row" style={{ justifyContent: "space-between" }}>
-              <button className="btn btnPrimary" disabled={loading} type="submit">
+              <button className="btn btn-primary" disabled={loading} type="submit">
                 {loading ? "Creating..." : "Register"}
               </button>
               <span className="small">

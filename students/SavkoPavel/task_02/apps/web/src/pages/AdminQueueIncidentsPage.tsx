@@ -120,7 +120,7 @@ export function AdminQueueIncidentsPage() {
                   <td>{i.priority}</td>
                   <td>{i.assignedToId ? "Yes" : "No"}</td>
                   <td>
-                    <button className="btn btnDanger" onClick={() => deleteIncident(i.id)}>
+                    <button className="btn btn-danger" onClick={() => deleteIncident(i.id)}>
                       Delete
                     </button>
                   </td>

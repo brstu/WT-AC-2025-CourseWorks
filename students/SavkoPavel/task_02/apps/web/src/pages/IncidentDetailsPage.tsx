@@ -193,7 +193,7 @@ export function IncidentDetailsPage() {
 
       {incident ? (
         <div className="card section">
-          <h2 className="cardTitle">Details</h2>
+          <h2 className="card-title">Details</h2>
           <div className="divider" />
 
           <div className="stack">
@@ -212,7 +212,7 @@ export function IncidentDetailsPage() {
               />
             </label>
 
-            <div className="grid2">
+            <div className="grid-2">
               <label>
                 Status
                 <select value={editStatus} onChange={(e) => setEditStatus(e.target.value as IncidentStatus)} disabled={!canEditAsAdmin && !canEditAsAgent}>
@@ -234,7 +234,7 @@ export function IncidentDetailsPage() {
               </label>
             </div>
 
-            <div className="grid2">
+            <div className="grid-2">
               <div className="small">
                 Created by: <span className="kbd">{incident.createdBy?.email ?? incident.createdById}</span>
               </div>
@@ -244,7 +244,7 @@ export function IncidentDetailsPage() {
             </div>
 
             <div className="row">
-              <button className="btn btnPrimary" onClick={save} disabled={!canEditFields}>
+              <button className="btn btn-primary" onClick={save} disabled={!canEditFields}>
                 Save
               </button>
               {canTake ? (
@@ -253,7 +253,7 @@ export function IncidentDetailsPage() {
                 </button>
               ) : null}
               {canDelete ? (
-                <button className="btn btnDanger" onClick={remove}>
+                <button className="btn btn-danger" onClick={remove}>
                   Delete
                 </button>
               ) : null}
@@ -264,12 +264,12 @@ export function IncidentDetailsPage() {
 
       {incident ? (
         <div className="card section">
-          <h2 className="cardTitle">Comments</h2>
+          <h2 className="card-title">Comments</h2>
           <div className="divider" />
 
           <form onSubmit={addComment} className="row">
             <input value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Write a comment..." style={{ flex: 1 }} />
-            <button className="btn btnPrimary" type="submit" disabled={!newComment.trim()}>
+            <button className="btn btn-primary" type="submit" disabled={!newComment.trim()}>
               Add
             </button>
           </form>

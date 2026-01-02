@@ -150,7 +150,7 @@ export function QueuesPage() {
       {error ? <div className="error">{error}</div> : null}
 
       <div className="card section">
-        <h2 className="cardTitle">Create queue</h2>
+        <h2 className="card-title">Create queue</h2>
         <form onSubmit={createQueue} className="stack" style={{ marginTop: 10 }}>
           <label>
             Name
@@ -161,7 +161,7 @@ export function QueuesPage() {
             <input value={description} onChange={(e) => setDescription(e.target.value)} />
           </label>
           <div className="row">
-            <button className="btn btnPrimary" type="submit" disabled={!name.trim()}>
+            <button className="btn btn-primary" type="submit" disabled={!name.trim()}>
               Create
             </button>
           </div>
@@ -174,7 +174,7 @@ export function QueuesPage() {
       >
         <div className="card">
           <div className="row" style={{ justifyContent: "space-between" }}>
-            <h2 className="cardTitle">Queues</h2>
+            <h2 className="card-title">Queues</h2>
             <button className="btn" onClick={loadAll} disabled={loading}>
               {loading ? "Loading..." : "Refresh"}
             </button>
@@ -187,7 +187,7 @@ export function QueuesPage() {
                 <button
                   key={q.id}
                   onClick={() => setSelectedQueueId(q.id)}
-                  className={isActive ? "listButton listButtonActive" : "listButton"}
+                  className={isActive ? "list-button list-button-active" : "list-button"}
                 >
                   <div style={{ fontWeight: 800 }}>{q.name}</div>
                   <div className="small" style={{ marginTop: 4 }}>
@@ -204,7 +204,7 @@ export function QueuesPage() {
         </div>
 
         <div className="card">
-          <h2 className="cardTitle">Queue agents</h2>
+          <h2 className="card-title">Queue agents</h2>
 
           {selectedQueue ? (
             <div className="section">
@@ -243,7 +243,7 @@ export function QueuesPage() {
                 </select>
               </label>
             </div>
-            <button className="btn btnPrimary" onClick={addAgent} disabled={!selectedQueueId || !selectedAgentId}>
+            <button className="btn btn-primary" onClick={addAgent} disabled={!selectedQueueId || !selectedAgentId}>
               Add
             </button>
           </div>
@@ -269,7 +269,7 @@ export function QueuesPage() {
                         </div>
                       </td>
                       <td>
-                        <button className="btn btnDanger" onClick={() => removeAgent(m.userId)}>
+                        <button className="btn btn-danger" onClick={() => removeAgent(m.userId)}>
                           Remove
                         </button>
                       </td>

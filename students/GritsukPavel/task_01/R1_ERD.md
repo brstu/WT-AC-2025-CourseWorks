@@ -92,12 +92,13 @@ CREATE TABLE companies (
  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Сначала создаём jobs без FK на stages
 CREATE TABLE jobs (
  id UUID PRIMARY KEY,
  title TEXT NOT NULL,
  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
- current_stage_id UUID REFERENCES stages(id) ON DELETE SET NULL,
+ current_stage_id UUID, -- FK добавится после создания stages
  salary TEXT,
  location TEXT,
  url TEXT,
@@ -112,6 +113,13 @@ CREATE TABLE stages (
  order INT NOT NULL,
  date TIMESTAMP WITH TIME ZONE
 );
+
+-- Добавляем FK после создания обеих таблиц
+ALTER TABLE jobs
+ ADD CONSTRAINT fk_jobs_current_stage
+ FOREIGN KEY (current_stage_id)
+ REFERENCES stages(id)
+ ON DELETE SET NULL;
 
 CREATE TABLE notes (
  id UUID PRIMARY KEY,
@@ -134,4 +142,6 @@ CREATE TABLE reminders (
 
 - Все связи через внешние ключи (FK) с каскадным удалением для зависимых сущностей.
 - Job.current_stage_id может быть NULL (SET NULL при удалении Stage).
+- Циклическая зависимость Job ↔ Stage решена через ALTER TABLE: сначала создаём обе таблицы, затем добавляем FK.
 - Индексы рекомендуется добавить на: user_id, company_id, job_id для ускорения запросов.
+- При удалении Company каскадно удаляются все связанные Jobs (а с ними — Stages, Notes, Reminders).

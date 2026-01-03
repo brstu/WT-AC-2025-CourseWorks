@@ -125,6 +125,13 @@ API — верхнеуровневые ресурсы и операции
 - Пагинация: `limit` и `offset` (по умолчанию limit=50).
 - Аутентификация: `Authorization: Bearer <jwt>`; роли: `admin`, `user`.
 
+**Безопасность:**
+
+- Все операции CRUD на ресурсах (Job, Company, Stage, Note, Reminder) требуют проверки ownership: `resource.user_id === req.user.id`.
+- Admin имеет read-only доступ ко всем ресурсам (кроме Users), но НЕ может редактировать/удалять чужие данные.
+- refreshToken хранится в httpOnly cookie, accessToken — в памяти клиента (не localStorage для защиты от XSS).
+- Rate limiting на /auth/login и /auth/register (например, 5 попыток/минуту).
+
 Примеры ошибок (JSON)
 
 ```json
@@ -134,11 +141,19 @@ API — верхнеуровневые ресурсы и операции
 }
 ```
 
+Коды ошибок:
+
+- `validation_failed` — ошибка валидации полей
+- `unauthorized` — не авторизован (нет токена или токен невалиден)
+- `forbidden` — нет прав на операцию (например, попытка редактировать чужой Job)
+- `not_found` — ресурс не найден
+
 Auth
 
-- POST `/auth/register` — `{email, password, username}` → `201 {id, email, username, role}`
-- POST `/auth/login` — `{email, password}` → `200 {accessToken, refreshToken, user}`
-- POST `/auth/refresh` — `{refreshToken}` → `200 {accessToken}`
+- POST `/auth/register` — `{email, password, username}` → `201 {id, email, username, role}` (пароль хешируется bcrypt/argon2)
+- POST `/auth/login` — `{email, password}` → `200 {accessToken, user}` + httpOnly cookie с refreshToken
+- POST `/auth/refresh` — читает refreshToken из cookie → `200 {accessToken}`
+- POST `/auth/logout` — очищает httpOnly cookie с refreshToken
 
 Users
 
@@ -150,43 +165,43 @@ Users
 
 Companies
 
-- GET `/companies?userId=&limit=&offset=` — список
-- POST `/companies` — User (payload: `{name,description?}`)
-- GET `/companies/{id}` — детали
-- PUT `/companies/{id}` — User (owner)
-- DELETE `/companies/{id}` — User (owner)
+- GET `/companies?userId=&limit=&offset=` — список компаний (только свои для user, все для admin)
+- POST `/companies` — User (payload: `{name,description?}`) → `201 {id}`
+- GET `/companies/{id}` — детали компании (ownership проверка)
+- PUT `/companies/{id}` — User (только owner может редактировать)
+- DELETE `/companies/{id}` — User (только owner, проверка: нет связанных Jobs или каскадное удаление с предупреждением)
 
 Jobs
 
-- POST `/jobs` — User `{title,companyId,salary?,location?,url?}` → `201 {id}`
-- GET `/jobs?userId=&companyId=&stageId=` — список вакансий
-- GET `/jobs/{id}` — детали вакансии, включая этапы и заметки
-- PUT `/jobs/{id}` — User (owner)
-- DELETE `/jobs/{id}` — User (owner)
+- POST `/jobs` — User `{title,companyId,salary?,location?,url?}` → `201 {id}` (проверка: companyId принадлежит user)
+- GET `/jobs?userId=&companyId=&stageId=` — список вакансий (user видит только свои, admin — все)
+- GET `/jobs/{id}` — детали вакансии, включая этапы и заметки (ownership проверка)
+- PUT `/jobs/{id}` — User (только owner)
+- DELETE `/jobs/{id}` — User (только owner, каскадно удаляет Stages, Notes, Reminders)
 
 Stages
 
-- POST `/stages` — User `{jobId, name, order, date?}` → `201 {id}`
-- GET `/stages?jobId=` — список этапов для вакансии
-- GET `/stages/{id}` — детали этапа
-- PUT `/stages/{id}` — User (owner)
-- DELETE `/stages/{id}` — User (owner)
+- POST `/stages` — User `{jobId, name, order, date?}` → `201 {id}` (проверка: Job принадлежит user)
+- GET `/stages?jobId=` — список этапов для вакансии (ownership проверка через Job)
+- GET `/stages/{id}` — детали этапа (ownership проверка)
+- PUT `/stages/{id}` — User (только owner Job'а)
+- DELETE `/stages/{id}` — User (только owner Job'а)
 
 Notes
 
-- POST `/notes` — User `{jobId, content}` → `201 {id}`
-- GET `/notes?jobId=` — список заметок для вакансии
-- GET `/notes/{id}` — детали заметки
-- PUT `/notes/{id}` — User (owner)
-- DELETE `/notes/{id}` — User (owner)
+- POST `/notes` — User `{jobId, content}` → `201 {id}` (проверка: Job принадлежит user)
+- GET `/notes?jobId=` — список заметок для вакансии (ownership проверка)
+- GET `/notes/{id}` — детали заметки (ownership проверка)
+- PUT `/notes/{id}` — User (только owner Job'а)
+- DELETE `/notes/{id}` — User (только owner Job'а)
 
 Reminders
 
-- POST `/reminders` — User `{jobId, title, date}` → `201 {id}`
-- GET `/reminders?jobId=&completed=&from=&to=` — список напоминаний
-- GET `/reminders/{id}` — детали напоминания
-- PUT `/reminders/{id}` — User (owner, можно отметить completed)
-- DELETE `/reminders/{id}` — User (owner)
+- POST `/reminders` — User `{jobId, title, date}` → `201 {id}` (проверка: Job принадлежит user)
+- GET `/reminders?jobId=&completed=&from=&to=` — список напоминаний (только свои)
+- GET `/reminders/{id}` — детали напоминания (ownership проверка)
+- PUT `/reminders/{id}` — User (только owner Job'а, можно отметить completed)
+- DELETE `/reminders/{id}` — User (только owner Job'а)
 
 Канбан
 
@@ -200,4 +215,41 @@ Reminders
 - Stage.name: не пустое, макс 50 символов
 - Note.content: не пустое, макс 5000 символов
 - Reminder.title: не пустое, макс 200 символов
-- Reminder.date: не раньше текущей даты
+- Reminder.date: не раньше текущей даты (только при создании, не при редактировании)
+- User.username: только алфавит и цифры, уникальное
+- User.email: формат email, уникальное
+- User.password: минимум 6 символов (при регистрации/изменении)
+
+---
+
+## Требования безопасности (обязательно к реализации)
+
+1. **Аутентификация:**
+   - JWT с accessToken (короткое время жизни, 15 мин) + refreshToken (долгое время жизни, 7 дней).
+   - refreshToken хранится в httpOnly cookie (защита от XSS).
+   - Хеширование паролей: bcrypt или argon2 (не хранить plaintext).
+
+2. **Авторизация и проверка прав:**
+   - Middleware для проверки ownership: перед любой операцией на Job/Company/Stage/Note/Reminder проверять `resource.user_id === req.user.id`.
+   - Admin имеет read-only доступ к чужим данным (кроме Users, где полный CRUD).
+   - Запрещено редактировать/удалять чужие ресурсы даже для admin.
+
+3. **Rate Limiting:**
+   - /auth/login: максимум 5 попыток в минуту с одного IP.
+   - /auth/register: максимум 3 регистрации в час с одного IP.
+
+4. **CORS и Helmet:**
+   - CORS: разрешить только конкретный origin фронтенда (не `*`).
+   - Helmet для защиты от XSS, clickjacking, MIME sniffing.
+
+5. **Валидация:**
+   - Zod-схемы на сервере для всех входящих данных.
+   - Человекочитаемые ошибки с кодами (validation_failed, unauthorized, forbidden, not_found).
+
+6. **Логирование:**
+   - Логи всех неудачных попыток аутентификации.
+   - Логи попыток доступа к чужим ресурсам (для аудита).
+
+7. **Удаление данных:**
+   - При удалении Company с Job'ами — показать предупреждение на фронтенде, но разрешить каскадное удаление.
+   - При удалении Job — каскадно удалять Stages, Notes, Reminders (FK с ON DELETE CASCADE).

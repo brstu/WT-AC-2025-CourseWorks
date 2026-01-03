@@ -8,6 +8,7 @@ import { register as apiRegister } from '../api';
 
 const registerSchema = z
   .object({
+    username: z.string().min(1, 'Введите имя пользователя'),
     email: z.string().email('Некорректный email'),
     password: z
       .string()
@@ -43,7 +44,7 @@ export function RegisterPage() {
     setError('');
     setIsSubmitting(true);
     try {
-      const response = await apiRegister(data.email, data.password);
+      const response = await apiRegister(data.username, data.email, data.password);
       login(response.accessToken, response.user);
       navigate('/', { replace: true });
     } catch (err) {
@@ -66,6 +67,18 @@ export function RegisterPage() {
         {error && <div className="alert alert-error">{error}</div>}
 
         <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-group">
+            <label htmlFor="username">Имя пользователя</label>
+            <input
+              id="username"
+              type="text"
+              {...register('username')}
+              className={errors.username ? 'input-error' : ''}
+              placeholder="Ваше имя"
+            />
+            {errors.username && <span className="error-text">{errors.username.message}</span>}
+          </div>
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input

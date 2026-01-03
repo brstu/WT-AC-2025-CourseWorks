@@ -1,153 +1,70 @@
-# «Оффер где?» — Job Search Tracker
+# Оффер где? — Вариант 32
 
-MVP full-stack приложение для трекинга вакансий (Вариант 32 — Поиск работы).
+MVP трекер откликов на вакансии (канбан, компании, вакансии, этапы, заметки, напоминания) на стеке React + Express + PostgreSQL.
 
-## 🚀 Возможности
+## Требования
 
-- **Kanban-доска** — визуальный трекинг вакансий по этапам
-- **Компании** — управление списком компаний
-- **Вакансии** — CRUD операции с полной информацией
-- **Этапы** — отслеживание прогресса по каждой вакансии
-- **Заметки** — личные заметки к вакансиям
-- **Напоминания** — напоминания о важных датах
-- **Аутентификация** — JWT с refresh-токенами (httpOnly cookie)
-- **Роли** — user и admin
+- Node.js 18+ (npm 9+)
+- PostgreSQL 14+
 
-## 🛠 Стек
+## Запуск всего проекта одной командой
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **Backend**: Node.js + Express + TypeScript
-- **БД**: PostgreSQL
-- **ORM**: Prisma
-- **Auth**: JWT (access + refresh tokens)
-- **Validation**: Zod
+1) Установить зависимости:
 
-## 📋 Требования
+ ```bash
+ npm install
+ ```
 
-- Node.js >= 18
-- PostgreSQL >= 14
-- npm >= 9
+2) Настроить переменные окружения для backend (см. `apps/backend/.env.example`):
 
-## ⚡ Быстрый старт
+ ```bash
+ # bash
+ cp apps/backend/.env.example apps/backend/.env
+ # или в Windows cmd
+ copy apps\backend\.env.example apps\backend\.env
+ ```
 
-### 1. Установка зависимостей
+ Обязательные поля: `DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN` (origin фронтенда), `COOKIE_DOMAIN` (в dev можно оставить `localhost`).
+3) Применить миграции:
 
-```bash
-npm install
-```
+ ```bash
+ npm run prisma:migrate
+ ```
 
-### 2. Настройка окружения
+4) (Опционально) заполнить демо-данные:
 
-Скопируйте `.env.example` в `.env` для backend:
+ ```bash
+ cd apps/backend
+ npx prisma db seed
+ cd ../..
+ ```
 
-```bash
-cp apps/backend/.env.example apps/backend/.env
-```
+5) Запустить backend и frontend вместе из корня:
 
-Отредактируйте `apps/backend/.env`:
+ ```bash
+ npm run dev
+ ```
 
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/jobtracker?schema=public"
-PORT=3000
-ACCESS_TOKEN_SECRET=your-secure-access-token-secret
-REFRESH_TOKEN_SECRET=your-secure-refresh-token-secret
-```
+- Backend: <http://localhost:3000>
 
-### 3. Миграции и seed
+- Frontend: <http://localhost:5173>
 
-```bash
-# Применить миграции
-npm run prisma:migrate
+## Как проверить работоспособность
 
-# Заполнить тестовыми данными
-npm run seed
-```
+1. Регистрация: на фронтенде перейдите на `/register`, создайте пользователя. Access выдаётся сразу, refresh сохраняется в httpOnly cookie.
+2. Вход: `/login` с существующим пользователем.
+3. Обновление access через refresh (ротация):
 
-### 4. Запуск
+- В `.env` можно временно уменьшить `JWT_ACCESS_TTL` (например, `15s`) и перезапустить backend.
+- Дождитесь истечения access, сделайте любой запрос из фронтенда. Клиент выполнит `POST /api/auth/refresh` с cookie, обновит access и повторит запрос.
 
-```bash
-# Backend (http://localhost:3000)
-npm run dev:backend
+1. Выход: кнопка Logout отправляет `POST /api/auth/logout`, refresh cookie очищается. Повторный `POST /api/auth/refresh` вернёт 401.
+2. Основной сценарий (под авторизованным пользователем): создать компанию → создать вакансию → добавлять этапы, заметки, напоминания → проверить канбан.
 
-# Frontend (http://localhost:5173) - в другом терминале
-npm run dev:frontend
-```
+## Структура монорепозитория
 
-## 👥 Тестовые пользователи
+- apps/backend — Express + Prisma API
+- apps/frontend — React SPA (Vite)
+- task_01 — документация R1 по варианту
 
-После запуска `npm run seed`:
-
-| Роль  | Email              | Пароль    |
-|-------|--------------------|-----------|
-| Admin | <admin@example.com>  | Admin123! |
-| User  | <alice@example.com>  | User123!  |
-| User  | <bob@example.com>    | User123!  |
-
-## 📁 Структура проекта
-
-```
-task_02/
-├── apps/
-│   ├── backend/
-│   │   ├── prisma/
-│   │   │   ├── schema.prisma   # Модели БД
-│   │   │   ├── seed.ts         # Демо-данные
-│   │   │   └── migrations/     # SQL миграции
-│   │   └── src/
-│   │       ├── routes/         # API эндпоинты
-│   │       ├── lib/            # Утилиты (auth, validation)
-│   │       └── index.ts        # Entry point
-│   └── frontend/
-│       └── src/
-│           ├── api/            # HTTP-клиент
-│           ├── components/     # React-компоненты
-│           ├── context/        # Auth context
-│           ├── pages/          # Страницы приложения
-│           └── types/          # TypeScript типы
-├── task_01/                    # Документация R1
-└── package.json                # Workspace scripts
-```
-
-## 🔧 Скрипты
-
-| Команда              | Описание                        |
-|----------------------|---------------------------------|
-| `npm run dev:backend`  | Запуск backend (dev mode)     |
-| `npm run dev:frontend` | Запуск frontend (dev mode)    |
-| `npm run prisma:migrate` | Применить миграции          |
-| `npm run prisma:generate` | Сгенерировать Prisma Client|
-| `npm run prisma:studio` | Открыть Prisma Studio        |
-| `npm run seed`         | Заполнить БД тестовыми данными|
-
-## 🔐 API Endpoints
-
-### Auth
-
-- `POST /api/auth/register` — Регистрация
-- `POST /api/auth/login` — Вход
-- `POST /api/auth/logout` — Выход
-- `POST /api/auth/refresh` — Обновление токена
-- `GET /api/auth/me` — Текущий пользователь
-
-### Resources (требуют авторизации)
-
-- `GET/POST /api/companies` — Компании
-- `GET/PUT/DELETE /api/companies/:id`
-- `GET/POST /api/jobs` — Вакансии
-- `GET/PUT/DELETE /api/jobs/:id`
-- `GET/POST /api/stages` — Этапы
-- `GET/PUT/DELETE /api/stages/:id`
-- `GET/POST /api/notes` — Заметки
-- `GET/PUT/DELETE /api/notes/:id`
-- `GET/POST /api/reminders` — Напоминания
-- `GET/PUT/DELETE /api/reminders/:id`
-- `GET /api/kanban` — Kanban-данные
-
-### Admin
-
-- `GET /api/users` — Список пользователей (admin only)
-- `DELETE /api/users/:id` — Удаление пользователя (admin only)
-
-## 📝 Лицензия
-
-Курсовой проект — "Веб-Технологии" 2025
+Подробности по запуску и сценариям см. в `apps/backend/README.md` и `apps/frontend/README.md`.

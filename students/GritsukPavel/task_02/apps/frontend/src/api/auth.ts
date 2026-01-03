@@ -3,12 +3,12 @@ import type { AuthData, User } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
-export async function register(email: string, password: string): Promise<AuthData> {
+export async function register(username: string, email: string, password: string): Promise<AuthData> {
   const res = await fetch(`${API_BASE}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ username, email, password }),
   });
   const json = await res.json();
   if (json.status === 'error') {

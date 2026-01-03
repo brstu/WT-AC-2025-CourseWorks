@@ -11,6 +11,7 @@ import {
 import { validateBody } from '../middleware/validate';
 import { registerSchema, loginSchema } from '../validation/authSchemas';
 import { env, refreshCookieOptions } from '../config/env';
+import { rateLimit } from '../middleware/rate-limit';
 
 const router = Router();
 
@@ -54,7 +55,11 @@ async function issueTokens(user: { id: string; role: string }, req: any, res: an
   return accessToken;
 }
 
-router.post('/register', validateBody(registerSchema), async (req, res, next) => {
+router.post(
+  '/register',
+  rateLimit({ windowMs: 60 * 60 * 1000, max: 3 }),
+  validateBody(registerSchema),
+  async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
 
@@ -82,7 +87,11 @@ router.post('/register', validateBody(registerSchema), async (req, res, next) =>
   }
 });
 
-router.post('/login', validateBody(loginSchema), async (req, res, next) => {
+router.post(
+  '/login',
+  rateLimit({ windowMs: 60 * 1000, max: 5 }),
+  validateBody(loginSchema),
+  async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });

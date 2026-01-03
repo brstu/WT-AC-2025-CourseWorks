@@ -47,7 +47,12 @@ export function JobsPage() {
     }
   };
 
-  const handleSave = async (data: { title: string; companyId?: string; salary?: string; url?: string }) => {
+  const handleSave = async (data: {
+    title: string;
+    companyId?: string;
+    salary?: string;
+    url?: string;
+  }) => {
     try {
       const { job } = await createJob(data);
       const jobWithCompany = {
@@ -93,9 +98,7 @@ export function JobsPage() {
 
       {companyIdFilter && (
         <div className="filter-bar">
-          <span>
-            Фильтр по компании: {companies.find((c) => c.id === companyIdFilter)?.name}
-          </span>
+          <span>Фильтр по компании: {companies.find((c) => c.id === companyIdFilter)?.name}</span>
           <Link to="/jobs" className="btn btn-secondary btn-sm">
             Сбросить
           </Link>
@@ -119,21 +122,21 @@ export function JobsPage() {
                 <Link to={`/jobs/${job.id}`} className="job-title">
                   {job.title}
                 </Link>
-                <p className="job-company">
-                  {job.company?.name || 'Компания не указана'}
-                </p>
+                <p className="job-company">{job.company?.name || 'Компания не указана'}</p>
                 {job.salary && <p className="job-salary">{job.salary}</p>}
                 {job.stages && job.stages.length > 0 && (
-                  <p className="job-stage">
-                    Этап: {job.stages[job.stages.length - 1].name}
-                  </p>
+                  <p className="job-stage">Этап: {job.stages[job.stages.length - 1].name}</p>
                 )}
               </div>
               <div className="job-actions">
                 <Link to={`/jobs/${job.id}`} className="btn btn-secondary btn-sm">
                   Открыть
                 </Link>
-                <button onClick={() => handleDelete(job.id)} className="btn btn-icon" title="Удалить">
+                <button
+                  onClick={() => handleDelete(job.id)}
+                  className="btn btn-icon"
+                  title="Удалить"
+                >
                   🗑️
                 </button>
               </div>
@@ -143,11 +146,7 @@ export function JobsPage() {
       )}
 
       {showModal && (
-        <JobModal
-          companies={companies}
-          onSave={handleSave}
-          onClose={() => setShowModal(false)}
-        />
+        <JobModal companies={companies} onSave={handleSave} onClose={() => setShowModal(false)} />
       )}
     </div>
   );
@@ -184,7 +183,9 @@ function JobModal({ companies, onSave, onClose }: JobModalProps) {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Новая вакансия</h2>
-          <button onClick={onClose} className="btn btn-icon">✕</button>
+          <button onClick={onClose} className="btn btn-icon">
+            ✕
+          </button>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -200,11 +201,7 @@ function JobModal({ companies, onSave, onClose }: JobModalProps) {
           </div>
           <div className="form-group">
             <label htmlFor="company">Компания</label>
-            <select
-              id="company"
-              value={companyId}
-              onChange={(e) => setCompanyId(e.target.value)}
-            >
+            <select id="company" value={companyId} onChange={(e) => setCompanyId(e.target.value)}>
               <option value="">Не выбрано</option>
               {companies.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -237,7 +234,11 @@ function JobModal({ companies, onSave, onClose }: JobModalProps) {
             <button type="button" onClick={onClose} className="btn btn-secondary">
               Отмена
             </button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting || !title.trim()}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting || !title.trim()}
+            >
               {isSubmitting ? 'Создание...' : 'Создать'}
             </button>
           </div>

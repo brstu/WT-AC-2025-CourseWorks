@@ -15,14 +15,16 @@ npm install
 npm run dev:frontend
 ```
 
-Фронтенд: http://localhost:5173 (backend должен быть запущен на http://localhost:3000).
+Фронтенд: <http://localhost:5173> (backend должен быть запущен на <http://localhost:3000>).
 
 ## Переменные окружения
 
 `apps/frontend/.env.example`:
+
 ```
 VITE_API_BASE_URL=http://localhost:3000
 ```
+
 Скопируйте в `.env` и при необходимости укажите другой backend origin.
 
 ## Что реализовано

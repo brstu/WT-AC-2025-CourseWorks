@@ -22,12 +22,14 @@ router.get('/', async (req, res, next) => {
       where,
       skip: offset,
       take: limit,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     // Admin can read all; user already scoped
     if (req.user!.role !== 'admin' && req.user!.role !== 'user') {
-      return res.status(403).json({ status: 'error', error: { code: 'forbidden', message: 'Forbidden' } });
+      return res
+        .status(403)
+        .json({ status: 'error', error: { code: 'forbidden', message: 'Forbidden' } });
     }
 
     res.json({ status: 'ok', data: { companies } });
@@ -43,8 +45,8 @@ router.post('/', requireAuth, validateBody(createCompanySchema), async (req, res
       data: {
         name: req.body.name,
         description: req.body.description ?? undefined,
-        userId: req.user!.id
-      }
+        userId: req.user!.id,
+      },
     });
     res.status(201).json({ status: 'ok', data: { company } });
   } catch (error) {
@@ -56,7 +58,9 @@ router.get('/:id', async (req, res, next) => {
   try {
     const company = await prisma.company.findUnique({ where: { id: req.params.id } });
     if (!company) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Company not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Company not found' } });
     }
     assertCanRead(company.userId, req.user!);
     res.json({ status: 'ok', data: { company } });
@@ -70,7 +74,9 @@ router.put('/:id', validateBody(updateCompanySchema), async (req, res, next) => 
     enforceUserRole(req.user!);
     const company = await prisma.company.findUnique({ where: { id: req.params.id } });
     if (!company) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Company not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Company not found' } });
     }
     assertCanModify(company.userId, req.user!);
 
@@ -78,8 +84,8 @@ router.put('/:id', validateBody(updateCompanySchema), async (req, res, next) => 
       where: { id: company.id },
       data: {
         name: req.body.name ?? company.name,
-        description: req.body.description ?? company.description
-      }
+        description: req.body.description ?? company.description,
+      },
     });
 
     res.json({ status: 'ok', data: { company: updated } });
@@ -93,7 +99,9 @@ router.delete('/:id', async (req, res, next) => {
     enforceUserRole(req.user!);
     const company = await prisma.company.findUnique({ where: { id: req.params.id } });
     if (!company) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Company not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Company not found' } });
     }
     assertCanModify(company.userId, req.user!);
 

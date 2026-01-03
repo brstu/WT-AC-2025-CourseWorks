@@ -1,6 +1,12 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { User } from '../types';
-import { setAccessToken, setOnUnauthorized, refreshToken, logout as apiLogout, getMe } from '../api';
+import {
+  setAccessToken,
+  setOnUnauthorized,
+  refreshToken,
+  logout as apiLogout,
+  getMe,
+} from '../api';
 
 interface AuthContextType {
   user: User | null;

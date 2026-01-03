@@ -378,12 +378,7 @@ function JobEditForm({ job, onSave, onCancel }: JobEditFormProps) {
       </div>
       <div className="form-group">
         <label htmlFor="salary">Зарплата</label>
-        <input
-          id="salary"
-          type="text"
-          value={salary}
-          onChange={(e) => setSalary(e.target.value)}
-        />
+        <input id="salary" type="text" value={salary} onChange={(e) => setSalary(e.target.value)} />
       </div>
       <div className="form-group">
         <label htmlFor="url">Ссылка</label>

@@ -17,9 +17,10 @@ API для варианта «Оффер где?» (компании, вакан
 - Скопировать и заполнить env: `cp apps/backend/.env.example apps/backend/.env`.
   - `DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` — обязательны.
   - `JWT_ACCESS_TTL` можно временно уменьшить (например, `15s`) для демонстрации авто-refresh.
-  - `CORS_ORIGIN` — origin фронтенда (например, http://localhost:5173), `COOKIE_DOMAIN` — домен для cookie.
+  - `CORS_ORIGIN` — origin фронтенда (например, <http://localhost:5173>), `COOKIE_DOMAIN` — домен для cookie.
 - Миграции (из корня): `npm run prisma:migrate`.
 - Dемо-данные (опционально):
+
   ```cmd
   cd apps\backend
   npx prisma db seed
@@ -27,17 +28,20 @@ API для варианта «Оффер где?» (компании, вакан
   ```
 
 Тестовые аккаунты (после seed):
-- admin@example.com / Admin123! (admin)
-- alice@example.com / User123! (user)
-- bob@example.com / User123! (user)
+
+- <admin@example.com> / Admin123! (admin)
+- <alice@example.com> / User123! (user)
+- <bob@example.com> / User123! (user)
 
 ## Запуск
 
 - Только backend (из корня):
+
   ```bash
   npm run dev:backend
   ```
-- Healthcheck: GET http://localhost:3000/health
+
+- Healthcheck: GET <http://localhost:3000/health>
 - Prisma Studio: `npm run prisma:studio`
 
 ## Auth flow (коротко)
@@ -49,6 +53,7 @@ API для варианта «Оффер где?» (компании, вакан
 ## Примеры PowerShell (curl)
 
 Логин (сохраняет refresh cookie в cookies.txt):
+
 ```powershell
 $login = curl -s -X POST http://localhost:3000/api/auth/login `
   -H "Content-Type: application/json" `
@@ -58,22 +63,26 @@ $ACCESS = $login.data.accessToken
 ```
 
 Получить текущего пользователя:
+
 ```powershell
 curl -s http://localhost:3000/api/users/me -H "Authorization: Bearer $ACCESS"
 ```
 
 Обновить access по refresh cookie (ротация):
+
 ```powershell
 $refresh = curl -s -X POST http://localhost:3000/api/auth/refresh -b cookies.txt -c cookies.txt | ConvertFrom-Json
 $ACCESS = $refresh.data.accessToken
 ```
 
 Защищённый запрос (вакансии текущего пользователя):
+
 ```powershell
 curl -s http://localhost:3000/api/jobs -H "Authorization: Bearer $ACCESS"
 ```
 
 Выход:
+
 ```powershell
 curl -s -X POST http://localhost:3000/api/auth/logout -b cookies.txt -c cookies.txt
 ```

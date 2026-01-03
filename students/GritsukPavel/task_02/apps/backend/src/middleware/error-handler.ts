@@ -16,12 +16,22 @@ export function errorHandler(err: AppError, _req: Request, res: Response, _next:
         fields[issue.path.join('.')] = issue.message;
       }
     });
-    return res.status(400).json({ status: 'error', error: { code: 'validation_failed', message: 'Validation failed', fields } });
+    return res
+      .status(400)
+      .json({
+        status: 'error',
+        error: { code: 'validation_failed', message: 'Validation failed', fields },
+      });
   }
 
   const status = err.status || 500;
   const code = err.code || (status >= 500 ? 'internal_error' : 'bad_request');
   const message = err.message || 'Internal server error';
 
-  res.status(status).json({ status: 'error', error: { code, message, ...(err.fields ? { fields: err.fields } : {}) } });
+  res
+    .status(status)
+    .json({
+      status: 'error',
+      error: { code, message, ...(err.fields ? { fields: err.fields } : {}) },
+    });
 }

@@ -30,7 +30,9 @@ export function enforceUserRole(user: AuthUser) {
 
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({ status: 'error', error: { code: 'forbidden', message: 'Admin access required' } });
+    return res
+      .status(403)
+      .json({ status: 'error', error: { code: 'forbidden', message: 'Admin access required' } });
   }
   next();
 }

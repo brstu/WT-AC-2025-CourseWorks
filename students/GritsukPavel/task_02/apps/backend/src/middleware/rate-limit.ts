@@ -33,8 +33,8 @@ export function rateLimit(options: RateLimitOptions) {
       status: 'error',
       error: {
         code: 'too_many_requests',
-        message: 'Too many requests. Please try again later.'
-      }
+        message: 'Too many requests. Please try again later.',
+      },
     });
   };
 }

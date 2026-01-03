@@ -47,7 +47,7 @@ export function KanbanPage() {
 
   const handleDrop = async (targetColumnId: string) => {
     if (!draggedJob || !dragSourceColumn) return;
-    
+
     // Не перемещаем в ту же колонку
     if (dragSourceColumn === targetColumnId) {
       setDraggedJob(null);
@@ -136,10 +136,7 @@ export function KanbanPage() {
               onDragOver={handleDragOver}
               onDrop={() => handleDrop(column.id)}
             >
-              <div
-                className="kanban-column-header"
-                style={{ borderTopColor: column.color }}
-              >
+              <div className="kanban-column-header" style={{ borderTopColor: column.color }}>
                 <h3>{column.name}</h3>
                 <span className="job-count">{column.jobs.length}</span>
               </div>

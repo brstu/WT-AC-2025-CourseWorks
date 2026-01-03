@@ -27,11 +27,13 @@ router.get('/', async (req, res, next) => {
       where,
       skip: offset,
       take: limit,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     if (req.user!.role !== 'admin' && req.user!.role !== 'user') {
-      return res.status(403).json({ status: 'error', error: { code: 'forbidden', message: 'Forbidden' } });
+      return res
+        .status(403)
+        .json({ status: 'error', error: { code: 'forbidden', message: 'Forbidden' } });
     }
 
     res.json({ status: 'ok', data: { jobs } });
@@ -49,7 +51,12 @@ router.post('/', validateBody(createJobSchema), async (req, res, next) => {
     if (companyId) {
       const company = await prisma.company.findUnique({ where: { id: companyId } });
       if (!company) {
-        return res.status(400).json({ status: 'error', error: { code: 'validation_failed', message: 'Company not found' } });
+        return res
+          .status(400)
+          .json({
+            status: 'error',
+            error: { code: 'validation_failed', message: 'Company not found' },
+          });
       }
       assertCanModify(company.userId, req.user!);
     }
@@ -62,9 +69,9 @@ router.post('/', validateBody(createJobSchema), async (req, res, next) => {
         status: req.body.status || 'APPLIED',
         salary: req.body.salary ?? undefined,
         location: req.body.location ?? undefined,
-        url: req.body.url ?? undefined
+        url: req.body.url ?? undefined,
       },
-      include: { company: true }
+      include: { company: true },
     });
 
     res.status(201).json({ status: 'ok', data: { job } });
@@ -81,11 +88,13 @@ router.get('/:id', async (req, res, next) => {
         company: true,
         stages: { orderBy: { order: 'asc' } },
         notes: { orderBy: { createdAt: 'desc' } },
-        reminders: { orderBy: { date: 'asc' } }
-      }
+        reminders: { orderBy: { date: 'asc' } },
+      },
     });
     if (!job) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
     }
     assertCanRead(job.userId, req.user!);
     res.json({ status: 'ok', data: { job } });
@@ -99,14 +108,21 @@ router.put('/:id', validateBody(updateJobSchema), async (req, res, next) => {
     enforceUserRole(req.user!);
     const job = await prisma.job.findUnique({ where: { id: req.params.id } });
     if (!job) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
     }
     assertCanModify(job.userId, req.user!);
 
     if (req.body.companyId) {
       const company = await prisma.company.findUnique({ where: { id: req.body.companyId } });
       if (!company) {
-        return res.status(400).json({ status: 'error', error: { code: 'validation_failed', message: 'Company not found' } });
+        return res
+          .status(400)
+          .json({
+            status: 'error',
+            error: { code: 'validation_failed', message: 'Company not found' },
+          });
       }
       assertCanModify(company.userId, req.user!);
     }
@@ -114,7 +130,12 @@ router.put('/:id', validateBody(updateJobSchema), async (req, res, next) => {
     if (req.body.currentStageId) {
       const stage = await prisma.stage.findUnique({ where: { id: req.body.currentStageId } });
       if (!stage || stage.jobId !== job.id) {
-        return res.status(400).json({ status: 'error', error: { code: 'validation_failed', message: 'Stage does not belong to this job' } });
+        return res
+          .status(400)
+          .json({
+            status: 'error',
+            error: { code: 'validation_failed', message: 'Stage does not belong to this job' },
+          });
       }
     }
 
@@ -127,8 +148,8 @@ router.put('/:id', validateBody(updateJobSchema), async (req, res, next) => {
         salary: req.body.salary ?? job.salary,
         location: req.body.location ?? job.location,
         url: req.body.url ?? job.url,
-        currentStageId: req.body.currentStageId ?? job.currentStageId
-      }
+        currentStageId: req.body.currentStageId ?? job.currentStageId,
+      },
     });
 
     res.json({ status: 'ok', data: { job: updated } });
@@ -142,7 +163,9 @@ router.delete('/:id', async (req, res, next) => {
     enforceUserRole(req.user!);
     const job = await prisma.job.findUnique({ where: { id: req.params.id } });
     if (!job) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
     }
     assertCanModify(job.userId, req.user!);
 

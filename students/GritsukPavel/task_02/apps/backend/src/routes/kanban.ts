@@ -17,7 +17,7 @@ const KANBAN_COLUMNS = [
   { id: 'INTERVIEW', name: 'Интервью', color: '#f59e0b', order: 3 },
   { id: 'OFFER', name: 'Оффер', color: '#10b981', order: 4 },
   { id: 'REJECTED', name: 'Отказ', color: '#ef4444', order: 5 },
-  { id: 'ARCHIVED', name: 'Архив', color: '#6b7280', order: 6 }
+  { id: 'ARCHIVED', name: 'Архив', color: '#6b7280', order: 6 },
 ];
 
 // GET /api/kanban - получить канбан-доску
@@ -29,9 +29,9 @@ router.get('/', async (req, res, next) => {
     const jobs = await prisma.job.findMany({
       where: { userId },
       include: {
-        company: { select: { id: true, name: true } }
+        company: { select: { id: true, name: true } },
       },
-      orderBy: { updatedAt: 'desc' }
+      orderBy: { updatedAt: 'desc' },
     });
 
     // Группируем вакансии по статусу
@@ -46,8 +46,8 @@ router.get('/', async (req, res, next) => {
           companyName: job.company?.name || null,
           salary: job.salary,
           url: job.url,
-          updatedAt: job.updatedAt
-        }))
+          updatedAt: job.updatedAt,
+        })),
     }));
 
     res.json({ status: 'ok', data: { columns } });
@@ -59,7 +59,7 @@ router.get('/', async (req, res, next) => {
 // PUT /api/kanban/move - переместить вакансию в другую колонку
 const moveJobSchema = z.object({
   jobId: z.string().uuid(),
-  status: z.enum(['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'ARCHIVED'])
+  status: z.enum(['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'ARCHIVED']),
 });
 
 router.put('/move', validateBody(moveJobSchema), async (req, res, next) => {
@@ -70,17 +70,21 @@ router.put('/move', validateBody(moveJobSchema), async (req, res, next) => {
     // Проверяем что вакансия принадлежит пользователю
     const job = await prisma.job.findUnique({ where: { id: jobId } });
     if (!job) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
     }
     if (job.userId !== req.user!.id) {
-      return res.status(403).json({ status: 'error', error: { code: 'forbidden', message: 'Forbidden' } });
+      return res
+        .status(403)
+        .json({ status: 'error', error: { code: 'forbidden', message: 'Forbidden' } });
     }
 
     // Обновляем статус
     const updated = await prisma.job.update({
       where: { id: jobId },
       data: { status: status as JobStatus },
-      include: { company: { select: { id: true, name: true } } }
+      include: { company: { select: { id: true, name: true } } },
     });
 
     res.json({
@@ -92,9 +96,9 @@ router.put('/move', validateBody(moveJobSchema), async (req, res, next) => {
           companyId: updated.companyId,
           companyName: updated.company?.name || null,
           status: updated.status,
-          updatedAt: updated.updatedAt
-        }
-      }
+          updatedAt: updated.updatedAt,
+        },
+      },
     });
   } catch (error) {
     next(error);

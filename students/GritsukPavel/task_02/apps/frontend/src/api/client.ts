@@ -35,17 +35,14 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
-export async function apiFetch<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
+export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE}/api${endpoint}`;
-  
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string> || {}),
+    ...((options.headers as Record<string, string>) || {}),
   };
-  
+
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
   }
@@ -72,9 +69,12 @@ export async function apiFetch<T>(
   }
 
   const json = await res.json();
-  
+
   if (json.status === 'error') {
-    const err = new Error(json.error?.message || 'Unknown error') as Error & { code?: string; fields?: Record<string, string> };
+    const err = new Error(json.error?.message || 'Unknown error') as Error & {
+      code?: string;
+      fields?: Record<string, string>;
+    };
     err.code = json.error?.code;
     err.fields = json.error?.fields;
     throw err;

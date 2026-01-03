@@ -95,16 +95,29 @@ export function CompaniesPage() {
               <div className="card-header">
                 <h3>{company.name}</h3>
                 <div className="card-actions">
-                  <button onClick={() => handleEdit(company)} className="btn btn-icon" title="Редактировать">
+                  <button
+                    onClick={() => handleEdit(company)}
+                    className="btn btn-icon"
+                    title="Редактировать"
+                  >
                     ✏️
                   </button>
-                  <button onClick={() => handleDelete(company.id)} className="btn btn-icon" title="Удалить">
+                  <button
+                    onClick={() => handleDelete(company.id)}
+                    className="btn btn-icon"
+                    title="Удалить"
+                  >
                     🗑️
                   </button>
                 </div>
               </div>
               {company.website && (
-                <a href={company.website} target="_blank" rel="noopener noreferrer" className="company-link">
+                <a
+                  href={company.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="company-link"
+                >
                   {company.website}
                 </a>
               )}
@@ -153,7 +166,9 @@ function CompanyModal({ company, onSave, onClose }: CompanyModalProps) {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{company ? 'Редактировать компанию' : 'Новая компания'}</h2>
-          <button onClick={onClose} className="btn btn-icon">✕</button>
+          <button onClick={onClose} className="btn btn-icon">
+            ✕
+          </button>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -181,7 +196,11 @@ function CompanyModal({ company, onSave, onClose }: CompanyModalProps) {
             <button type="button" onClick={onClose} className="btn btn-secondary">
               Отмена
             </button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting || !name.trim()}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting || !name.trim()}
+            >
               {isSubmitting ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>

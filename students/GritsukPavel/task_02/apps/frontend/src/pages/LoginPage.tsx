@@ -91,7 +91,9 @@ export function LoginPage() {
         </p>
 
         <div className="demo-credentials">
-          <p><strong>Тестовые данные:</strong></p>
+          <p>
+            <strong>Тестовые данные:</strong>
+          </p>
           <p>Admin: admin@example.com / Admin123!</p>
           <p>User: alice@example.com / User123!</p>
         </div>

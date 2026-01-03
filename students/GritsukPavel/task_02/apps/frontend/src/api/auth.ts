@@ -3,7 +3,11 @@ import type { AuthData, User } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
-export async function register(username: string, email: string, password: string): Promise<AuthData> {
+export async function register(
+  username: string,
+  email: string,
+  password: string,
+): Promise<AuthData> {
   const res = await fetch(`${API_BASE}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -12,7 +16,9 @@ export async function register(username: string, email: string, password: string
   });
   const json = await res.json();
   if (json.status === 'error') {
-    const err = new Error(json.error?.message || 'Registration failed') as Error & { fields?: Record<string, string> };
+    const err = new Error(json.error?.message || 'Registration failed') as Error & {
+      fields?: Record<string, string>;
+    };
     err.fields = json.error?.fields;
     throw err;
   }
@@ -29,7 +35,9 @@ export async function login(email: string, password: string): Promise<AuthData> 
   });
   const json = await res.json();
   if (json.status === 'error') {
-    const err = new Error(json.error?.message || 'Login failed') as Error & { fields?: Record<string, string> };
+    const err = new Error(json.error?.message || 'Login failed') as Error & {
+      fields?: Record<string, string>;
+    };
     err.fields = json.error?.fields;
     throw err;
   }

@@ -22,8 +22,8 @@ async function main() {
       username: 'admin',
       email: 'admin@example.com',
       passwordHash: adminPassword,
-      role: Role.admin
-    }
+      role: Role.admin,
+    },
   });
 
   const alice = await prisma.user.create({
@@ -31,8 +31,8 @@ async function main() {
       username: 'alice',
       email: 'alice@example.com',
       passwordHash: user1Password,
-      role: Role.user
-    }
+      role: Role.user,
+    },
   });
 
   const bob = await prisma.user.create({
@@ -40,24 +40,24 @@ async function main() {
       username: 'bob',
       email: 'bob@example.com',
       passwordHash: user2Password,
-      role: Role.user
-    }
+      role: Role.user,
+    },
   });
 
   const acme = await prisma.company.create({
     data: {
       name: 'Acme Corp',
       description: 'Продуктовая компания (frontend вакансия)'.slice(0, 1000),
-      userId: alice.id
-    }
+      userId: alice.id,
+    },
   });
 
   const globex = await prisma.company.create({
     data: {
       name: 'Globex',
       description: 'Консалтинг, backend вакансия'.slice(0, 1000),
-      userId: bob.id
-    }
+      userId: bob.id,
+    },
   });
 
   const frontendJob = await prisma.job.create({
@@ -68,8 +68,8 @@ async function main() {
       status: 'INTERVIEW',
       salary: '2500-3000 USD',
       location: 'Remote',
-      url: 'https://example.com/jobs/frontend'
-    }
+      url: 'https://example.com/jobs/frontend',
+    },
   });
 
   const backendJob = await prisma.job.create({
@@ -80,8 +80,8 @@ async function main() {
       status: 'SCREENING',
       salary: '2800-3300 USD',
       location: 'Hybrid',
-      url: 'https://example.com/jobs/backend'
-    }
+      url: 'https://example.com/jobs/backend',
+    },
   });
 
   // Stages for frontend job (alice)
@@ -90,29 +90,29 @@ async function main() {
       jobId: frontendJob.id,
       name: 'Applied',
       order: 0,
-      date: new Date()
-    }
+      date: new Date(),
+    },
   });
   const stageInterview = await prisma.stage.create({
     data: {
       jobId: frontendJob.id,
       name: 'Interview',
       order: 1,
-      date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-    }
+      date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    },
   });
   const stageOffer = await prisma.stage.create({
     data: {
       jobId: frontendJob.id,
       name: 'Offer',
       order: 2,
-      date: null
-    }
+      date: null,
+    },
   });
 
   await prisma.job.update({
     where: { id: frontendJob.id },
-    data: { currentStageId: stageInterview.id }
+    data: { currentStageId: stageInterview.id },
   });
 
   // Stages for backend job (bob)
@@ -121,26 +121,26 @@ async function main() {
       jobId: backendJob.id,
       name: 'Phone screen',
       order: 0,
-      date: new Date()
-    }
+      date: new Date(),
+    },
   });
   await prisma.job.update({
     where: { id: backendJob.id },
-    data: { currentStageId: stagePhone.id }
+    data: { currentStageId: stagePhone.id },
   });
 
   // Notes
   await prisma.note.create({
     data: {
       jobId: frontendJob.id,
-      content: 'Отправил тестовое задание. Жду ответа.'
-    }
+      content: 'Отправил тестовое задание. Жду ответа.',
+    },
   });
   await prisma.note.create({
     data: {
       jobId: backendJob.id,
-      content: 'Нужно подготовить примеры по Node.js и Prisma.'
-    }
+      content: 'Нужно подготовить примеры по Node.js и Prisma.',
+    },
   });
 
   // Reminders
@@ -148,22 +148,22 @@ async function main() {
     data: {
       jobId: frontendJob.id,
       title: 'Фоллоу-ап после интервью',
-      date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
-    }
+      date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    },
   });
   await prisma.reminder.create({
     data: {
       jobId: backendJob.id,
       title: 'Отправить резюме обновлённое',
-      date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
-    }
+      date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+    },
   });
 
   console.log('Seed completed. Users:');
   console.log({
     admin: { email: admin.email, password: 'Admin123!' },
     alice: { email: alice.email, password: 'User123!' },
-    bob: { email: bob.email, password: 'User123!' }
+    bob: { email: bob.email, password: 'User123!' },
   });
 }
 

@@ -13,12 +13,19 @@ router.get('/', async (req, res, next) => {
   try {
     const jobId = typeof req.query.jobId === 'string' ? req.query.jobId : undefined;
     if (!jobId) {
-      return res.status(400).json({ status: 'error', error: { code: 'validation_failed', message: 'jobId is required' } });
+      return res
+        .status(400)
+        .json({
+          status: 'error',
+          error: { code: 'validation_failed', message: 'jobId is required' },
+        });
     }
 
     const job = await prisma.job.findUnique({ where: { id: jobId } });
     if (!job) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
     }
     assertCanRead(job.userId, req.user!);
 
@@ -35,7 +42,9 @@ router.post('/', validateBody(createStageSchema), async (req, res, next) => {
     const { jobId } = req.body;
     const job = await prisma.job.findUnique({ where: { id: jobId } });
     if (!job) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Job not found' } });
     }
     assertCanModify(job.userId, req.user!);
 
@@ -44,8 +53,8 @@ router.post('/', validateBody(createStageSchema), async (req, res, next) => {
         jobId,
         name: req.body.name,
         order: req.body.order,
-        date: req.body.date ? new Date(req.body.date) : undefined
-      }
+        date: req.body.date ? new Date(req.body.date) : undefined,
+      },
     });
 
     res.status(201).json({ status: 'ok', data: { stage } });
@@ -56,9 +65,14 @@ router.post('/', validateBody(createStageSchema), async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const stage = await prisma.stage.findUnique({ where: { id: req.params.id }, include: { job: true } });
+    const stage = await prisma.stage.findUnique({
+      where: { id: req.params.id },
+      include: { job: true },
+    });
     if (!stage) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Stage not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Stage not found' } });
     }
     assertCanRead(stage.job.userId, req.user!);
     res.json({ status: 'ok', data: { stage } });
@@ -70,9 +84,14 @@ router.get('/:id', async (req, res, next) => {
 router.put('/:id', validateBody(updateStageSchema), async (req, res, next) => {
   try {
     enforceUserRole(req.user!);
-    const stage = await prisma.stage.findUnique({ where: { id: req.params.id }, include: { job: true } });
+    const stage = await prisma.stage.findUnique({
+      where: { id: req.params.id },
+      include: { job: true },
+    });
     if (!stage) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Stage not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Stage not found' } });
     }
     assertCanModify(stage.job.userId, req.user!);
 
@@ -81,8 +100,8 @@ router.put('/:id', validateBody(updateStageSchema), async (req, res, next) => {
       data: {
         name: req.body.name ?? stage.name,
         order: req.body.order ?? stage.order,
-        date: req.body.date ? new Date(req.body.date) : stage.date
-      }
+        date: req.body.date ? new Date(req.body.date) : stage.date,
+      },
     });
 
     res.json({ status: 'ok', data: { stage: updated } });
@@ -94,9 +113,14 @@ router.put('/:id', validateBody(updateStageSchema), async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     enforceUserRole(req.user!);
-    const stage = await prisma.stage.findUnique({ where: { id: req.params.id }, include: { job: true } });
+    const stage = await prisma.stage.findUnique({
+      where: { id: req.params.id },
+      include: { job: true },
+    });
     if (!stage) {
-      return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Stage not found' } });
+      return res
+        .status(404)
+        .json({ status: 'error', error: { code: 'not_found', message: 'Stage not found' } });
     }
     assertCanModify(stage.job.userId, req.user!);
 

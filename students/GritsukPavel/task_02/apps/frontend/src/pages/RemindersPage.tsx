@@ -43,7 +43,7 @@ export function RemindersPage() {
   });
 
   const sortedReminders = filteredReminders.sort(
-    (a, b) => new Date(a.remindAt).getTime() - new Date(b.remindAt).getTime()
+    (a, b) => new Date(a.remindAt).getTime() - new Date(b.remindAt).getTime(),
   );
 
   if (isLoading) {
@@ -90,8 +90,8 @@ export function RemindersPage() {
             {filter === 'all'
               ? 'У вас пока нет напоминаний.'
               : filter === 'upcoming'
-              ? 'Нет предстоящих напоминаний.'
-              : 'Нет прошедших напоминаний.'}
+                ? 'Нет предстоящих напоминаний.'
+                : 'Нет прошедших напоминаний.'}
           </p>
           <p>Напоминания можно добавить на странице вакансии.</p>
           <Link to="/jobs" className="btn btn-primary">

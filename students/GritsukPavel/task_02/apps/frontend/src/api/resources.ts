@@ -84,5 +84,30 @@ export const deleteReminder = (id: string) =>
   apiFetch<void>(`/reminders/${id}`, { method: 'DELETE' });
 
 // Kanban
+export interface KanbanColumn {
+  id: string;
+  name: string;
+  color: string;
+  order: number;
+  jobs: {
+    id: string;
+    title: string;
+    companyId: string | null;
+    companyName: string | null;
+    salary: string | null;
+    url: string | null;
+    updatedAt: string;
+  }[];
+}
+
 export const getKanban = () =>
-  apiFetch<{ kanban: KanbanStage[] }>('/kanban');
+  apiFetch<{ columns: KanbanColumn[] }>('/kanban');
+
+export const moveJobOnKanban = (jobId: string, status: string) =>
+  apiFetch<{ job: any }>('/kanban/move', {
+    method: 'PUT',
+    body: JSON.stringify({ jobId, status })
+  });
+
+export const getKanbanColumns = () =>
+  apiFetch<{ columns: { id: string; name: string; color: string; order: number }[] }>('/kanban/columns');

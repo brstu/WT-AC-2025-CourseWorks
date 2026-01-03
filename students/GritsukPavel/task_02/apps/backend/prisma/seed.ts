@@ -65,6 +65,7 @@ async function main() {
       title: 'Frontend Developer',
       companyId: acme.id,
       userId: alice.id,
+      status: 'INTERVIEW',
       salary: '2500-3000 USD',
       location: 'Remote',
       url: 'https://example.com/jobs/frontend'
@@ -76,6 +77,7 @@ async function main() {
       title: 'Backend Engineer',
       companyId: globex.id,
       userId: bob.id,
+      status: 'SCREENING',
       salary: '2800-3300 USD',
       location: 'Hybrid',
       url: 'https://example.com/jobs/backend'

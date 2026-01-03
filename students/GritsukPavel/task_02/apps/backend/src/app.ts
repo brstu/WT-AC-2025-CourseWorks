@@ -27,14 +27,14 @@ app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-app.use('/auth', authRouter);
-app.use('/users', usersRouter);
-app.use('/companies', companiesRouter);
-app.use('/jobs', jobsRouter);
-app.use('/stages', stagesRouter);
-app.use('/notes', notesRouter);
-app.use('/reminders', remindersRouter);
-app.use('/kanban', kanbanRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/companies', companiesRouter);
+app.use('/api/jobs', jobsRouter);
+app.use('/api/stages', stagesRouter);
+app.use('/api/notes', notesRouter);
+app.use('/api/reminders', remindersRouter);
+app.use('/api/kanban', kanbanRouter);
 
 app.use(errorHandler);
 

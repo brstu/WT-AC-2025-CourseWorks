@@ -79,9 +79,9 @@ npm run dev:frontend
 
 | Роль  | Email              | Пароль    |
 |-------|--------------------|-----------|
-| Admin | admin@example.com  | Admin123! |
-| User  | alice@example.com  | User123!  |
-| User  | bob@example.com    | User123!  |
+| Admin | <admin@example.com>  | Admin123! |
+| User  | <alice@example.com>  | User123!  |
+| User  | <bob@example.com>    | User123!  |
 
 ## 📁 Структура проекта
 
@@ -122,6 +122,7 @@ task_02/
 ## 🔐 API Endpoints
 
 ### Auth
+
 - `POST /api/auth/register` — Регистрация
 - `POST /api/auth/login` — Вход
 - `POST /api/auth/logout` — Выход
@@ -129,6 +130,7 @@ task_02/
 - `GET /api/auth/me` — Текущий пользователь
 
 ### Resources (требуют авторизации)
+
 - `GET/POST /api/companies` — Компании
 - `GET/PUT/DELETE /api/companies/:id`
 - `GET/POST /api/jobs` — Вакансии
@@ -142,6 +144,7 @@ task_02/
 - `GET /api/kanban` — Kanban-данные
 
 ### Admin
+
 - `GET /api/users` — Список пользователей (admin only)
 - `DELETE /api/users/:id` — Удаление пользователя (admin only)
 

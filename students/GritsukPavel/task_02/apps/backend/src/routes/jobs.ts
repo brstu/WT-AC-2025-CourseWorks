@@ -45,21 +45,26 @@ router.post('/', validateBody(createJobSchema), async (req, res, next) => {
     enforceUserRole(req.user!);
     const { companyId } = req.body;
 
-    const company = await prisma.company.findUnique({ where: { id: companyId } });
-    if (!company) {
-      return res.status(400).json({ status: 'error', error: { code: 'validation_failed', message: 'Company not found' } });
+    // Проверяем компанию если указана
+    if (companyId) {
+      const company = await prisma.company.findUnique({ where: { id: companyId } });
+      if (!company) {
+        return res.status(400).json({ status: 'error', error: { code: 'validation_failed', message: 'Company not found' } });
+      }
+      assertCanModify(company.userId, req.user!);
     }
-    assertCanModify(company.userId, req.user!);
 
     const job = await prisma.job.create({
       data: {
         title: req.body.title,
-        companyId,
+        companyId: companyId || null,
         userId: req.user!.id,
+        status: req.body.status || 'APPLIED',
         salary: req.body.salary ?? undefined,
         location: req.body.location ?? undefined,
         url: req.body.url ?? undefined
-      }
+      },
+      include: { company: true }
     });
 
     res.status(201).json({ status: 'ok', data: { job } });
@@ -117,7 +122,8 @@ router.put('/:id', validateBody(updateJobSchema), async (req, res, next) => {
       where: { id: job.id },
       data: {
         title: req.body.title ?? job.title,
-        companyId: req.body.companyId ?? job.companyId,
+        companyId: req.body.companyId !== undefined ? req.body.companyId : job.companyId,
+        status: req.body.status ?? job.status,
         salary: req.body.salary ?? job.salary,
         location: req.body.location ?? job.location,
         url: req.body.url ?? job.url,

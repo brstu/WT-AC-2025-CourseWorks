@@ -12,6 +12,15 @@ enum Role {
   admin
 }
 
+enum JobStatus {
+  APPLIED
+  SCREENING
+  INTERVIEW
+  OFFER
+  REJECTED
+  ARCHIVED
+}
+
 model User {
   id            String         @id @default(uuid())
   username      String         @unique
@@ -40,8 +49,9 @@ model Company {
 model Job {
   id             String    @id @default(uuid())
   title          String
-  companyId      String
+  companyId      String?
   userId         String
+  status         JobStatus @default(APPLIED)
   currentStageId String?
   salary         String?
   location       String?
@@ -49,12 +59,12 @@ model Job {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company      Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company      Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
   stages       Stage[]
   notes        Note[]
   reminders    Reminder[]
-  currentStage Stage?  @relation("CurrentStage", fields: [currentStageId], references: [id], onDelete: SetNull)
+  currentStage Stage?   @relation("CurrentStage", fields: [currentStageId], references: [id], onDelete: SetNull)
 }
 
 model Stage {

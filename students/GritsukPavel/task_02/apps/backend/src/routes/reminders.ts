@@ -7,6 +7,18 @@ import { assertCanModify, assertCanRead, enforceUserRole } from '../lib/authoriz
 
 const router = Router();
 
+// Map Prisma fields to API format
+function mapReminderToApi(reminder: any) {
+  return {
+    id: reminder.id,
+    jobId: reminder.jobId,
+    message: reminder.title,
+    remindAt: reminder.date,
+    createdAt: reminder.createdAt,
+    job: reminder.job
+  };
+}
+
 router.use(requireAuth);
 
 router.get('/', async (req, res, next) => {
@@ -35,10 +47,12 @@ router.get('/', async (req, res, next) => {
 
     const reminders = await prisma.reminder.findMany({
       where,
-      orderBy: { date: 'asc' }
+      orderBy: { date: 'asc' },
+      include: { job: { select: { id: true, title: true } } }
     });
 
-    res.json({ status: 'ok', data: { reminders } });
+    const mappedReminders = reminders.map(mapReminderToApi);
+    res.json({ status: 'ok', data: { reminders: mappedReminders } });
   } catch (error) {
     next(error);
   }
@@ -56,12 +70,12 @@ router.post('/', validateBody(createReminderSchema), async (req, res, next) => {
     const reminder = await prisma.reminder.create({
       data: {
         jobId: req.body.jobId,
-        title: req.body.title,
-        date: new Date(req.body.date)
+        title: req.body.message || req.body.title,
+        date: new Date(req.body.remindAt || req.body.date)
       }
     });
 
-    res.status(201).json({ status: 'ok', data: { reminder } });
+    res.status(201).json({ status: 'ok', data: { reminder: mapReminderToApi(reminder) } });
   } catch (error) {
     next(error);
   }
@@ -69,12 +83,12 @@ router.post('/', validateBody(createReminderSchema), async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const reminder = await prisma.reminder.findUnique({ where: { id: req.params.id }, include: { job: true } });
+    const reminder = await prisma.reminder.findUnique({ where: { id: req.params.id }, include: { job: { select: { id: true, title: true, userId: true } } } });
     if (!reminder) {
       return res.status(404).json({ status: 'error', error: { code: 'not_found', message: 'Reminder not found' } });
     }
     assertCanRead(reminder.job.userId, req.user!);
-    res.json({ status: 'ok', data: { reminder } });
+    res.json({ status: 'ok', data: { reminder: mapReminderToApi(reminder) } });
   } catch (error) {
     next(error);
   }
@@ -92,13 +106,13 @@ router.put('/:id', validateBody(updateReminderSchema), async (req, res, next) =>
     const updated = await prisma.reminder.update({
       where: { id: reminder.id },
       data: {
-        title: req.body.title ?? reminder.title,
-        date: req.body.date ? new Date(req.body.date) : reminder.date,
+        title: req.body.message || req.body.title || reminder.title,
+        date: req.body.remindAt ? new Date(req.body.remindAt) : (req.body.date ? new Date(req.body.date) : reminder.date),
         completed: req.body.completed ?? reminder.completed
       }
     });
 
-    res.json({ status: 'ok', data: { reminder: updated } });
+    res.json({ status: 'ok', data: { reminder: mapReminderToApi(updated) } });
   } catch (error) {
     next(error);
   }

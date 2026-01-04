@@ -28,8 +28,7 @@
   - id: UUID
   - name: string
   - color: string
-  - owner_id: reference -> User.id (null для системных меток)
-  - is_system: boolean (default false)
+  - owner_id: reference -> User.id
 
 - NoteLabel (связь Note и Label)
   - note_id: reference -> Note.id
@@ -42,19 +41,11 @@
   - permission: enum [read, write]
   - created_at: datetime
 
-- NoteHistory (история изменений заметки)
-  - id: UUID
-  - note_id: reference -> Note.id
-  - content: text
-  - edited_by: reference -> User.id
-  - created_at: datetime
-
 Связи (ER-эскиз)
 
 - User 1..* Notebook (пользователь владеет тетрадями)
 - Notebook 1..* Note (тетрадь содержит заметки)
 - Note *..* Label (заметка может иметь метки)
-- Note 1..* NoteHistory (заметка хранит историю изменений)
 - Notebook 1..* Share (тетрадь может быть расшарена)
 - User 1..* Share (пользователю предоставлен доступ)
 
@@ -63,12 +54,9 @@
 - unique(User.username)
 - Notebook.owner_id → User.id (FK, not null)
 - Note.notebook_id → Notebook.id (FK, not null)
-- Label.owner_id → User.id (FK, nullable для системных меток)
+- Label.owner_id → User.id (FK, not null)
 - Share.notebook_id → Notebook.id (FK, not null)
 - Share.user_id → User.id (FK, not null)
-- unique(Share.notebook_id, Share.user_id)
-- NoteHistory.note_id → Note.id (FK, not null)
-- NoteHistory.edited_by → User.id (FK, not null)
 
 API — верхнеуровневые ресурсы и операции
 
@@ -136,7 +124,6 @@ Auth
 - POST `/auth/register` — `{username, password}` → `201 {id, username, role}`
 - POST `/auth/login` — `{username, password}` → `200 {accessToken, refreshToken, user}`
 - POST `/auth/refresh` — `{refreshToken}` → `200 {accessToken}`
-- POST `/auth/logout` — `{refreshToken}` → `200` (инвалидирует токен)
 
 Users
 
@@ -157,22 +144,10 @@ Notebooks
 Notes
 
 - GET `/notes?notebookId=&labelId=&limit=&offset=` — список заметок
-- POST `/notes` — `{notebookId, title, content?, labelIds?}` → `201 {id}`
+- POST `/notes` — `{notebookId, title, content?}` → `201 {id}`
 - GET `/notes/{id}` — детали заметки с историей
-- PUT `/notes/{id}` — владелец или при наличии write доступа; `403` при permission=read
+- PUT `/notes/{id}` — владелец или при наличии write доступа
 - DELETE `/notes/{id}` — владелец или admin
-
-Note Labels (связь заметки с метками)
-
-- GET `/notes/{id}/labels` — список меток заметки
-- POST `/notes/{id}/labels` — `{labelId}` → `201` (привязать метку)
-- DELETE `/notes/{id}/labels/{labelId}` — отвязать метку
-
-Note History (история изменений)
-
-- GET `/notes/{id}/history` — список версий заметки
-- GET `/notes/{id}/history/{historyId}` — детали конкретной версии
-- POST `/notes/{id}/history/{historyId}/restore` — восстановить версию
 
 Labels
 
@@ -186,10 +161,7 @@ Shares
 
 - GET `/shares?notebookId=&userId=&limit=&offset=` — список доступов
 - POST `/shares` — `{notebookId, userId, permission}` → `201 {id}`
-  - `400` — попытка поделиться с самим собой (userId = owner)
-  - `409` — доступ уже существует (duplicate)
-- PUT `/shares/{id}` — изменить permission (владелец тетради или admin)
-- DELETE `/shares/{id}` — владелец тетради, admin, или получатель доступа (сам отказывается)
+- DELETE `/shares/{id}` — владелец тетради или admin
 
 ---
 

@@ -9,9 +9,11 @@ erDiagram
   USER ||--o{ NOTEBOOK : owns
   NOTEBOOK ||--o{ NOTE : contains
   NOTE }o--o{ LABEL : has
+  NOTE ||--o{ NOTE_HISTORY : has_versions
   NOTEBOOK ||--o{ SHARE : shared_via
   USER ||--o{ SHARE : has_access
   USER ||--o{ LABEL : owns
+  USER ||--o{ NOTE_HISTORY : edited_by
 
   USER {
    id int PK
@@ -35,11 +37,19 @@ erDiagram
    created_at datetime
    updated_at datetime
   }
+  NOTE_HISTORY {
+   id int PK
+   note_id int FK
+   content text
+   edited_by int FK
+   created_at datetime
+  }
   LABEL {
    id int PK
    name varchar
    color varchar
    owner_id int FK
+   is_system boolean
   }
   NOTE_LABEL {
    note_id int FK
@@ -58,8 +68,9 @@ erDiagram
 
 ```text
 User 1---* Notebook 1---* Note *---* Label
-   \                              
-    \-*- Share (user получает доступ к Notebook)
+   \                        |
+    \                       1---* NoteHistory
+     \-*- Share (user получает доступ к Notebook)
 ```
 
 ## Минимальный SQL DDL (пример, PostgreSQL)
@@ -94,7 +105,16 @@ CREATE TABLE labels (
  id UUID PRIMARY KEY,
  name TEXT NOT NULL,
  color TEXT,
- owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
+ owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
+ is_system BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE note_history (
+ id UUID PRIMARY KEY,
+ note_id UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
+ content TEXT NOT NULL,
+ edited_by UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+ created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
 CREATE TABLE note_labels (

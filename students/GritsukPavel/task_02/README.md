@@ -25,6 +25,7 @@ MVP трекер откликов на вакансии (канбан, комп�
  ```
 
  Обязательные поля: `DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN` (origin фронтенда), `COOKIE_DOMAIN` (в dev можно оставить `localhost`).
+
 1) Применить миграции:
 
  ```bash

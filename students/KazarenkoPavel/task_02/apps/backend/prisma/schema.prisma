@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum TaskPriority {
+  low
+  medium
+  high
+}
+
+enum TaskStatus {
+  pending
+  in_progress
+  completed
+}
+
+enum SessionStatus {
+  running
+  paused
+  completed
+  interrupted
+}
+
+enum SessionType {
+  pomodoro
+  short_break
+  long_break
+}
+
+model User {
+  id                   String                @id @default(uuid())
+  username             String                @unique
+  email                String                @unique
+  passwordHash         String
+  role                 Role                  @default(user)
+  tasks                Task[]
+  tags                 Tag[]
+  sessions             Session[]
+  notificationSettings NotificationSettings?
+  refreshTokens        RefreshToken[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  priority    TaskPriority @default(medium)
+  status      TaskStatus   @default(pending)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  tags        TaskTag[]
+  sessions    Session[]
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  color     String?
+  tasks     TaskTag[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TaskTag {
+  taskId String
+  tagId  String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, tagId])
+}
+
+model Session {
+  id                 String        @id @default(uuid())
+  userId             String
+  taskId             String?
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task               Task?         @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  startTime          DateTime
+  endTime            DateTime?
+  pausedAt           DateTime?
+  totalPausedSeconds Int           @default(0)
+  duration           Int?
+  status             SessionStatus
+  sessionType        SessionType
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model NotificationSettings {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifyPush  Boolean  @default(true)
+  notifyEmail Boolean  @default(false)
+  notifySound Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RefreshToken {
+  id               String         @id @default(uuid())
+  hashedToken      String         @unique
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  replacedByTokenId String?
+  replacedByToken  RefreshToken?  @relation("RefreshTokenReplacements", fields: [replacedByTokenId], references: [id])
+  createdTokens    RefreshToken[] @relation("RefreshTokenReplacements")
+  createdAt        DateTime       @default(now())
+  createdByIp      String?
+  userAgent        String?
+}

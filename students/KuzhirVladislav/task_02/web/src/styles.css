@@ -228,26 +228,15 @@ textarea::placeholder {
 }
 
 .input:focus,
-select:focus {
+textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgb(21 84 94 / 10%);
   background: linear-gradient(180deg, rgb(255 255 255 / 2%), rgb(255 255 255 / 0.8%));
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: rgb(159 176 200 / 50%);
 }
 
 textarea {
   min-height: 110px;
   resize: vertical;
-}
-
-textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(21 84 94 / 10%);
-  background: linear-gradient(180deg, rgb(255 255 255 / 2%), rgb(255 255 255 / 0.8%));
 }
 
 select {

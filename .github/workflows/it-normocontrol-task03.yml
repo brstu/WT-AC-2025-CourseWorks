@@ -1,0 +1,97 @@
+name: IT Normocontrol (task_03)
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number to validate (required for manual run)'
+        required: true
+
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'students/**/task_03/**'
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  it-normocontrol-task03:
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number != '') || github.event_name == 'pull_request_target' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare PR event
+        id: prepare
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "Fetching PR #${{ github.event.inputs.pr_number }} to $GITHUB_WORKSPACE/.github/manual_event.json"
+            mkdir -p "$GITHUB_WORKSPACE/.github"
+            curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.inputs.pr_number }}" > "$GITHUB_WORKSPACE/.github/manual_event.json"
+            echo "event_path=$GITHUB_WORKSPACE/.github/manual_event.json" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.inputs.pr_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "event_path=$GITHUB_EVENT_PATH" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout PR head
+        run: |
+          git fetch origin pull/${{ steps.prepare.outputs.pr_number }}/head:pr-${{ steps.prepare.outputs.pr_number }}
+          git checkout pr-${{ steps.prepare.outputs.pr_number }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run IT normocontrol checker (task_03)
+        id: run_check
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ steps.prepare.outputs.event_path }}
+          PR_NUMBER: ${{ steps.prepare.outputs.pr_number }}
+        run: |
+          python .github/scripts/run_it_normocontrol_task03.py
+
+      - name: Upload reports artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: it-normocontrol-reports
+          path: |
+            normocontrol_reports/
+            .github/it_normocontrol_comment.md
+            .github/it_normocontrol_result.json
+
+      - name: Comment PR with results
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.prepare.outputs.pr_number }}
+          RESULT_PATH: .github/it_normocontrol_result.json
+        run: |
+          python .github/scripts/comment_it_normocontrol.py || true
+
+      - name: Fail job if checker failed
+        if: always()
+        run: |
+          python -c "import json; d=json.load(open('.github/it_normocontrol_result.json', encoding='utf-8')); raise SystemExit(int(d.get('exit_code', 1)))"

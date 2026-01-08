@@ -126,6 +126,7 @@ body.modal-open {
   font-weight: 600;
   color: var(--text);
 }
+
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -139,6 +140,11 @@ body.modal-open {
   transition: all 0.2s ease;
 }
 
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -146,11 +152,6 @@ body.modal-open {
   border-color: var(--accent);
   background: rgb(255 255 255 / 8%);
   box-shadow: 0 0 0 3px rgb(21 84 94 / 10%);
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 80px;
 }
 
 /* Info Grid */
@@ -178,6 +179,7 @@ body.modal-open {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
 .info-value {
   font-size: 14px;
   color: var(--text);
@@ -188,6 +190,7 @@ body.modal-open {
   line-height: 1.4;
   word-break: break-word;
 }
+
 /* Modal Footer */
 
 .modal-footer {
@@ -230,7 +233,7 @@ body.modal-open {
 .button-primary:hover:not(:disabled) {
   background: var(--accent-2);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(21, 84, 94, 0.2);
+  box-shadow: 0 4px 12px rgb(21 84 94 / 20%);
 }
 
 .button-secondary {

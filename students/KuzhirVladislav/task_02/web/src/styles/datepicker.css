@@ -120,6 +120,11 @@
   justify-content: center;
 }
 
+.datepicker-day:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .datepicker-day:not(.empty):hover {
   background: rgb(255 255 255 / 8%);
   border: 1px solid rgb(255 255 255 / 10%);
@@ -135,15 +140,6 @@
   color: #021124;
   font-weight: 700;
   border: none;
-}
-
-.datepicker-day:not(.empty):hover {
-  background: rgb(21 84 94 / 8%);
-}
-
-.datepicker-day:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .datepicker-time-picker {

@@ -68,7 +68,7 @@
 
 ## 🛠️ Стек технологий
 
-### Backend Server
+Backend Server:
 
 - **Language**: Java 17
 - **Database**: PostgreSQL 15
@@ -79,7 +79,7 @@
 - **Security**: Spring Security + JWT
 - **API Documentation**: SpringDoc OpenAPI
 
-### Frontend Client
+Frontend Client:
 
 - **Framework**: React 18.2.0
 - **Language**: TypeScript 5.2.2
@@ -88,7 +88,7 @@
 - **HTTP Client**: Axios
 - **Styling**: CSS Modules
 
-### DevOps
+DevOps:
 
 - **Containerization**: Docker
 - **Orchestration**: Docker Compose

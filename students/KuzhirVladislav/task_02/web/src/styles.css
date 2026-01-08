@@ -228,7 +228,6 @@ textarea::placeholder {
 }
 
 .input:focus,
-textarea:focus,
 select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgb(21 84 94 / 10%);
@@ -245,14 +244,14 @@ textarea {
   resize: vertical;
 }
 
-select {
-  padding-right: 36px;
-}
-
 textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgb(21 84 94 / 10%);
   background: linear-gradient(180deg, rgb(255 255 255 / 2%), rgb(255 255 255 / 0.8%));
+}
+
+select {
+  padding-right: 36px;
 }
 
 select:focus {
@@ -519,7 +518,7 @@ button[disabled] {
   background: rgb(21 84 94 / 60%);
 }
 
-@media (max-width: 900px) {
+@media (width <= 900px) {
   .sidebar {
     display: none;
   }

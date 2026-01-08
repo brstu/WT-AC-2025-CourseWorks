@@ -1,0 +1,185 @@
+/* Board (Доска) - Kanban для задач */
+.board-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+.board {
+  display: grid;
+  grid-auto-columns: minmax(320px, 1fr);
+  gap: 12px;
+  min-width: min-content;
+}
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, rgba(31,4,97,0.08), rgba(21,84,94,0.05));
+  border: 1px solid rgba(31,4,97,0.3);
+  border-radius: 12px;
+  padding: 14px;
+  min-height: 450px;
+  transition: all 0.2s ease;
+}
+
+.board-column.collapsed {
+  min-height: auto;
+  padding: 10px;
+}
+
+.board-column:hover {
+  background: linear-gradient(135deg, rgba(31,4,97,0.12), rgba(21,84,94,0.08));
+  border-color: rgba(31,4,97,0.5);
+}
+
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid;
+}
+
+.board-column.collapsed .board-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.board-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.board-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.board-toggle:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--accent);
+}
+
+.board-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.board-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.board-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+
+.task-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 8px;
+  cursor: move;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.task-card:hover {
+  border-color: rgba(255,255,255,0.12);
+  background: linear-gradient(135deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+  box-shadow: 0 4px 12px rgba(21,84,94,0.15);
+  transform: translateY(-2px);
+}
+
+.task-card:active {
+  opacity: 0.7;
+  box-shadow: 0 8px 16px rgba(21,84,94,0.25);
+}
+
+.task-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.task-title {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 13px;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.task-deal {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.task-desc {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.7;
+  line-height: 1.2;
+}
+
+.task-due {
+  font-size: 10px;
+  color: var(--accent-3);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.board-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: var(--muted);
+  font-size: 12px;
+  border: 2px dashed rgba(255,255,255,0.08);
+  border-radius: 8px;
+  text-align: center;
+  padding: 12px;
+  opacity: 0.6;
+}
+

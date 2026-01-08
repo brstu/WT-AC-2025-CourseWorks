@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +16,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+  private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
   private final JwtUtils jwtUtils;
   private final UserDetailsService userDetailsService;
 
@@ -27,16 +31,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     try {
       String jwt = parseJwt(request);
-      if (jwt != null && jwtUtils.validateToken(jwt)) {
+      if (jwt == null) {
+        logger.debug("No Authorization header with Bearer token present in request {} {}", request.getMethod(), request.getRequestURI());
+      } else if (!jwtUtils.validateToken(jwt)) {
+        logger.warn("JWT token validation failed for request {} {}", request.getMethod(), request.getRequestURI());
+      } else {
         String username = jwtUtils.getUsernameFromToken(jwt);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            userDetails, null, userDetails.getAuthorities());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (username != null) {
+          UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+          UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+              userDetails, null, userDetails.getAuthorities());
+          authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+          logger.debug("Authenticated user '{}' for request {} {}", username, request.getMethod(), request.getRequestURI());
+        } else {
+          logger.warn("Username extracted from JWT is null for request {} {}", request.getMethod(), request.getRequestURI());
+        }
       }
     } catch (Exception ex) {
-      logger.error(ex.getStackTrace());
+      logger.error("Error while processing JWT authentication", ex);
     }
     filterChain.doFilter(request, response);
   }
@@ -49,4 +62,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     return null;
   }
 }
-

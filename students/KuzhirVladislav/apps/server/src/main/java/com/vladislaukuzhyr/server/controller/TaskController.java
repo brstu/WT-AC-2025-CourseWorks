@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,7 +28,14 @@ public class TaskController {
   private final TaskService service;
 
   @GetMapping
-  public List<TaskReadDto> getAll() {
+  public List<TaskReadDto> getAll(@RequestParam(required = false) String search,
+                                   @RequestParam(required = false) Long dealId) {
+    if (dealId != null) {
+      return service.findByDealId(dealId);
+    }
+    if (search != null && !search.isBlank()) {
+      return service.search(search);
+    }
     return service.findAllDto();
   }
 

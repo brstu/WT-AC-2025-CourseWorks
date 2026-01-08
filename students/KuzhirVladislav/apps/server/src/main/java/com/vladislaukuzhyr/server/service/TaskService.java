@@ -52,7 +52,6 @@ public class TaskService {
     repository.deleteById(id);
   }
 
-  // DTO-based
   public TaskReadDto create(@Valid TaskCreateDto dto) {
     Task task = mapper.toEntity(dto);
     if (dto.dealId() != null) dealService.findById(dto.dealId()).ifPresent(task::setDeal);
@@ -69,5 +68,20 @@ public class TaskService {
     task.setId(id);
     Task updated = repository.save(task);
     return mapper.toReadDto(updated);
+  }
+
+  public List<TaskReadDto> search(String query) {
+    if (query == null || query.isBlank()) {
+      return findAllDto();
+    }
+    return repository.findByTitleContainingIgnoreCase(query).stream()
+        .map(mapper::toReadDto)
+        .collect(Collectors.toList());
+  }
+
+  public List<TaskReadDto> findByDealId(Long dealId) {
+    return repository.findByDealId(dealId).stream()
+        .map(mapper::toReadDto)
+        .collect(Collectors.toList());
   }
 }

@@ -7,6 +7,8 @@ import com.vladislaukuzhyr.server.entity.Invoice;
 import com.vladislaukuzhyr.server.mapper.InvoiceMapper;
 import com.vladislaukuzhyr.server.repository.InvoiceRepository;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,11 +54,11 @@ public class InvoiceService {
     repository.deleteById(id);
   }
 
-  // DTO-based
   public InvoiceReadDto create(@Valid InvoiceCreateDto dto) {
     Invoice invoice = mapper.toEntity(dto);
     if (dto.dealId() != null) dealService.findById(dto.dealId()).ifPresent(invoice::setDeal);
     if (dto.userId() != null) userService.findById(dto.userId()).ifPresent(invoice::setUser);
+    invoice.setIssueDate(LocalDateTime.now());
     Invoice saved = repository.save(invoice);
     return mapper.toReadDto(saved);
   }
@@ -69,5 +71,14 @@ public class InvoiceService {
     invoice.setId(id);
     Invoice updated = repository.save(invoice);
     return mapper.toReadDto(updated);
+  }
+
+  public List<InvoiceReadDto> search(String query) {
+    if (query == null || query.isBlank()) {
+      return findAllDto();
+    }
+    return repository.findByNumberContainingIgnoreCase(query).stream()
+        .map(mapper::toReadDto)
+        .collect(Collectors.toList());
   }
 }

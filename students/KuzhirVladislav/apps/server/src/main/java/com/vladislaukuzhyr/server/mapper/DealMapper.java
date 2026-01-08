@@ -15,6 +15,20 @@ public interface DealMapper {
   @Mapping(target = "stageId", expression = "java(deal.getStage() == null ? null : deal.getStage().getId())")
   @Mapping(target = "userId", expression = "java(deal.getUser() == null ? null : deal.getUser().getId())")
   DealReadDto toReadDto(Deal deal);
+
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "client", ignore = true)
+  @Mapping(target = "stage", ignore = true)
+  @Mapping(target = "user", ignore = true)
+  @Mapping(target = "tasks", ignore = true)
+  @Mapping(target = "invoices", ignore = true)
   Deal toEntity(DealCreateDto dto);
+
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "client", ignore = true)
+  @Mapping(target = "stage", ignore = true)
+  @Mapping(target = "user", ignore = true)
+  @Mapping(target = "tasks", ignore = true)
+  @Mapping(target = "invoices", ignore = true)
   void updateFromDto(DealUpdateDto dto, @MappingTarget Deal entity);
 }

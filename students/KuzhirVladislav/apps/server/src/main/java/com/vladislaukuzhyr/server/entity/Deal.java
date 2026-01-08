@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Getter;
 
@@ -15,6 +16,7 @@ public class Deal {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  private BigDecimal amount;
   private String title;
   private String description;
 
@@ -35,6 +37,11 @@ public class Deal {
 
   public Deal setId(Long id) {
     this.id = id;
+    return this;
+  }
+
+  public Deal setAmount(BigDecimal amount) {
+    this.amount = amount;
     return this;
   }
 

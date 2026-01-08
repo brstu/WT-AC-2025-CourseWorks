@@ -14,6 +14,7 @@ public class Invoice {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  private String number;
   private double amount;
   private String status;
   private LocalDateTime issueDate;
@@ -26,6 +27,11 @@ public class Invoice {
 
   public Invoice setUser(User user) {
     this.user = user;
+    return this;
+  }
+
+  public Invoice setNumber(String number) {
+    this.number = number;
     return this;
   }
 

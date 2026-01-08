@@ -53,24 +53,45 @@ public class DealService {
     repository.deleteById(id);
   }
 
-  // DTO-based
   public DealReadDto create(@Valid DealCreateDto dto) {
+    if (dto.stageId() == null) {
+      throw new IllegalArgumentException("Этап (stageId) является обязательным полем");
+    }
     Deal deal = mapper.toEntity(dto);
-    if (dto.clientId() != null) clientService.findById(dto.clientId()).ifPresent(deal::setClient);
-    if (dto.stageId() != null) stageService.findById(dto.stageId()).ifPresent(deal::setStage);
-    if (dto.userId() != null) userService.findById(dto.userId()).ifPresent(deal::setUser);
+    if (dto.clientId() != null) {
+      clientService.findById(dto.clientId()).ifPresent(deal::setClient);
+    }
+    stageService.findById(dto.stageId()).ifPresent(deal::setStage);
+    if (dto.userId() != null) {
+      userService.findById(dto.userId()).ifPresent(deal::setUser);
+    }
     Deal saved = repository.save(deal);
     return mapper.toReadDto(saved);
   }
 
   public DealReadDto update(Long id, @Valid DealUpdateDto dto) {
-    Deal deal = new Deal();
+    Deal deal = repository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Deal not found with id: " + id));
     mapper.updateFromDto(dto, deal);
-    if (dto.clientId() != null) clientService.findById(dto.clientId()).ifPresent(deal::setClient);
-    if (dto.stageId() != null) stageService.findById(dto.stageId()).ifPresent(deal::setStage);
-    if (dto.userId() != null) userService.findById(dto.userId()).ifPresent(deal::setUser);
-    deal.setId(id);
+    if (dto.clientId() != null) {
+      clientService.findById(dto.clientId()).ifPresent(deal::setClient);
+    }
+    if (dto.stageId() != null) {
+      stageService.findById(dto.stageId()).ifPresent(deal::setStage);
+    }
+    if (dto.userId() != null) {
+      userService.findById(dto.userId()).ifPresent(deal::setUser);
+    }
     Deal updated = repository.save(deal);
     return mapper.toReadDto(updated);
+  }
+
+  public List<DealReadDto> search(String query) {
+    if (query == null || query.isBlank()) {
+      return findAllDto();
+    }
+    return repository.findByTitleContainingIgnoreCase(query).stream()
+        .map(mapper::toReadDto)
+        .collect(Collectors.toList());
   }
 }

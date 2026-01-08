@@ -1,5 +1,6 @@
 package com.vladislaukuzhyr.server.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,6 +16,8 @@ public class Stage {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
+  @Column(name = "stage_order")
+  private Integer stageOrder;
 
   @OneToMany(mappedBy = "stage")
   private List<Deal> deals;
@@ -26,6 +29,11 @@ public class Stage {
 
   public Stage setName(String name) {
     this.name = name;
+    return this;
+  }
+
+  public Stage setStageOrder(Integer stageOrder) {
+    this.stageOrder = stageOrder;
     return this;
   }
 

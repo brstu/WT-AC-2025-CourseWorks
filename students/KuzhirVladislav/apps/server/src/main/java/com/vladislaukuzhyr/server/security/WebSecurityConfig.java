@@ -40,6 +40,7 @@ public class WebSecurityConfig {
       .csrf(AbstractHttpConfigurer::disable)
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(authorize -> authorize
+        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html").permitAll()
         .anyRequest().authenticated()
@@ -78,10 +79,13 @@ public class WebSecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("*"));
+    // allow any origin pattern (supports credentials)
+    configuration.setAllowedOriginPatterns(List.of("*"));
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
+    // optionally expose Authorization header to clients
+    configuration.setExposedHeaders(List.of("Authorization"));
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;

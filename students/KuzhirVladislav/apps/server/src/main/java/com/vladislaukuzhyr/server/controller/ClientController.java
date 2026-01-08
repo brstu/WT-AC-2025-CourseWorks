@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,7 +27,10 @@ public class ClientController {
   private final ClientService service;
 
   @GetMapping
-  public List<ClientReadDto> getAll() {
+  public List<ClientReadDto> getAll(@RequestParam(required = false) String search) {
+    if (search != null && !search.isBlank()) {
+      return service.search(search);
+    }
     return service.findAllDto();
   }
 

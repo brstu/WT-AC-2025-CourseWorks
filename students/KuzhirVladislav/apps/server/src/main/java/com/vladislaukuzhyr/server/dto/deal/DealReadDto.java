@@ -1,4 +1,7 @@
 package com.vladislaukuzhyr.server.dto.deal;
 
-public record DealReadDto(Long id, String title, String description, Long clientId, Long stageId, Long userId) {}
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+
+public record DealReadDto(Long id, BigDecimal amount, String title, String description, Long clientId, Long stageId, Long userId) {}
 

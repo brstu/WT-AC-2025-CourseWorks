@@ -67,4 +67,13 @@ public class ClientService {
     Client updated = repository.save(client);
     return mapper.toReadDto(updated);
   }
+
+  public List<ClientReadDto> search(String query) {
+    if (query == null || query.isBlank()) {
+      return findAllDto();
+    }
+    return repository.findByNameContainingIgnoreCase(query).stream()
+      .map(mapper::toReadDto)
+      .collect(Collectors.toList());
+  }
 }

@@ -115,10 +115,6 @@
   color: var(--accent);
 }
 
-.select-option.active svg {
-  color: var(--accent-3);
-}
-
 .select-option svg {
   width: 16px;
   height: 16px;

@@ -152,6 +152,7 @@ body.modal-open {
   resize: vertical;
   min-height: 80px;
 }
+
 /* Info Grid */
 
 .info-grid {
@@ -196,6 +197,8 @@ body.modal-open {
   padding: 16px 20px;
   border-top: 1px solid rgb(21 84 94 / 30%);
   flex-shrink: 0;
+}
+
 /* Button Styles */
 
 .button {
@@ -211,8 +214,6 @@ body.modal-open {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  user-select: none;
-} white-space: nowrap;
   user-select: none;
 }
 
@@ -230,6 +231,8 @@ body.modal-open {
   background: var(--accent-2);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(21, 84, 94, 0.2);
+}
+
 .button-secondary {
   background: rgb(255 255 255 / 5%);
   color: var(--text);
@@ -250,6 +253,4 @@ body.modal-open {
 .button-danger:hover:not(:disabled) {
   background: rgb(255 100 100 / 20%);
   border-color: rgb(255 100 100 / 50%);
-} background: rgba(255, 100, 100, 0.2);
-  border-color: rgba(255, 100, 100, 0.5);
 }

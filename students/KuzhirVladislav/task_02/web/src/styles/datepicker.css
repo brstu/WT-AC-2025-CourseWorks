@@ -137,6 +137,10 @@
   border: none;
 }
 
+.datepicker-day:not(.empty):hover {
+  background: rgb(21 84 94 / 8%);
+}
+
 .datepicker-day:disabled {
   opacity: 0.5;
   cursor: not-allowed;

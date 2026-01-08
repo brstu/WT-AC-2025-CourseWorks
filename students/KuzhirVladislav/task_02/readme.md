@@ -4,14 +4,14 @@
 
 ## 📋 Содержание
 
-- [Описание](#описание)
-- [Основные возможности](#основные-возможности)
-- [Архитектура](#архитектура)
-- [Стек технологий](#стек-технологий)
-- [Установка и запуск](#установка-и-запуск)
-- [Структура проекта](#структура-проекта)
-- [API](#api)
-- [Данные](#данные)
+- Описание
+- Основные возможности
+- Архитектура
+- Стек технологий
+- Установка и запуск
+- Структура проекта
+- API
+- Данные
 
 ## 📝 Описание
 
@@ -27,7 +27,7 @@
 - ✅ Система коммуникации
 - ✅ Управление пользователями и ролями
 
-## 🎯 Основные возможности
+## 🎯 Основные возможност
 
 ### Интерфейс
 
@@ -68,9 +68,8 @@
 
 ## 🛠️ Стек технологий
 
-### Backend
+### Backend Server
 
-- **Framework**: Spring Boot 4.0.1
 - **Language**: Java 17
 - **Database**: PostgreSQL 15
 - **ORM**: Spring Data JPA
@@ -80,7 +79,7 @@
 - **Security**: Spring Security + JWT
 - **API Documentation**: SpringDoc OpenAPI
 
-### Frontend
+### Frontend Client
 
 - **Framework**: React 18.2.0
 - **Language**: TypeScript 5.2.2
@@ -122,7 +121,7 @@ docker-compose up --build
 - Maven 3.6+
 - npm 8+
 
-#### Backend
+#### Backend Server
 
 ```bash
 cd apps/server
@@ -136,7 +135,7 @@ cd apps/server
 
 API запустится на `http://localhost:8080`
 
-#### Frontend
+#### Frontend Client
 
 ```bash
 cd apps/web
@@ -220,18 +219,17 @@ apps/
 
 ## 🔌 API
 
-### Контроллеры
+## 📋 Таблица API
 
-| Endpoint             | Метод    | Описание                    |
 | -------------------- | -------- | --------------------------- |
-| `/api/auth/login`    | POST     | Вход в систему              |
-| `/api/auth/register` | POST     | Регистрация                 |
-| `/api/clients`       | GET/POST | Получение/создание клиентов |
-| `/api/deals`         | GET/POST | Получение/создание сделок   |
-| `/api/stages`        | GET/POST | Получение/создание этапов   |
-| `/api/tasks`         | GET/POST | Получение/создание задач    |
-| `/api/invoices`      | GET/POST | Получение/создание счетов   |
-| `/api/users`         | GET/POST | Управление пользователями   |
+| `/api/auth/login` | POST | Вход в систему |
+| `/api/auth/register` | POST | Регистрация |
+| `/api/clients` | GET/POST | Получение/создание клиентов |
+| `/api/deals` | GET/POST | Получение/создание сделок |
+| `/api/stages` | GET/POST | Получение/создание этапов |
+| `/api/tasks` | GET/POST | Получение/создание задач |
+| `/api/invoices` | GET/POST | Получение/создание счетов |
+| `/api/users` | GET/POST | Управление пользователями |
 
 ### Сущности API
 
@@ -244,8 +242,6 @@ apps/
 - **UserController** — управление пользователями
 
 ## 🗄️ Данные
-
-### Основные сущности
 
 ```
 User (Пользователь)

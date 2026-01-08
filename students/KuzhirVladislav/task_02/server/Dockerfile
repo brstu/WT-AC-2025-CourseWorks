@@ -10,7 +10,7 @@ COPY --from=build /app/target/server-*.jar ./server.jar
 RUN java -Djarmode=layertools -jar server.jar extract
 
 FROM eclipse-temurin:21-jre
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install -y --no-install-recommends curl=7.* && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 VOLUME /tmp
 COPY --from=extract /app/dependencies/ ./

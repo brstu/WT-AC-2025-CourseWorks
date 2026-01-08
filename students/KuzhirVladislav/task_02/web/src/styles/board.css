@@ -90,7 +90,7 @@
   min-width: 28px;
   height: 28px;
   background: rgb(255 255 255 / 8%);
-  border: 2px solid currentColor;
+  border: 2px solid currentcolor;
   border-radius: 50%;
   font-size: 12px;
   font-weight: 700;

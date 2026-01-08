@@ -8,8 +8,8 @@
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.005));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.005));
   color: var(--text);
   display: flex;
   justify-content: space-between;
@@ -22,13 +22,13 @@
 
 .select-trigger:hover {
   border-color: var(--accent);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.008));
 }
 
 .select-trigger:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(21,84,94,0.1);
+  box-shadow: 0 0 0 3px rgba(21, 84, 94, 0.1);
 }
 
 .select-trigger svg {
@@ -44,10 +44,10 @@
   left: 0;
   right: 0;
   margin-top: 4px;
-  background: linear-gradient(135deg, rgba(15,23,36,0.95), rgba(11,18,32,0.95));
-  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(135deg, rgba(15, 23, 36, 0.95), rgba(11, 18, 32, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
   z-index: 1000;
   overflow: hidden;
 }
@@ -56,19 +56,19 @@
   width: 100%;
   padding: 12px 14px;
   border: none;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   background: transparent;
   color: var(--text);
   font-size: 14px;
 }
 
 .select-search::placeholder {
-  color: rgba(159,176,200,0.4);
+  color: rgba(159, 176, 200, 0.4);
 }
 
 .select-search:focus {
   outline: none;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .select-options {
@@ -82,11 +82,11 @@
 }
 
 .select-options::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .select-options::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 3px;
 }
 
@@ -106,11 +106,11 @@
 }
 
 .select-option:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .select-option.active {
-  background: rgba(21,84,94,0.2);
+  background: rgba(21, 84, 94, 0.2);
   color: var(--accent);
 }
 
@@ -136,4 +136,3 @@
   color: var(--muted);
   font-size: 13px;
 }
-

@@ -1,2 +1,1 @@
-export { default as StagesList } from './StagesList'
-
+export { default as StagesList } from "./StagesList";

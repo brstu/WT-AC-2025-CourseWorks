@@ -1,4 +1,3 @@
 // barrel for src
-export * from './types/models'
-export * from './api/clients'
-
+export * from "./types/models";
+export * from "./api/clients";

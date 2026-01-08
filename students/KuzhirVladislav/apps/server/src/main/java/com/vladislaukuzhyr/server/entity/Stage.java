@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.Getter;
@@ -18,6 +19,9 @@ public class Stage {
   private String name;
   @Column(name = "stage_order")
   private Integer stageOrder;
+
+  @ManyToOne
+  private User user;
 
   @OneToMany(mappedBy = "stage")
   private List<Deal> deals;
@@ -34,6 +38,11 @@ public class Stage {
 
   public Stage setStageOrder(Integer stageOrder) {
     this.stageOrder = stageOrder;
+    return this;
+  }
+
+  public Stage setUser(User user) {
+    this.user = user;
     return this;
   }
 

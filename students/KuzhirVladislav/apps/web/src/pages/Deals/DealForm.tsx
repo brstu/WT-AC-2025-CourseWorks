@@ -1,98 +1,97 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Deal, Stage, Client } from '../../types/models'
-import dealsApi from '../../api/deals'
-import stagesApi from '../../api/stages'
-import clientsApi from '../../api/clients'
-import CustomSelect from '../../components/UI/CustomSelect'
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Deal, Stage, Client } from "../../types/models";
+import dealsApi from "../../api/deals";
+import stagesApi from "../../api/stages";
+import clientsApi from "../../api/clients";
+import CustomSelect from "../../components/UI/CustomSelect";
 
 export default function DealForm() {
-  const { id } = useParams<{ id?: string }>()
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(!!id)
-  const [submitting, setSubmitting] = useState(false)
-  const [stages, setStages] = useState<Stage[]>([])
-  const [clients, setClients] = useState<Client[]>([])
+  const { id } = useParams<{ id?: string }>();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(!!id);
+  const [submitting, setSubmitting] = useState(false);
+  const [stages, setStages] = useState<Stage[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [form, setForm] = useState<Partial<Deal>>({
-    title: '',
+    title: "",
     amount: 0,
-    stageId: 0, // В моделях stageId — это number
+    stageId: 0,
     clientId: 0,
-    description: ''
-  })
+    description: "",
+  });
 
   useEffect(() => {
-    Promise.all([
-      stagesApi.list(),
-      clientsApi.list()
-    ]).then(([stagesData, clientsData]) => {
-      // ИСПРАВЛЕНО: Сортировка по stageOrder
-      setStages(stagesData.sort((a, b) => (a.stageOrder || 0) - (b.stageOrder || 0)))
-      setClients(clientsData)
-    })
+    Promise.all([stagesApi.list(), clientsApi.list()]).then(([stagesData, clientsData]) => {
+      setStages(stagesData.sort((a, b) => (a.stageOrder || 0) - (b.stageOrder || 0)));
+      setClients(clientsData);
+    });
 
     if (id) {
-      dealsApi.get(id).then(data => {
-        setForm(data)
-        setLoading(false)
-      }).catch(err => {
-        console.error('Failed to load deal:', err)
-        setLoading(false)
-      })
+      dealsApi
+        .get(id)
+        .then((data) => {
+          setForm(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to load deal:", err);
+          setLoading(false);
+        });
     }
-  }, [id])
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!form.title || !form.title.trim()) {
-      alert('Укажите название сделки')
-      return
+      alert("Укажите название сделки");
+      return;
     }
     if (!form.stageId) {
-      alert('Укажите этап')
-      return
+      alert("Укажите этап");
+      return;
     }
-    setSubmitting(true)
+    setSubmitting(true);
     try {
       const payload: Partial<Deal> = {
         title: form.title.trim(),
         amount: form.amount && form.amount > 0 ? form.amount : undefined,
         stageId: Number(form.stageId),
         clientId: form.clientId ? Number(form.clientId) : undefined,
-        description: form.description ? form.description.trim() : undefined
-      }
+        description: form.description ? form.description.trim() : undefined,
+      };
 
       if (id) {
-        await dealsApi.update(id, payload)
-        alert('Сделка обновлена успешно')
+        await dealsApi.update(id, payload);
+        alert("Сделка обновлена успешно");
       } else {
-        await dealsApi.create(payload)
-        alert('Сделка создана успешно')
+        await dealsApi.create(payload);
+        alert("Сделка создана успешно");
       }
-      navigate('/deals')
+      navigate("/deals");
     } catch (err: any) {
-      console.error('Failed to save deal:', err)
-      const message = err.response?.data?.message || err.message || 'Ошибка при сохранении'
-      alert('Ошибка: ' + message)
+      console.error("Failed to save deal:", err);
+      const message = err.response?.data?.message || err.message || "Ошибка при сохранении";
+      alert("Ошибка: " + message);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   if (loading) {
-    return <div className="card">Загрузка...</div>
+    return <div className="card">Загрузка...</div>;
   }
 
   return (
     <div>
-      <h1>{id ? 'Редактирование сделки' : 'Новая сделка'}</h1>
-      <form onSubmit={handleSubmit} className="card" style={{ maxWidth: '500px' }}>
+      <h1>{id ? "Редактирование сделки" : "Новая сделка"}</h1>
+      <form onSubmit={handleSubmit} className="card" style={{ maxWidth: "500px" }}>
         <div className="field">
           <label className="label">Название *</label>
           <input
             type="text"
             className="input"
-            value={form.title || ''}
+            value={form.title || ""}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             placeholder="Название сделки"
             required
@@ -102,9 +101,9 @@ export default function DealForm() {
         <div className="field">
           <label className="label">Этап *</label>
           <CustomSelect
-            value={form.stageId?.toString() || ''}
+            value={form.stageId?.toString() || ""}
             onChange={(e) => setForm({ ...form, stageId: e ? Number(e) : undefined })}
-            options={stages.map(s => ({ value: s.id.toString(), label: s.name }))}
+            options={stages.map((s) => ({ value: s.id.toString(), label: s.name }))}
             placeholder="Выберите этап"
             required
           />
@@ -113,11 +112,11 @@ export default function DealForm() {
         <div className="field">
           <label className="label">Клиент</label>
           <CustomSelect
-            value={form.clientId?.toString() || ''}
+            value={form.clientId?.toString() || ""}
             onChange={(e) => setForm({ ...form, clientId: e ? Number(e) : undefined })}
             options={[
-              { value: '', label: 'Выберите клиента' },
-              ...clients.map(c => ({ value: c.id.toString(), label: c.name }))
+              { value: "", label: "Выберите клиента" },
+              ...clients.map((c) => ({ value: c.id.toString(), label: c.name })),
             ]}
           />
         </div>
@@ -128,36 +127,37 @@ export default function DealForm() {
             type="number"
             className="input"
             min="0"
-            value={form.amount !== undefined ? form.amount.toString() : ''}
+            value={form.amount !== undefined ? form.amount.toString() : ""}
             onChange={(e) => {
               const val = e.target.value;
               setForm({
                 ...form,
-                amount: val ? Math.floor(Number(val)) : undefined
+                amount: val ? Math.floor(Number(val)) : undefined,
               });
             }}
             placeholder="0"
-          />        </div>
+          />{" "}
+        </div>
 
         <div className="field">
           <label className="label">Описание</label>
           <textarea
             className="input"
-            value={form.description || ''}
+            value={form.description || ""}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="Описание сделки"
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
           <button type="submit" className="button" disabled={submitting}>
-            {submitting ? 'Сохранение...' : (id ? 'Обновить' : 'Создать')}
+            {submitting ? "Сохранение..." : id ? "Обновить" : "Создать"}
           </button>
-          <button type="button" className="button secondary" onClick={() => navigate('/deals')}>
+          <button type="button" className="button secondary" onClick={() => navigate("/deals")}>
             Отмена
           </button>
         </div>
       </form>
     </div>
-  )
+  );
 }

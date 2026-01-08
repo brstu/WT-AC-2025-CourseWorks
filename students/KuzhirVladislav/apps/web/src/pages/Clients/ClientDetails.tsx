@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import api from '../../api/clients'
-import { Client } from '../../types/models'
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "../../api/clients";
+import { Client } from "../../types/models";
 
-export default function ClientDetails(){
-  const { id } = useParams()
-  const [client,setClient] = useState<Client | null>(null)
+export default function ClientDetails() {
+  const { id } = useParams();
+  const [client, setClient] = useState<Client | null>(null);
 
-  useEffect(()=>{
-    if(!id) return
-    api.get(id).then(r=>setClient(r)).catch(()=>{})
-  },[id])
+  useEffect(() => {
+    if (!id) return;
+    api
+      .get(id)
+      .then((r) => setClient(r))
+      .catch(() => {});
+  }, [id]);
 
-  if(!client) return <div className="card">Загрузка...</div>
+  if (!client) return <div className="card">Загрузка...</div>;
 
   return (
     <div>
@@ -23,6 +26,5 @@ export default function ClientDetails(){
         <div>Создан: {client.createdAt}</div>
       </div>
     </div>
-  )
+  );
 }
-

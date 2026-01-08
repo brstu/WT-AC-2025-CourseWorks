@@ -31,7 +31,11 @@ public class AuthController {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(request.username(), request.password())
       );
-      String token = jwtUtils.generateToken(request.username());
+      var user = userService.findByUsername(request.username());
+      if (user.isEmpty()) {
+        return ResponseEntity.status(401).build();
+      }
+      String token = jwtUtils.generateToken(request.username(), user.get().getId());
       return ResponseEntity.ok(new AuthResponse(token));
     } catch (AuthenticationException ex) {
       return ResponseEntity.status(401).build();

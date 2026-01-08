@@ -6,7 +6,9 @@ import com.vladislaukuzhyr.server.dto.invoice.InvoiceUpdateDto;
 import com.vladislaukuzhyr.server.service.InvoiceService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +57,15 @@ public class InvoiceController {
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     service.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{id}/count-related")
+  public ResponseEntity<Map<String, Long>> countRelated(@PathVariable Long id) {
+    // Проверяем что счет принадлежит текущему пользователю
+    service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invoice not found or access denied"));
+    
+    Map<String, Long> counts = new HashMap<>();
+    counts.put("items", 0L);
+    return ResponseEntity.ok(counts);
   }
 }

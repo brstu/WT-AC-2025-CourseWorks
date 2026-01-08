@@ -15,8 +15,8 @@
 .board-column {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, rgba(31,4,97,0.08), rgba(21,84,94,0.05));
-  border: 1px solid rgba(31,4,97,0.3);
+  background: linear-gradient(135deg, rgba(31, 4, 97, 0.08), rgba(21, 84, 94, 0.05));
+  border: 1px solid rgba(31, 4, 97, 0.3);
   border-radius: 12px;
   padding: 14px;
   min-height: 450px;
@@ -29,8 +29,8 @@
 }
 
 .board-column:hover {
-  background: linear-gradient(135deg, rgba(31,4,97,0.12), rgba(21,84,94,0.08));
-  border-color: rgba(31,4,97,0.5);
+  background: linear-gradient(135deg, rgba(31, 4, 97, 0.12), rgba(21, 84, 94, 0.08));
+  border-color: rgba(31, 4, 97, 0.5);
 }
 
 .board-header {
@@ -62,7 +62,7 @@
   width: 24px;
   height: 24px;
   border: none;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   border-radius: 6px;
   cursor: pointer;
@@ -72,7 +72,7 @@
 }
 
 .board-toggle:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--accent);
 }
 
@@ -88,7 +88,7 @@
   justify-content: center;
   min-width: 28px;
   height: 28px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border: 2px solid currentColor;
   border-radius: 50%;
   font-size: 12px;
@@ -106,10 +106,9 @@
   padding-right: 4px;
 }
 
-
 .task-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
-  border: 1px solid rgba(255,255,255,0.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008));
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -121,15 +120,15 @@
 }
 
 .task-card:hover {
-  border-color: rgba(255,255,255,0.12);
-  background: linear-gradient(135deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
-  box-shadow: 0 4px 12px rgba(21,84,94,0.15);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01));
+  box-shadow: 0 4px 12px rgba(21, 84, 94, 0.15);
   transform: translateY(-2px);
 }
 
 .task-card:active {
   opacity: 0.7;
-  box-shadow: 0 8px 16px rgba(21,84,94,0.25);
+  box-shadow: 0 8px 16px rgba(21, 84, 94, 0.25);
 }
 
 .task-content {
@@ -176,10 +175,9 @@
   height: 100px;
   color: var(--muted);
   font-size: 12px;
-  border: 2px dashed rgba(255,255,255,0.08);
+  border: 2px dashed rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   text-align: center;
   padding: 12px;
   opacity: 0.6;
 }
-

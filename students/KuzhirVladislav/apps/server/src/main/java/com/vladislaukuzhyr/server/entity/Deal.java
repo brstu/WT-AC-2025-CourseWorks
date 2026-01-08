@@ -1,5 +1,6 @@
 package com.vladislaukuzhyr.server.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,10 +30,10 @@ public class Deal {
   @ManyToOne
   private User user;
 
-  @OneToMany(mappedBy = "deal")
+  @OneToMany(mappedBy = "deal", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Task> tasks;
 
-  @OneToMany(mappedBy = "deal")
+  @OneToMany(mappedBy = "deal", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Invoice> invoices;
 
   public Deal setId(Long id) {

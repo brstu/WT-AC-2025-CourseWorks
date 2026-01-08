@@ -15,12 +15,12 @@
 .pipeline-column {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, rgba(21,84,94,0.08), rgba(31,4,97,0.05));
-  border: 1px solid rgba(21,84,94,0.3);
+  background: linear-gradient(135deg, rgba(21, 84, 94, 0.08), rgba(31, 4, 97, 0.05));
+  border: 1px solid rgba(21, 84, 94, 0.3);
   border-radius: 12px;
   padding: 14px;
   min-height: 52px;
-  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pipeline-column.collapsed {
@@ -29,8 +29,8 @@
 }
 
 .pipeline-column:hover {
-  background: linear-gradient(135deg, rgba(21,84,94,0.12), rgba(31,4,97,0.08));
-  border-color: rgba(21,84,94,0.5);
+  background: linear-gradient(135deg, rgba(21, 84, 94, 0.12), rgba(31, 4, 97, 0.08));
+  border-color: rgba(21, 84, 94, 0.5);
 }
 
 .pipeline-header {
@@ -64,7 +64,7 @@
   height: 24px;
   min-width: 24px;
   border: none;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   border-radius: 6px;
   cursor: pointer;
@@ -74,14 +74,14 @@
 }
 
 .pipeline-toggle:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--accent);
 }
 
 .pipeline-toggle svg {
   width: 16px;
   height: 16px;
-  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: rotate(0deg);
 }
 
@@ -114,10 +114,9 @@
   max-height: calc(10 * (42px + 8px) + 8px);
 }
 
-
 .deal-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
-  border: 1px solid rgba(21,84,94,0.4);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008));
+  border: 1px solid rgba(21, 84, 94, 0.4);
   border-radius: 8px;
   padding: 10px 12px;
   cursor: move;
@@ -129,14 +128,14 @@
 
 .deal-card:hover {
   border-color: var(--accent);
-  background: linear-gradient(135deg, rgba(21,84,94,0.1), rgba(31,4,97,0.05));
-  box-shadow: 0 4px 12px rgba(21,84,94,0.2);
+  background: linear-gradient(135deg, rgba(21, 84, 94, 0.1), rgba(31, 4, 97, 0.05));
+  box-shadow: 0 4px 12px rgba(21, 84, 94, 0.2);
   transform: translateY(-2px);
 }
 
 .deal-card:active {
   opacity: 0.7;
-  box-shadow: 0 8px 16px rgba(21,84,94,0.25);
+  box-shadow: 0 8px 16px rgba(21, 84, 94, 0.25);
 }
 
 .deal-title {
@@ -177,10 +176,9 @@
   height: 100px;
   color: var(--muted);
   font-size: 12px;
-  border: 2px dashed rgba(21,84,94,0.3);
+  border: 2px dashed rgba(21, 84, 94, 0.3);
   border-radius: 8px;
   text-align: center;
   padding: 12px;
   opacity: 0.6;
 }
-

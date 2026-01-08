@@ -35,6 +35,10 @@ public class UserService {
     return repository.findById(id);
   }
 
+  public Optional<User> findByUsername(String username) {
+    return repository.findByUsername(username);
+  }
+
   public Optional<UserReadDto> findByIdDto(Long id) {
     return repository.findById(id).map(mapper::toReadDto);
   }

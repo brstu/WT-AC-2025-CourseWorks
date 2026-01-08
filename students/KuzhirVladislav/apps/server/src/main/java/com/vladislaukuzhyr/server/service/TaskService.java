@@ -6,6 +6,7 @@ import com.vladislaukuzhyr.server.dto.task.TaskUpdateDto;
 import com.vladislaukuzhyr.server.entity.Task;
 import com.vladislaukuzhyr.server.mapper.TaskMapper;
 import com.vladislaukuzhyr.server.repository.TaskRepository;
+import com.vladislaukuzhyr.server.security.SecurityUtils;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -23,20 +24,28 @@ public class TaskService {
   private final DealService dealService;
   private final UserService userService;
 
+  private Long getCurrentUserId() {
+    return SecurityUtils.getCurrentUserId();
+  }
+
   public List<Task> findAll() {
-    return repository.findAll();
+    Long userId = getCurrentUserId();
+    return repository.findByUserId(userId);
   }
 
   public List<TaskReadDto> findAllDto() {
-    return repository.findAll().stream().map(mapper::toReadDto).collect(Collectors.toList());
+    Long userId = getCurrentUserId();
+    return repository.findByUserId(userId).stream().map(mapper::toReadDto).collect(Collectors.toList());
   }
 
   public Optional<Task> findById(Long id) {
-    return repository.findById(id);
+    Long userId = getCurrentUserId();
+    return repository.findById(id)
+        .filter(task -> task.getUser() != null && task.getUser().getId().equals(userId));
   }
 
   public Optional<TaskReadDto> findByIdDto(Long id) {
-    return repository.findById(id).map(mapper::toReadDto);
+    return findById(id).map(mapper::toReadDto);
   }
 
   public Task save(Task task) {
@@ -53,35 +62,47 @@ public class TaskService {
   }
 
   public TaskReadDto create(@Valid TaskCreateDto dto) {
+    Long userId = getCurrentUserId();
     Task task = mapper.toEntity(dto);
     if (dto.dealId() != null) dealService.findById(dto.dealId()).ifPresent(task::setDeal);
-    if (dto.userId() != null) userService.findById(dto.userId()).ifPresent(task::setUser);
+    userService.findById(userId).ifPresent(task::setUser);
     Task saved = repository.save(task);
     return mapper.toReadDto(saved);
   }
 
   public TaskReadDto update(Long id, @Valid TaskUpdateDto dto) {
-    Task task = new Task();
+    Long userId = getCurrentUserId();
+    Task task = repository.findById(id)
+        .filter(t -> t.getUser() != null && t.getUser().getId().equals(userId))
+        .orElseThrow(() -> new IllegalArgumentException("Task not found or access denied"));
     mapper.updateFromDto(dto, task);
     if (dto.dealId() != null) dealService.findById(dto.dealId()).ifPresent(task::setDeal);
-    if (dto.userId() != null) userService.findById(dto.userId()).ifPresent(task::setUser);
-    task.setId(id);
     Task updated = repository.save(task);
     return mapper.toReadDto(updated);
   }
 
   public List<TaskReadDto> search(String query) {
+    Long userId = getCurrentUserId();
     if (query == null || query.isBlank()) {
       return findAllDto();
     }
-    return repository.findByTitleContainingIgnoreCase(query).stream()
+    return repository.findByUserIdAndTitleContainingIgnoreCase(userId, query).stream()
         .map(mapper::toReadDto)
         .collect(Collectors.toList());
   }
 
   public List<TaskReadDto> findByDealId(Long dealId) {
+    Long userId = getCurrentUserId();
     return repository.findByDealId(dealId).stream()
+        .filter(task -> task.getUser() != null && task.getUser().getId().equals(userId))
         .map(mapper::toReadDto)
         .collect(Collectors.toList());
+  }
+
+  public long countByDealId(Long dealId) {
+    Long userId = getCurrentUserId();
+    return repository.findByDealId(dealId).stream()
+        .filter(task -> task.getUser() != null && task.getUser().getId().equals(userId))
+        .count();
   }
 }

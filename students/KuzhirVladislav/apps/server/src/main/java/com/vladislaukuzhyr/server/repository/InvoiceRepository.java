@@ -8,4 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
   List<Invoice> findByNumberContainingIgnoreCase(String number);
+  List<Invoice> findByUserId(Long userId);
+  List<Invoice> findByUserIdAndNumberContainingIgnoreCase(Long userId, String number);
+  List<Invoice> findByDealId(Long dealId);
+  long countByDealId(Long dealId);
 }

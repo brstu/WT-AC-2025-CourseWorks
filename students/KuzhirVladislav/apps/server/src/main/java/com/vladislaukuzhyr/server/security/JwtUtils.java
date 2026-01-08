@@ -30,6 +30,18 @@ public class JwtUtils {
     this.expirationMs = expirationMs;
   }
 
+  public String generateToken(String username, Long userId) {
+    Date now = new Date();
+    Date exp = new Date(now.getTime() + expirationMs);
+    return Jwts.builder()
+        .setSubject(username)
+        .claim("userId", userId)
+        .setIssuedAt(now)
+        .setExpiration(exp)
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
+  }
+
   public String generateToken(String username) {
     Date now = new Date();
     Date exp = new Date(now.getTime() + expirationMs);
@@ -44,6 +56,15 @@ public class JwtUtils {
   public String getUsernameFromToken(String token) {
     Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     return claims.getSubject();
+  }
+
+  public Long getUserIdFromToken(String token) {
+    Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    Object userId = claims.get("userId");
+    if (userId instanceof Number) {
+      return ((Number) userId).longValue();
+    }
+    return null;
   }
 
   public boolean validateToken(String token) {

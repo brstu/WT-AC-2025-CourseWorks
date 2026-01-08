@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface DealRepository extends JpaRepository<Deal, Long> {
   List<Deal> findByTitleContainingIgnoreCase(String title);
   List<Deal> findByDescriptionContainingIgnoreCase(String description);
+  List<Deal> findByUserId(Long userId);
+  List<Deal> findByUserIdAndTitleContainingIgnoreCase(Long userId, String title);
+  long countByClientId(Long clientId);
+  List<Deal> findByClientId(Long clientId);
 }

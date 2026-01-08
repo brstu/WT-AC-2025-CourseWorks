@@ -4,8 +4,12 @@ import com.vladislaukuzhyr.server.dto.client.ClientCreateDto;
 import com.vladislaukuzhyr.server.dto.client.ClientReadDto;
 import com.vladislaukuzhyr.server.dto.client.ClientUpdateDto;
 import com.vladislaukuzhyr.server.service.ClientService;
+import com.vladislaukuzhyr.server.service.DealService;
+import com.vladislaukuzhyr.server.service.InvoiceService;
+import com.vladislaukuzhyr.server.service.TaskService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "bearerAuth")
 public class ClientController {
   private final ClientService service;
+  private final DealService dealService;
+  private final TaskService taskService;
+  private final InvoiceService invoiceService;
 
   @GetMapping
   public List<ClientReadDto> getAll(@RequestParam(required = false) String search) {
@@ -54,5 +61,20 @@ public class ClientController {
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     service.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{id}/count-related")
+  public ResponseEntity<Map<String, Long>> countRelated(@PathVariable Long id) {
+    service.findById(id).orElseThrow(() -> new IllegalArgumentException("Client not found or access denied"));
+    
+    Map<String, Long> counts = new java.util.HashMap<>();
+    long dealsCount = service.countByClientId(id);
+    long tasksCount = service.countRelatedTasks(id);
+    long invoicesCount = service.countRelatedInvoices(id);
+    
+    counts.put("deals", dealsCount);
+    counts.put("tasks", tasksCount);
+    counts.put("invoices", invoicesCount);
+    return ResponseEntity.ok(counts);
   }
 }

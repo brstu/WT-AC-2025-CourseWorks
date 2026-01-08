@@ -1,5 +1,6 @@
 package com.vladislaukuzhyr.server.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +23,7 @@ public class Client {
   @ManyToOne
   private User user;
 
-  @OneToMany(mappedBy = "client")
+  @OneToMany(mappedBy = "client", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Deal> deals;
 
   public Client setUser(User user) {

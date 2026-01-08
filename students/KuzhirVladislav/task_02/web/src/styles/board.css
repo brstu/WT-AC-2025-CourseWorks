@@ -1,4 +1,5 @@
 /* Board (Доска) - Kanban для задач */
+
 .board-container {
   width: 100%;
   overflow-x: auto;
@@ -15,8 +16,8 @@
 .board-column {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, rgba(31, 4, 97, 0.08), rgba(21, 84, 94, 0.05));
-  border: 1px solid rgba(31, 4, 97, 0.3);
+  background: linear-gradient(135deg, rgb(31 4 97 / 8%), rgb(21 84 94 / 5%));
+  border: 1px solid rgb(31 4 97 / 30%);
   border-radius: 12px;
   padding: 14px;
   min-height: 450px;
@@ -29,8 +30,8 @@
 }
 
 .board-column:hover {
-  background: linear-gradient(135deg, rgba(31, 4, 97, 0.12), rgba(21, 84, 94, 0.08));
-  border-color: rgba(31, 4, 97, 0.5);
+  background: linear-gradient(135deg, rgb(31 4 97 / 12%), rgb(21 84 94 / 8%));
+  border-color: rgb(31 4 97 / 50%);
 }
 
 .board-header {
@@ -62,7 +63,7 @@
   width: 24px;
   height: 24px;
   border: none;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgb(255 255 255 / 5%);
   color: var(--text);
   border-radius: 6px;
   cursor: pointer;
@@ -72,7 +73,7 @@
 }
 
 .board-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255 255 255 / 10%);
   color: var(--accent);
 }
 
@@ -88,7 +89,7 @@
   justify-content: center;
   min-width: 28px;
   height: 28px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(255 255 255 / 8%);
   border: 2px solid currentColor;
   border-radius: 50%;
   font-size: 12px;
@@ -107,8 +108,8 @@
 }
 
 .task-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008));
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgb(255 255 255 / 2.5%), rgb(255 255 255 / 0.8%));
+  border: 1px solid rgb(255 255 255 / 5%);
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -120,15 +121,15 @@
 }
 
 .task-card:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01));
-  box-shadow: 0 4px 12px rgba(21, 84, 94, 0.15);
+  border-color: rgb(255 255 255 / 12%);
+  background: linear-gradient(135deg, rgb(255 255 255 / 3.5%), rgb(255 255 255 / 1%));
+  box-shadow: 0 4px 12px rgb(21 84 94 / 15%);
   transform: translateY(-2px);
 }
 
 .task-card:active {
   opacity: 0.7;
-  box-shadow: 0 8px 16px rgba(21, 84, 94, 0.25);
+  box-shadow: 0 8px 16px rgb(21 84 94 / 25%);
 }
 
 .task-content {
@@ -175,7 +176,7 @@
   height: 100px;
   color: var(--muted);
   font-size: 12px;
-  border: 2px dashed rgba(255, 255, 255, 0.08);
+  border: 2px dashed rgb(255 255 255 / 8%);
   border-radius: 8px;
   text-align: center;
   padding: 12px;

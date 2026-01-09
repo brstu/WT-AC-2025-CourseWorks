@@ -18,7 +18,7 @@ export const Badge: React.FC<BadgeProps> = ({ children, variant = 'default', col
     : undefined;
 
   return (
-    <span className={clsx('badge', !color && `badge--${variant}`, className)} style={style}>
+    <span className={clsx('badge', !color && `badge-${variant}`, className)} style={style}>
       {children}
     </span>
   );

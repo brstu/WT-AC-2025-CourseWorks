@@ -9,7 +9,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children, className, variant = 'default' }) => {
   return (
-    <div className={clsx('card', `card--${variant}`, className)}>
+    <div className={clsx('card', variant !== 'default' && `card-${variant}`, className)}>
       {children}
     </div>
   );
@@ -21,7 +21,7 @@ interface CardHeaderProps {
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({ children, className }) => {
-  return <div className={clsx('card__header', className)}>{children}</div>;
+  return <div className={clsx('card-header', className)}>{children}</div>;
 };
 
 interface CardBodyProps {
@@ -30,7 +30,7 @@ interface CardBodyProps {
 }
 
 export const CardBody: React.FC<CardBodyProps> = ({ children, className }) => {
-  return <div className={clsx('card__body', className)}>{children}</div>;
+  return <div className={clsx('card-body', className)}>{children}</div>;
 };
 
 interface CardFooterProps {
@@ -39,5 +39,5 @@ interface CardFooterProps {
 }
 
 export const CardFooter: React.FC<CardFooterProps> = ({ children, className }) => {
-  return <div className={clsx('card__footer', className)}>{children}</div>;
+  return <div className={clsx('card-footer', className)}>{children}</div>;
 };

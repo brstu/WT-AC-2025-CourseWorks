@@ -125,9 +125,9 @@ export const StatusesPage: React.FC = () => {
   return (
     <div className="page-statuses">
       <div className="page-header">
-        <div className="page-header__title">
+        <div className="page-header-title">
           <h1>Статусы заявок</h1>
-          <p className="page-header__subtitle">
+          <p className="page-header-subtitle">
             Управление статусами для отслеживания заявок
           </p>
         </div>
@@ -163,26 +163,26 @@ export const StatusesPage: React.FC = () => {
           {statuses.map((status) => (
             <Card key={status.id} className="status-card" data-testid={`item-${status.id}`}>
               <CardBody>
-                <div className="status-card__content">
-                  <div className="status-card__info">
-                    <div className="status-card__header">
+                <div className="status-card-content">
+                  <div className="status-card-info">
+                    <div className="status-card-header">
                       <div
-                        className="status-card__color"
+                        className="status-card-color"
                         style={{ backgroundColor: status.color || '#94a3b8' }}
                       />
-                      <h3 className="status-card__name">{status.name}</h3>
+                      <h3 className="status-card-name">{status.name}</h3>
                       {status.isFinal && (
                         <Badge variant="info">Финальный</Badge>
                       )}
                     </div>
                     {status.description && (
-                      <p className="status-card__description">{status.description}</p>
+                      <p className="status-card-description">{status.description}</p>
                     )}
-                    <span className="status-card__order">Порядок: {status.order || 0}</span>
+                    <span className="status-card-order">Порядок: {status.order || 0}</span>
                   </div>
 
                   {isAdmin && (
-                    <div className="status-card__actions">
+                    <div className="status-card-actions">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -233,12 +233,12 @@ export const StatusesPage: React.FC = () => {
 
           <div className="form-row">
             <div className="form-field">
-              <label className="form-field__label">Цвет</label>
+              <label className="form-field-label">Цвет</label>
               <input
                 type="color"
                 value={formData.color || '#3b82f6'}
                 onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                className="form-field__color"
+                className="form-field-color"
               />
             </div>
 
@@ -251,7 +251,7 @@ export const StatusesPage: React.FC = () => {
             />
           </div>
 
-          <div className="form-field form-field--checkbox">
+          <div className="form-field form-field-checkbox">
             <label className="checkbox-label">
               <input
                 type="checkbox"
@@ -262,7 +262,7 @@ export const StatusesPage: React.FC = () => {
             </label>
           </div>
 
-          <div className="status-form__actions">
+          <div className="status-form-actions">
             <Button variant="secondary" onClick={closeModal}>
               Отмена
             </Button>

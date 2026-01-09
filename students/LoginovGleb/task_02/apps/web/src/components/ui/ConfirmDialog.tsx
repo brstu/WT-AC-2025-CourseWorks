@@ -27,8 +27,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
-      <p className="confirm-dialog__message">{message}</p>
-      <div className="confirm-dialog__actions">
+      <p className="confirm-dialog-message">{message}</p>
+      <div className="confirm-dialog-actions">
         <Button
           variant="secondary"
           onClick={onClose}

@@ -166,7 +166,7 @@ export const FormFormPage: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} data-testid="form-form" className="form-editor">
-            <div className="form-editor__basic">
+            <div className="form-editor-basic">
               <Input
                 label="Название формы"
                 placeholder="Введите название"
@@ -183,7 +183,7 @@ export const FormFormPage: React.FC = () => {
                 rows={3}
               />
 
-              <div className="form-field form-field--checkbox">
+              <div className="form-field form-field-checkbox">
                 <label className="checkbox-label">
                   <input type="checkbox" {...register('isActive')} />
                   <span>Активна (доступна для создания заявок)</span>
@@ -191,8 +191,8 @@ export const FormFormPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="form-editor__fields">
-              <div className="form-editor__fields-header">
+            <div className="form-editor-fields">
+              <div className="form-editor-fields-header">
                 <h2>Поля формы</h2>
                 <Button type="button" variant="secondary" size="sm" onClick={addField}>
                   <Plus size={16} />
@@ -207,23 +207,23 @@ export const FormFormPage: React.FC = () => {
               <div className="fields-editor">
                 {fields.map((field, index) => (
                   <div key={field.id} className="field-editor">
-                    <div className="field-editor__header">
-                      <GripVertical size={16} className="field-editor__drag" />
-                      <span className="field-editor__number">Поле {index + 1}</span>
+                    <div className="field-editor-header">
+                      <GripVertical size={16} className="field-editor-drag" />
+                      <span className="field-editor-number">Поле {index + 1}</span>
                       {fields.length > 1 && (
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => remove(index)}
-                          className="field-editor__remove"
+                          className="field-editor-remove"
                         >
                           <Trash2 size={16} />
                         </Button>
                       )}
                     </div>
 
-                    <div className="field-editor__grid">
+                    <div className="field-editor-grid">
                       <Input
                         label="Имя поля (идентификатор)"
                         placeholder="field_name"
@@ -263,7 +263,7 @@ export const FormFormPage: React.FC = () => {
                         />
                       )}
 
-                      <div className="form-field form-field--checkbox">
+                      <div className="form-field form-field-checkbox">
                         <label className="checkbox-label">
                           <input type="checkbox" {...register(`fields.${index}.required`)} />
                           <span>Обязательное поле</span>

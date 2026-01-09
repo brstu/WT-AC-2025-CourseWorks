@@ -37,18 +37,18 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className={clsx('modal', `modal--${size}`)}
+        className={clsx('modal', `modal-${size}`)}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
       >
         {title && (
-          <div className="modal__header">
-            <h2 id="modal-title" className="modal__title">{title}</h2>
+          <div className="modal-header">
+            <h2 id="modal-title" className="modal-title">{title}</h2>
             <button
               type="button"
-              className="modal__close"
+              className="modal-close"
               onClick={onClose}
               aria-label="Закрыть"
             >
@@ -56,7 +56,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
             </button>
           </div>
         )}
-        <div className="modal__body">{children}</div>
+        <div className="modal-body">{children}</div>
       </div>
     </div>
   );

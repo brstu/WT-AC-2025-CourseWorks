@@ -9,10 +9,10 @@ interface LoadingProps {
 
 export const Loading: React.FC<LoadingProps> = ({ size = 'md', className, text }) => {
   return (
-    <div className={clsx('loading', `loading--${size}`, className)} data-testid="loading-indicator">
-      <svg className="loading__spinner" viewBox="0 0 50 50">
+    <div className={clsx('loading', `loading-${size}`, className)} data-testid="loading-indicator">
+      <svg className="loading-spinner" viewBox="0 0 50 50">
         <circle
-          className="loading__track"
+          className="loading-track"
           cx="25"
           cy="25"
           r="20"
@@ -20,7 +20,7 @@ export const Loading: React.FC<LoadingProps> = ({ size = 'md', className, text }
           strokeWidth="4"
         />
         <circle
-          className="loading__head"
+          className="loading-head"
           cx="25"
           cy="25"
           r="20"
@@ -29,7 +29,7 @@ export const Loading: React.FC<LoadingProps> = ({ size = 'md', className, text }
           strokeLinecap="round"
         />
       </svg>
-      {text && <span className="loading__text">{text}</span>}
+      {text && <span className="loading-text">{text}</span>}
     </div>
   );
 };

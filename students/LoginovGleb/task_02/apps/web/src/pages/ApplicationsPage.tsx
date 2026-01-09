@@ -140,9 +140,9 @@ export const ApplicationsPage: React.FC = () => {
   return (
     <div className="page-applications">
       <div className="page-header">
-        <div className="page-header__title">
+        <div className="page-header-title">
           <h1>Заявки</h1>
-          <p className="page-header__subtitle">
+          <p className="page-header-subtitle">
             {isModerator ? 'Все заявки в системе' : 'Ваши заявки'}
           </p>
         </div>
@@ -200,12 +200,12 @@ export const ApplicationsPage: React.FC = () => {
             {applications.items.map((app) => (
               <Card key={app.id} className="application-card" data-testid={`item-${app.id}`}>
                 <CardBody>
-                  <div className="application-card__header">
-                    <div className="application-card__info">
-                      <h3 className="application-card__title">
+                  <div className="application-card-header">
+                    <div className="application-card-info">
+                      <h3 className="application-card-title">
                         {app.form?.name || 'Заявка'}
                       </h3>
-                      <p className="application-card__meta">
+                      <p className="application-card-meta">
                         Создана: {new Date(app.createdAt).toLocaleDateString('ru-RU')}
                         {app.submittedAt && (
                           <> • Отправлена: {new Date(app.submittedAt).toLocaleDateString('ru-RU')}</>
@@ -218,10 +218,10 @@ export const ApplicationsPage: React.FC = () => {
                   </div>
                   
                   {app.comment && (
-                    <p className="application-card__comment">{app.comment}</p>
+                    <p className="application-card-comment">{app.comment}</p>
                   )}
 
-                  <div className="application-card__actions">
+                  <div className="application-card-actions">
                     <Link to={`/applications/${app.id}`}>
                       <Button variant="ghost" size="sm" data-testid="view-btn">
                         <Eye size={16} />
@@ -286,7 +286,7 @@ export const ApplicationsPage: React.FC = () => {
               >
                 Назад
               </Button>
-              <span className="pagination__info">
+              <span className="pagination-info">
                 Страница {page} из {Math.ceil(applications.total / applications.pageSize)}
               </span>
               <Button

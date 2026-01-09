@@ -17,12 +17,12 @@ export const AuthLayout: React.FC = () => {
 
   return (
     <div className="auth-layout">
-      <div className="auth-layout__container">
-        <Link to="/" className="auth-layout__logo">
+      <div className="auth-layout-container">
+        <Link to="/" className="auth-layout-logo">
           <ClipboardList size={32} />
           <span>Да, я в деле</span>
         </Link>
-        <div className="auth-layout__content">
+        <div>
           <Outlet />
         </div>
       </div>

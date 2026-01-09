@@ -56,14 +56,14 @@ export const RegisterPage: React.FC = () => {
   return (
     <Card className="auth-card">
       <CardHeader>
-        <h1 className="auth-card__title">Регистрация</h1>
-        <p className="auth-card__subtitle">
+        <h1 className="auth-card-title">Регистрация</h1>
+        <p className="auth-card-subtitle">
           Создайте новый аккаунт для работы с заявками
         </p>
       </CardHeader>
       <CardBody>
         {error && (
-          <Alert variant="error" onClose={() => setError(null)} className="auth-card__alert">
+          <Alert variant="error" onClose={() => setError(null)} className="auth-card-alert">
             {error}
           </Alert>
         )}
@@ -100,15 +100,15 @@ export const RegisterPage: React.FC = () => {
             type="submit"
             variant="primary"
             isLoading={isLoading}
-            className="auth-form__submit"
+            className="auth-form-submit"
             data-testid="submit-btn"
           >
             Зарегистрироваться
           </Button>
         </form>
-        <p className="auth-card__footer">
+        <p className="auth-card-footer">
           Уже есть аккаунт?{' '}
-          <Link to="/login" className="auth-card__link">
+          <Link to="/login" className="auth-card-link">
             Войти
           </Link>
         </p>

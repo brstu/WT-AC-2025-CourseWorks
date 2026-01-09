@@ -63,9 +63,9 @@ export const FormsPage: React.FC = () => {
   return (
     <div className="page-forms">
       <div className="page-header">
-        <div className="page-header__title">
+        <div className="page-header-title">
           <h1>Формы заявок</h1>
-          <p className="page-header__subtitle">
+          <p className="page-header-subtitle">
             Шаблоны для создания заявок
           </p>
         </div>
@@ -105,22 +105,22 @@ export const FormsPage: React.FC = () => {
           {forms.map((form) => (
             <Card key={form.id} className="form-card" data-testid={`item-${form.id}`}>
               <CardBody>
-                <div className="form-card__header">
-                  <h3 className="form-card__title">{form.name}</h3>
+                <div className="form-card-header">
+                  <h3 className="form-card-title">{form.name}</h3>
                   <Badge variant={form.isActive ? 'success' : 'default'}>
                     {form.isActive ? 'Активна' : 'Неактивна'}
                   </Badge>
                 </div>
                 
                 {form.description && (
-                  <p className="form-card__description">{form.description}</p>
+                  <p className="form-card-description">{form.description}</p>
                 )}
 
-                <p className="form-card__meta">
+                <p className="form-card-meta">
                   Полей: {form.fields.length}
                 </p>
 
-                <div className="form-card__actions">
+                <div className="form-card-actions">
                   <Link to={`/forms/${form.id}`}>
                     <Button variant="ghost" size="sm" data-testid="view-btn">
                       <Eye size={16} />

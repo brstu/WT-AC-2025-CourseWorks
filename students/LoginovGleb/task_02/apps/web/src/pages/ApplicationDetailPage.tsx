@@ -172,12 +172,12 @@ export const ApplicationDetailPage: React.FC = () => {
       )}
 
       <div className="application-detail">
-        <Card className="application-detail__main">
+        <Card className="application-detail-main">
           <CardHeader>
-            <div className="application-detail__header">
+            <div className="application-detail-header">
               <div>
                 <h1>{application.form?.name || 'Заявка'}</h1>
-                <p className="application-detail__meta">
+                <p className="application-detail-meta">
                   ID: {application.id}
                 </p>
               </div>
@@ -187,7 +187,7 @@ export const ApplicationDetailPage: React.FC = () => {
             </div>
           </CardHeader>
           <CardBody>
-            <div className="application-detail__info">
+            <div className="application-detail-info">
               <div className="info-row">
                 <span className="info-label">Дата создания:</span>
                 <span className="info-value">
@@ -207,14 +207,14 @@ export const ApplicationDetailPage: React.FC = () => {
                 <span className="info-value">{application.user?.username}</span>
               </div>
               {application.comment && (
-                <div className="info-row info-row--full">
+                <div className="info-row info-row-full">
                   <span className="info-label">Комментарий:</span>
                   <span className="info-value">{application.comment}</span>
                 </div>
               )}
             </div>
 
-            <div className="application-detail__data">
+            <div className="application-detail-data">
               <h3>Данные заявки</h3>
               <div className="data-grid">
                 {Object.entries(application.data as Record<string, unknown>).map(([key, value]) => (
@@ -226,7 +226,7 @@ export const ApplicationDetailPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="application-detail__actions">
+            <div className="application-detail-actions">
               {canEdit && (
                 <Link to={`/applications/${id}/edit`}>
                   <Button variant="secondary" data-testid="edit-btn">
@@ -279,7 +279,7 @@ export const ApplicationDetailPage: React.FC = () => {
         </Card>
 
         {application.history && application.history.length > 0 && (
-          <Card className="application-detail__history">
+          <Card className="application-detail-history">
             <CardHeader>
               <h2>История изменений</h2>
             </CardHeader>
@@ -287,19 +287,19 @@ export const ApplicationDetailPage: React.FC = () => {
               <div className="history-list">
                 {application.history.map((item) => (
                   <div key={item.id} className="history-item">
-                    <div className="history-item__header">
-                      <span className="history-item__user">{item.changedBy?.username}</span>
-                      <span className="history-item__date">
+                    <div className="history-item-header">
+                      <span className="history-item-user">{item.changedBy?.username}</span>
+                      <span className="history-item-date">
                         {new Date(item.changedAt).toLocaleString('ru-RU')}
                       </span>
                     </div>
-                    <div className="history-item__change">
+                    <div className="history-item-change">
                       {item.fromStatus ? (
                         <>
                           <Badge color={item.fromStatus.color || undefined}>
                             {item.fromStatus.name}
                           </Badge>
-                          <span className="history-item__arrow">→</span>
+                          <span className="history-item-arrow">→</span>
                         </>
                       ) : null}
                       <Badge color={item.toStatus.color || undefined}>
@@ -307,7 +307,7 @@ export const ApplicationDetailPage: React.FC = () => {
                       </Badge>
                     </div>
                     {item.comment && (
-                      <p className="history-item__comment">{item.comment}</p>
+                      <p className="history-item-comment">{item.comment}</p>
                     )}
                   </div>
                 ))}
@@ -372,7 +372,7 @@ export const ApplicationDetailPage: React.FC = () => {
             placeholder="Добавьте комментарий (необязательно)"
             rows={3}
           />
-          <div className="status-change-form__actions">
+          <div className="status-change-form-actions">
             <Button variant="secondary" onClick={() => setShowStatusModal(false)}>
               Отмена
             </Button>

@@ -46,14 +46,14 @@ export const LoginPage: React.FC = () => {
   return (
     <Card className="auth-card">
       <CardHeader>
-        <h1 className="auth-card__title">Вход в систему</h1>
-        <p className="auth-card__subtitle">
+        <h1 className="auth-card-title">Вход в систему</h1>
+        <p className="auth-card-subtitle">
           Введите ваши учётные данные для входа
         </p>
       </CardHeader>
       <CardBody>
         {error && (
-          <Alert variant="error" onClose={() => setError(null)} className="auth-card__alert">
+          <Alert variant="error" onClose={() => setError(null)} className="auth-card-alert">
             {error}
           </Alert>
         )}
@@ -76,15 +76,15 @@ export const LoginPage: React.FC = () => {
             type="submit"
             variant="primary"
             isLoading={isLoading}
-            className="auth-form__submit"
+            className="auth-form-submit"
             data-testid="submit-btn"
           >
             Войти
           </Button>
         </form>
-        <p className="auth-card__footer">
+        <p className="auth-card-footer">
           Нет аккаунта?{' '}
-          <Link to="/register" className="auth-card__link">
+          <Link to="/register" className="auth-card-link">
             Зарегистрироваться
           </Link>
         </p>

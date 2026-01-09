@@ -6,8 +6,8 @@ export const MainLayout: React.FC = () => {
   return (
     <div className="layout">
       <Header />
-      <main className="layout__main">
-        <div className="layout__container">
+      <main className="layout-main">
+        <div className="layout-container">
           <Outlet />
         </div>
       </main>

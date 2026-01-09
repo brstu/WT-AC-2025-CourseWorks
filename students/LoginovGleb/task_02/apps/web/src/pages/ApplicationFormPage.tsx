@@ -177,7 +177,7 @@ export const ApplicationFormPage: React.FC = () => {
             name={fieldName}
             control={control}
             render={({ field: controllerField }) => (
-              <div className="form-field form-field--checkbox">
+              <div className="form-field form-field-checkbox">
                 <label className="checkbox-label">
                   <input
                     type="checkbox"
@@ -187,7 +187,7 @@ export const ApplicationFormPage: React.FC = () => {
                   <span>{field.label}</span>
                 </label>
                 {fieldError && (
-                  <span className="form-field__error" data-testid="error-message">
+                  <span className="form-field-error-message" data-testid="error-message">
                     {fieldError}
                   </span>
                 )}

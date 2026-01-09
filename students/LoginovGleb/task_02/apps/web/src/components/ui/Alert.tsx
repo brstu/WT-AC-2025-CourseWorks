@@ -20,11 +20,11 @@ export const Alert: React.FC<AlertProps> = ({ children, variant = 'info', onClos
   const Icon = icons[variant];
 
   return (
-    <div className={clsx('alert', `alert--${variant}`, className)} role="alert" data-testid="error-message">
-      <Icon className="alert__icon" size={20} />
-      <div className="alert__content">{children}</div>
+    <div className={clsx('alert', `alert-${variant}`, className)} role="alert" data-testid="error-message">
+      <Icon className="alert-icon" size={20} />
+      <div className="alert-content">{children}</div>
       {onClose && (
-        <button type="button" className="alert__close" onClick={onClose} aria-label="Закрыть">
+        <button type="button" className="alert-close" onClick={onClose} aria-label="Закрыть">
           <X size={18} />
         </button>
       )}

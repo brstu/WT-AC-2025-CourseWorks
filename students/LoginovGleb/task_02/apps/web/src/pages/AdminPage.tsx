@@ -44,9 +44,9 @@ export const AdminPage: React.FC = () => {
   return (
     <div className="page-admin">
       <div className="page-header">
-        <div className="page-header__title">
+        <div className="page-header-title">
           <h1>Панель администратора</h1>
-          <p className="page-header__subtitle">
+          <p className="page-header-subtitle">
             Управление системой заявок
           </p>
         </div>
@@ -58,13 +58,13 @@ export const AdminPage: React.FC = () => {
             <Card className="admin-card">
               <CardBody>
                 <div
-                  className="admin-card__icon"
+                  className="admin-card-icon"
                   style={{ backgroundColor: `${link.color}20`, color: link.color }}
                 >
                   {link.icon}
                 </div>
-                <h2 className="admin-card__title">{link.title}</h2>
-                <p className="admin-card__description">{link.description}</p>
+                <h2 className="admin-card-title">{link.title}</h2>
+                <p className="admin-card-description">{link.description}</p>
               </CardBody>
             </Card>
           </Link>
@@ -74,18 +74,18 @@ export const AdminPage: React.FC = () => {
       <Card className="admin-info">
         <CardBody>
           <h2>Информация о системе</h2>
-          <div className="admin-info__grid">
-            <div className="admin-info__item">
-              <span className="admin-info__label">Вариант</span>
-              <span className="admin-info__value">40 — «Да, я в деле»</span>
+          <div className="admin-info-grid">
+            <div className="admin-info-item">
+              <span className="admin-info-label">Вариант</span>
+              <span className="admin-info-value">40 — «Да, я в деле»</span>
             </div>
-            <div className="admin-info__item">
-              <span className="admin-info__label">Ваша роль</span>
-              <span className="admin-info__value">{user.role}</span>
+            <div className="admin-info-item">
+              <span className="admin-info-label">Ваша роль</span>
+              <span className="admin-info-value">{user.role}</span>
             </div>
-            <div className="admin-info__item">
-              <span className="admin-info__label">Пользователь</span>
-              <span className="admin-info__value">{user.username}</span>
+            <div className="admin-info-item">
+              <span className="admin-info-label">Пользователь</span>
+              <span className="admin-info-value">{user.username}</span>
             </div>
           </div>
         </CardBody>

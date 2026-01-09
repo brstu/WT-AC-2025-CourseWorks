@@ -12,28 +12,28 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaId = id || props.name;
     
     return (
-      <div className={clsx('form-field', error && 'form-field--error', className)}>
+      <div className={clsx('form-field', error && 'form-field-error', className)}>
         {label && (
-          <label htmlFor={textareaId} className="form-field__label">
+          <label htmlFor={textareaId} className="form-field-label">
             {label}
-            {props.required && <span className="form-field__required">*</span>}
+            {props.required && <span className="form-field-required">*</span>}
           </label>
         )}
         <textarea
           ref={ref}
           id={textareaId}
-          className="form-field__textarea"
+          className="form-field-textarea"
           aria-invalid={!!error}
           aria-describedby={error ? `${textareaId}-error` : undefined}
           {...props}
         />
         {error && (
-          <span id={`${textareaId}-error`} className="form-field__error" data-testid="error-message">
+          <span id={`${textareaId}-error`} className="form-field-error-message" data-testid="error-message">
             {error}
           </span>
         )}
         {hint && !error && (
-          <span className="form-field__hint">{hint}</span>
+          <span className="form-field-hint">{hint}</span>
         )}
       </div>
     );

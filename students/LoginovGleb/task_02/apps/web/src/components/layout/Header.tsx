@@ -18,46 +18,46 @@ export const Header: React.FC = () => {
 
   return (
     <header className="header">
-      <div className="header__container">
-        <Link to="/" className="header__logo">
+      <div className="header-container">
+        <Link to="/" className="header-logo">
           <ClipboardList size={24} />
           <span>Да, я в деле</span>
         </Link>
 
-        <nav className="header__nav">
+        <nav className="header-nav">
           {isAuthenticated && (
-            <Link to="/applications" className="header__link">
+            <Link to="/applications" className="header-link">
               <FileText size={18} />
               <span>Заявки</span>
             </Link>
           )}
 
-          <Link to="/forms" className="header__link">
+          <Link to="/forms" className="header-link">
             <ClipboardList size={18} />
             <span>Формы</span>
           </Link>
 
           {isAuthenticated && isModerator && (
-            <Link to="/statuses" className="header__link">
+            <Link to="/statuses" className="header-link">
               <Settings size={18} />
               <span>Статусы</span>
             </Link>
           )}
 
           {isAuthenticated && isAdmin && (
-            <Link to="/admin" className="header__link">
+            <Link to="/admin" className="header-link">
               <Users size={18} />
               <span>Админ</span>
             </Link>
           )}
         </nav>
 
-        <div className="header__actions">
+        <div className="header-actions">
           {isAuthenticated ? (
-            <div className="header__user">
-              <span className="header__username">
+            <div className="header-user">
+              <span className="header-username">
                 {user?.username}
-                <span className="header__role">({user?.role})</span>
+                <span className="header-role">({user?.role})</span>
               </span>
               <Button
                 variant="ghost"
@@ -69,7 +69,7 @@ export const Header: React.FC = () => {
               </Button>
             </div>
           ) : (
-            <div className="header__auth">
+            <div className="header-auth">
               <Link to="/login">
                 <Button variant="ghost" size="sm">Войти</Button>
               </Link>

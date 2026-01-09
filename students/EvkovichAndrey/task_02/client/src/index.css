@@ -75,6 +75,7 @@ code {
     width: 100% !important;
 }
 
+/* stylelint-disable selector-class-pattern */
 .react-calendar__tile--active {
     background: #4caf50 !important;
 }
@@ -83,3 +84,4 @@ code {
     background: #2196f3 !important;
     color: white !important;
 }
+/* stylelint-enable selector-class-pattern */

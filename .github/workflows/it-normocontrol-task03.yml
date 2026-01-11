@@ -7,6 +7,12 @@ on:
         description: 'Pull request number to validate (required for manual run)'
         required: true
 
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'students/**/task_03/**'
+
 permissions:
   contents: read
   issues: write
@@ -14,7 +20,7 @@ permissions:
 
 jobs:
   it-normocontrol-task03:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number != '' }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number != '') || github.event_name == 'pull_request_target' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -23,22 +29,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Prepare manual PR event
+      - name: Prepare PR event
         id: prepare
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
-          echo "Fetching PR #${{ github.event.inputs.pr_number }} to $GITHUB_WORKSPACE/.github/manual_event.json"
-          mkdir -p "$GITHUB_WORKSPACE/.github"
-          curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.inputs.pr_number }}" > "$GITHUB_WORKSPACE/.github/manual_event.json"
-          echo "event_path=$GITHUB_WORKSPACE/.github/manual_event.json" >> $GITHUB_OUTPUT
-          echo "pr_number=${{ github.event.inputs.pr_number }}" >> $GITHUB_OUTPUT
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "Fetching PR #${{ github.event.inputs.pr_number }} to $GITHUB_WORKSPACE/.github/manual_event.json"
+            mkdir -p "$GITHUB_WORKSPACE/.github"
+            curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.inputs.pr_number }}" > "$GITHUB_WORKSPACE/.github/manual_event.json"
+            echo "event_path=$GITHUB_WORKSPACE/.github/manual_event.json" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.inputs.pr_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "event_path=$GITHUB_EVENT_PATH" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Checkout PR head
         run: |
-          git fetch origin pull/${{ github.event.inputs.pr_number }}/head:pr-${{ github.event.inputs.pr_number }}
-          git checkout pr-${{ github.event.inputs.pr_number }}
+          git fetch origin pull/${{ steps.prepare.outputs.pr_number }}/head:pr-${{ steps.prepare.outputs.pr_number }}
+          git checkout pr-${{ steps.prepare.outputs.pr_number }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -75,7 +86,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          PR_NUMBER: ${{ steps.prepare.outputs.pr_number }}
           RESULT_PATH: .github/it_normocontrol_result.json
         run: |
           python .github/scripts/comment_it_normocontrol.py || true

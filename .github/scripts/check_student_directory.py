@@ -59,13 +59,19 @@ def load_students_map(csv_path):
     if not os.path.exists(csv_path):
         LOG.error("students.csv not found at %s", csv_path)
         return mapping
+    # Read file but skip any leading empty lines which would confuse DictReader
     with open(csv_path, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            gh = (row.get('Github Username') or '').strip()
-            directory = (row.get('Directory') or '').strip()
-            if gh:
-                mapping[gh.lower()] = directory
+        # collect non-empty lines to ensure the first line is the header
+        lines = [line for line in f if line.strip()]
+    if not lines:
+        LOG.error('students.csv is empty or contains only blank lines: %s', csv_path)
+        return mapping
+    reader = csv.DictReader(lines)
+    for row in reader:
+        gh = (row.get('Github Username') or '').strip()
+        directory = (row.get('Directory') or '').strip()
+        if gh:
+            mapping[gh.lower()] = directory
     return mapping
 
 

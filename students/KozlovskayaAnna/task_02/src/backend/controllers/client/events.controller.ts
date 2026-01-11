@@ -21,7 +21,7 @@ export const getEvent = async (req: AuthRequest, res: Response) => {
     const { id } = req.params
 
     try {
-        const event = await Event.findById(id)
+        const event = await Event.findById(id as string)
             .select('-content.md -createdAt -updatedAt')
             .populate({
                 path: 'speakers',
@@ -118,7 +118,7 @@ export const registerToEvent = async (req: AuthRequest, res: Response) => {
             throw new Error(`${EVENTS_ERRORS.CAPACITY_REACHED_MAXIMUM_CAPACITY}: ${event.capacity}`)
         }
 
-        const atendee = await Atendee.registerToEvent({ event_id: id, user_id })
+        const atendee = await Atendee.registerToEvent({ event_id: id as string, user_id })
 
         // Creating Ticket
         const ticketCode = await generateUniqueTicketCode(Ticket, 10)
@@ -151,7 +151,7 @@ export const unregisterFromEvent = async (req: AuthRequest, res: Response) => {
     const user_id = req.userId
 
     try {
-        const atendee = await Atendee.unregisterFromEvent({ event_id: id, user_id })
+        const atendee = await Atendee.unregisterFromEvent({ event_id: id as string, user_id })
         await Ticket.unregisterAtendeeFromEvent({ atendee_id: atendee._id.toString() })
 
         res.status(HTTP_STATUS.OK).json({
@@ -188,7 +188,7 @@ export const createInvitation = async (req: AuthRequest, res: Response) => {
         }
 
         const invitation = await Invitation.createInvitation({
-            event: id,
+            event: id as string,
             user_invited: userToInvite._id,
             invited_by: user_id,
         })
@@ -244,7 +244,7 @@ export const acceptInvitation = async (req: AuthRequest, res: Response) => {
             throw new Error(`${EVENTS_ERRORS.CAPACITY_REACHED_MAXIMUM_CAPACITY}: ${event.capacity}`)
         }
 
-        const atendee = await Atendee.registerToEvent({ event_id: id, user_id })
+        const atendee = await Atendee.registerToEvent({ event_id: id as string, user_id })
 
         const ticketCode = await generateUniqueTicketCode(Ticket, 10)
 

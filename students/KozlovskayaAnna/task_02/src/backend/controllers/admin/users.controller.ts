@@ -112,7 +112,7 @@ export const getUser = async (req: Request, res: Response) => {
             throw new Error(USER_ERRORS.ID_REQUIRED)
         }
 
-        const user = await User.findById(id).select('-password -__v').lean()
+        const user = await User.findById(id as string).select('-password -__v').lean()
 
         if (!user) {
             throw new Error(USER_ERRORS.NOT_FOUND)
@@ -148,7 +148,7 @@ export const patchUser = async (req: AdminRequest, res: Response) => {
             throw new Error(USER_ERRORS.ADMIN_SAME_ID)
         }
 
-        const user = await User.patchUser({ _id: id, email, name, role })
+        const user = await User.patchUser({ _id: id as string, email, name, role })
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
@@ -179,7 +179,7 @@ export const deleteUser = async (req: AdminRequest, res: Response) => {
             throw new Error(USER_ERRORS.ADMIN_SAME_ID)
         }
 
-        const user = await User.deleteUser({ _id: id })
+        const user = await User.deleteUser({ _id: id as string })
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
@@ -211,7 +211,7 @@ export const resetUserPassword = async (req: AdminRequest, res: Response) => {
             throw new Error(USER_ERRORS.ADMIN_SAME_ID)
         }
 
-        const user = await User.resetPassword({ _id: id, password })
+        const user = await User.resetPassword({ _id: id as string, password })
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,

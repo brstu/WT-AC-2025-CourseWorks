@@ -107,7 +107,7 @@ export const getEvent = async (req: AdminRequest, res: Response) => {
     const { id } = req.params
 
     try {
-        const event = await Event.findById(id).populate({
+        const event = await Event.findById(id as string).populate({
             path: 'speakers',
         })
 
@@ -137,13 +137,13 @@ export const patchEvent = async (req: AdminRequest, res: Response) => {
     const cover = req?.file || undefined
 
     try {
-        const existingEvent = await Event.findById(id)
+        const existingEvent = await Event.findById(id as string)
 
         if (!existingEvent) {
             throw new Error(EVENTS_ERRORS.NOT_FOUND)
         }
 
-        const patchData: PatchEventPayload = { id }
+        const patchData: PatchEventPayload = { id: id as string }
 
         if (Object.prototype.hasOwnProperty.call(req.body, 'title')) {
             patchData.title = title
@@ -236,16 +236,16 @@ export const deleteEvent = async (req: AdminRequest, res: Response) => {
     const { id } = req.params
 
     try {
-        const event = await Event.deleteEvent({ _id: id })
+        const event = await Event.deleteEvent({ _id: id as string })
 
         if (!event) {
             throw new Error(EVENTS_ERRORS.NOT_FOUND)
         }
 
         await Promise.all([
-            Atendee.deleteMany({ event_id: id }),
-            Ticket.deleteMany({ event: id }),
-            Invitation.deleteMany({ event: id }),
+            Atendee.deleteMany({ event_id: id as string }),
+            Ticket.deleteMany({ event: id as string }),
+            Invitation.deleteMany({ event: id as string }),
         ])
 
         const params = {

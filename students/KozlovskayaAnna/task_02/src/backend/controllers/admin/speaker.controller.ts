@@ -89,7 +89,7 @@ export const getSpeaker = async (req: AdminRequest, res: Response): Promise<void
     const { id } = req.params
 
     try {
-        const speaker = await Speaker.findById(id).lean()
+        const speaker = await Speaker.findById(id as string).lean()
 
         if (!speaker) {
             throw new Error(SPEAKERS_ERRORS.NOT_FOUND)
@@ -160,13 +160,13 @@ export const patchSpeaker = async (req: AdminRequest, res: Response): Promise<vo
     const upload = req?.file || undefined
 
     try {
-        const existingSpeaker = await Speaker.findById(id)
+        const existingSpeaker = await Speaker.findById(id as string)
 
         if (!existingSpeaker) {
             throw new Error(SPEAKERS_ERRORS.NOT_FOUND)
         }
 
-        const patchData: PatchSpeakerPayload = { _id: id }
+        const patchData: PatchSpeakerPayload = { _id: id as string }
 
         if (Object.prototype.hasOwnProperty.call(req.body, 'name')) {
             patchData.name = name
@@ -237,7 +237,7 @@ export const deleteSpeaker = async (req: AdminRequest, res: Response): Promise<v
     const { id } = req.params
 
     try {
-        const speaker = await Speaker.deleteSpeaker({ _id: id })
+        const speaker = await Speaker.deleteSpeaker({ _id: id as string })
 
         if (!speaker) {
             throw new Error(SPEAKERS_ERRORS.NOT_FOUND)

@@ -42,7 +42,7 @@ export const getTicket = async (req: AuthRequest, res: Response): Promise<void> 
     const { id } = req.params
 
     try {
-        const ticket = await Ticket.findById(id)
+        const ticket = await Ticket.findById(id as string)
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,

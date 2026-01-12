@@ -61,11 +61,11 @@
       {{if gt .totalPages 1}}
       <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-between align-items-center">
         <div>
-          <a class="btn btn-outline-secondary btn-sm {{if not .hasPrev}}disabled{{end}}" href="/shelves?page={{.prevPage}}&size={{.size}}">Previous</a>
+          <a class="btn btn-outline-secondary btn-sm" {{if not .hasPrev}}disabled{{end}} href="/shelves?page={{.prevPage}}&size={{.size}}">Previous</a>
         </div>
         <div>Page {{.page}} of {{.totalPages}}</div>
         <div>
-          <a class="btn btn-outline-secondary btn-sm {{if not .hasNext}}disabled{{end}}" href="/shelves?page={{.nextPage}}&size={{.size}}">Next</a>
+          <a class="btn btn-outline-secondary btn-sm" {{if not .hasNext}}disabled{{end}} href="/shelves?page={{.nextPage}}&size={{.size}}">Next</a>
         </div>
       </nav>
       {{end}}

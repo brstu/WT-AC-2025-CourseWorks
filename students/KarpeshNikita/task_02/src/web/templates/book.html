@@ -19,8 +19,8 @@
             </span>
             <span id="nav-user" style="display:none">
               <li class="nav-item"><a class="nav-link" href="/shelves">Shelves</a></li>
-              <li class="nav-item"><a class="nav-link" id="profileLink" href="/profile">Profile</a></li>
-              <li class="nav-item"><a class="nav-link" id="logoutLink" href="#">Logout</a></li>
+              <li class="nav-item"><a class="nav-link" id="profile-link" href="/profile">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" id="logout-link" href="#">Logout</a></li>
             </span>
           </ul>
         </div>
@@ -43,7 +43,7 @@
 
       <div class="mt-4">
         <h4>Leave a review</h4>
-        <form id="reviewForm" class="w-50">
+        <form id="review-form" class="w-50">
           <div class="mb-3">
             <label class="form-label">Rating</label>
             <select id="rating" class="form-select" required>
@@ -63,7 +63,7 @@
       </div>
 
       <script>
-        document.getElementById('reviewForm').addEventListener('submit', async function(e){
+        document.getElementById('review-form').addEventListener('submit', async function(e){
           e.preventDefault();
           const token = localStorage.getItem('token') || sessionStorage.getItem('token');
           if(!token){ alert('Please login to submit a review'); return; }

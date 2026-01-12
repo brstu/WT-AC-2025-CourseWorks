@@ -15,18 +15,18 @@
     </nav>
     <main class="container py-4">
       <h1>Profile</h1>
-      <div id="profileArea">Loading...</div>
+      <div id="profile-area">Loading...</div>
     </main>
     <script>
       async function load(){
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if(!token){ document.getElementById('profileArea').textContent = 'Not logged in'; return; }
+        if(!token){ document.getElementById('profile-area').textContent = 'Not logged in'; return; }
         try{
           const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer '+token } });
-          if(!res.ok){ document.getElementById('profileArea').textContent = 'Unable to fetch profile'; return; }
+          if(!res.ok){ document.getElementById('profile-area').textContent = 'Unable to fetch profile'; return; }
           const u = await res.json();
-          document.getElementById('profileArea').innerHTML = `<p><strong>Name:</strong> ${u.name || ''}</p><p><strong>Email:</strong> ${u.email}</p><p><strong>Role:</strong> ${u.role}</p>`;
-        }catch(err){ document.getElementById('profileArea').textContent = 'Network error'; }
+          document.getElementById('profile-area').innerHTML = `<p><strong>Name:</strong> ${u.name || ''}</p><p><strong>Email:</strong> ${u.email}</p><p><strong>Role:</strong> ${u.role}</p>`;
+        }catch(err){ document.getElementById('profile-area').textContent = 'Network error'; }
       }
       load();
     </script>

@@ -9,20 +9,20 @@
       if(token){ guest.style.display='none'; user.style.display='inline'; }
       else { guest.style.display='inline'; user.style.display='none'; }
     }
-    const createShelfArea = document.getElementById('createShelfArea');
+    const createShelfArea = document.getElementById('create-shelf-area');
     if(createShelfArea){ createShelfArea.classList.toggle('d-none', !token); }
   }
 
   document.addEventListener('DOMContentLoaded', ()=>{
     updateNav();
-    const logout = document.getElementById('logoutLink');
+    const logout = document.getElementById('logout-link');
     if(logout) logout.addEventListener('click', (e)=>{ e.preventDefault(); localStorage.removeItem('token'); sessionStorage.removeItem('token'); updateNav(); location.reload(); });
 
-    const createForm = document.getElementById('createShelfForm');
+    const createForm = document.getElementById('create-shelf-form');
     if(createForm){
       createForm.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const nameEl = document.getElementById('shelfName');
+        const nameEl = document.getElementById('shelf-name');
         const name = nameEl && nameEl.value.trim();
         if(!name){ alert('Enter shelf name'); return; }
         const token = getToken();

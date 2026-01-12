@@ -19,8 +19,8 @@
             </span>
             <span id="nav-user" style="display:none">
               <li class="nav-item"><a class="nav-link" href="/shelves">Shelves</a></li>
-              <li class="nav-item"><a class="nav-link" id="profileLink" href="/profile">Profile</a></li>
-              <li class="nav-item"><a class="nav-link" id="logoutLink" href="#">Logout</a></li>
+              <li class="nav-item"><a class="nav-link" id="profile-link" href="/profile">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" id="logout-link" href="#">Logout</a></li>
             </span>
           </ul>
         </div>
@@ -28,7 +28,7 @@
     </nav>
     <main class="container py-4">
       <h1>Add a New Book</h1>
-      <form id="bookForm" class="w-50">
+      <form id="book-form" class="w-50">
         <div class="mb-3">
           <label class="form-label">Title</label>
           <input type="text" name="title" class="form-control" required>
@@ -41,7 +41,7 @@
       </form>
       <script src="/assets/app.js"></script>
       <script>
-        document.getElementById('bookForm').addEventListener('submit', async function(e){
+        document.getElementById('book-form').addEventListener('submit', async function(e){
           e.preventDefault();
           const f = e.target;
           const token = localStorage.getItem('token') || sessionStorage.getItem('token');

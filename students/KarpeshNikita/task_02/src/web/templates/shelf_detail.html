@@ -19,8 +19,8 @@
             </span>
             <span id="nav-user" style="display:none">
               <li class="nav-item"><a class="nav-link" href="/shelves">Shelves</a></li>
-              <li class="nav-item"><a class="nav-link" id="profileLink" href="/profile">Profile</a></li>
-              <li class="nav-item"><a class="nav-link" id="logoutLink" href="#">Logout</a></li>
+              <li class="nav-item"><a class="nav-link" id="profile-link" href="/profile">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" id="logout-link" href="#">Logout</a></li>
             </span>
           </ul>
         </div>
@@ -50,8 +50,8 @@
 
       <div class="mt-4">
         <h4>Add book to shelf</h4>
-        <form id="addBookForm" class="d-flex gap-2">
-          <select id="bookSelect" class="form-select">
+        <form id="add-book-form" class="d-flex gap-2">
+          <select id="book-select" class="form-select">
             {{range .allBooks}}
             <option value="{{.ID}}">{{.Title}}</option>
             {{end}}
@@ -63,9 +63,9 @@
 
     <script src="/assets/app.js"></script>
     <script>
-      document.getElementById('addBookForm').addEventListener('submit', async function(e){
+      document.getElementById('add-book-form').addEventListener('submit', async function(e){
         e.preventDefault();
-        const bookID = parseInt(document.getElementById('bookSelect').value, 10);
+        const bookID = parseInt(document.getElementById('book-select').value, 10);
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if(!token){ alert('Login required'); return; }
         const shelfID = {{.shelf.ID}};

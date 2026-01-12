@@ -125,7 +125,7 @@ func TestLoginRegisterPages(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("register page failed: %d", w.Code)
 	}
-	if !strings.Contains(w.Body.String(), "regForm") {
+	if !strings.Contains(w.Body.String(), "reg-form") {
 		t.Fatalf("register page content missing")
 	}
 }

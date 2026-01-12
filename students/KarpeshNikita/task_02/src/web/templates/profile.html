@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Books</a>
+      </div>
+    </nav>
+    <main class="container py-4">
+      <h1>Profile</h1>
+      <div id="profileArea">Loading...</div>
+    </main>
+    <script>
+      async function load(){
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if(!token){ document.getElementById('profileArea').textContent = 'Not logged in'; return; }
+        try{
+          const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer '+token } });
+          if(!res.ok){ document.getElementById('profileArea').textContent = 'Unable to fetch profile'; return; }
+          const u = await res.json();
+          document.getElementById('profileArea').innerHTML = `<p><strong>Name:</strong> ${u.name || ''}</p><p><strong>Email:</strong> ${u.email}</p><p><strong>Role:</strong> ${u.role}</p>`;
+        }catch(err){ document.getElementById('profileArea').textContent = 'Network error'; }
+      }
+      load();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

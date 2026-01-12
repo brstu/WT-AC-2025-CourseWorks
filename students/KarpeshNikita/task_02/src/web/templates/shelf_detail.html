@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shelf</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Books</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ms-auto">
+            <span id="nav-guest">
+              <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+              <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+            </span>
+            <span id="nav-user" style="display:none">
+              <li class="nav-item"><a class="nav-link" href="/shelves">Shelves</a></li>
+              <li class="nav-item"><a class="nav-link" id="profileLink" href="/profile">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" id="logoutLink" href="#">Logout</a></li>
+            </span>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <main class="container py-4">
+      <a href="/shelves" class="btn btn-link">← Back to Shelves</a>
+      <h1>{{.shelf.Name}}</h1>
+      <p>Owner: {{.shelf.UserID}}</p>
+
+      <h3 class="mt-4">Books in this shelf</h3>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {{range .books}}
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{.Title}}</h5>
+              <p class="card-text">{{.Description}}</p>
+              <a href="/books/{{.ID}}" class="btn btn-sm btn-primary">View</a>
+            </div>
+          </div>
+        </div>
+        {{else}}
+        <div class="col-12">No books in this shelf.</div>
+        {{end}}
+      </div>
+
+      <div class="mt-4">
+        <h4>Add book to shelf</h4>
+        <form id="addBookForm" class="d-flex gap-2">
+          <select id="bookSelect" class="form-select">
+            {{range .allBooks}}
+            <option value="{{.ID}}">{{.Title}}</option>
+            {{end}}
+          </select>
+          <button class="btn btn-success" type="submit">Add</button>
+        </form>
+      </div>
+    </main>
+
+    <script src="/assets/app.js"></script>
+    <script>
+      document.getElementById('addBookForm').addEventListener('submit', async function(e){
+        e.preventDefault();
+        const bookID = parseInt(document.getElementById('bookSelect').value, 10);
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if(!token){ alert('Login required'); return; }
+        const shelfID = {{.shelf.ID}};
+        try{
+          const res = await fetch('/api/shelves/'+shelfID+'/books', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+token },
+            body: JSON.stringify({ book_id: bookID })
+          });
+          if(res.ok) location.reload(); else { const d=await res.json().catch(()=>({})); alert(d.error||'Failed'); }
+        }catch(err){ alert('Network error'); }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

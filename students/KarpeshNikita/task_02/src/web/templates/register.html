@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Books</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ms-auto">
+            <span id="nav-guest">
+              <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+              <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+            </span>
+            <span id="nav-user" style="display:none">
+              <li class="nav-item"><a class="nav-link" href="/shelves">Shelves</a></li>
+              <li class="nav-item"><a class="nav-link" id="profileLink" href="/profile">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" id="logoutLink" href="#">Logout</a></li>
+            </span>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <main class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <h1 class="mb-3">Register</h1>
+          <div id="alert" class="alert d-none" role="alert"></div>
+          <form id="regForm" novalidate>
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input id="name" type="text" name="name" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input id="email" type="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input id="password" type="password" name="password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirm" class="form-label">Confirm password</label>
+              <input id="confirm" type="password" name="confirm" class="form-control" required>
+            </div>
+            <button class="btn btn-primary" type="submit">Register</button>
+            <a class="btn btn-link" href="/login">Already have an account?</a>
+          </form>
+        </div>
+      </div>
+      <script src="/assets/app.js"></script>
+      <script>
+        const showAlert = (msg, type = 'danger') => {
+          const a = document.getElementById('alert');
+          a.className = 'alert alert-' + type;
+          a.textContent = msg;
+          a.classList.remove('d-none');
+        };
+
+        document.getElementById('regForm').addEventListener('submit', async function(e){
+          e.preventDefault();
+          const f = e.target;
+          const name = f.name.value.trim();
+          const email = f.email.value.trim();
+          const password = f.password.value;
+          const confirm = f.confirm.value;
+          if(!email || !password) {
+            showAlert('Please enter email and password');
+            return;
+          }
+          if(password.length < 6) {
+            showAlert('Password must be at least 6 characters');
+            return;
+          }
+          if(password !== confirm) {
+            showAlert('Passwords do not match');
+            return;
+          }
+          try {
+            const res = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});
+            if(res.ok){
+              showAlert('Registration successful — redirecting to login...', 'success');
+              setTimeout(()=>window.location.href='/login',1000);
+            } else {
+              const err = await res.json().catch(()=>({error:'Registration failed'}));
+              showAlert(err.error || 'Registration failed');
+            }
+          } catch (err) {
+            showAlert('Network error');
+          }
+        });
+      </script>
+    </main>
+  </body>
+</html>
+ 

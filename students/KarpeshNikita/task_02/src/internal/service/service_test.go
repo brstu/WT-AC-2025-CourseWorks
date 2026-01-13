@@ -62,6 +62,12 @@ func (r *fakeRepo) ListReviewsByBook(bookID int) ([]models.Review, error) {
 	return []models.Review{}, nil
 }
 
+func (r *fakeRepo) GetShelf(id int) (*models.Shelf, error) { return nil, nil }
+func (r *fakeRepo) ListBooksByShelf(shelfID int) ([]models.Book, error) { return []models.Book{}, nil }
+func (r *fakeRepo) AddBookToShelf(shelfID int, bookID int) error { return nil }
+func (r *fakeRepo) GetUserByID(id int) (*models.User, error) { return nil, nil }
+func (r *fakeRepo) UpdateUserRole(userID int, role string) error { return nil }
+
 func TestRegisterAndAuth(t *testing.T) {
 	r := newFakeRepo()
 	svc := NewService(r)

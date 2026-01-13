@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -42,6 +43,12 @@ func (h *Handler) RegisterRoutes(r *gin.Engine) {
 			books.GET(":id", h.GetBook)
 			books.PUT(":id", h.AuthMiddleware(), h.UpdateBook)
 			books.DELETE(":id", h.AuthMiddleware(), h.DeleteBook)
+
+			// Import/Export
+			books.GET("/export/json", h.AuthMiddleware(), h.ExportBooksJSON)
+			books.GET("/export/csv", h.AuthMiddleware(), h.ExportBooksCSV)
+			books.POST("/import/json", h.AuthMiddleware(), h.RequireRole("admin"), h.ImportBooksJSON)
+			books.POST("/import/csv", h.AuthMiddleware(), h.RequireRole("admin"), h.ImportBooksCSV)
 		}
 
 		shelves := api.Group("/shelves")
@@ -76,7 +83,11 @@ func (h *Handler) RegisterRoutes(r *gin.Engine) {
 }
 
 func (h *Handler) Index(c *gin.Context) {
-	books, _ := h.svc.ListBooks()
+	books, err := h.svc.ListBooks()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	// prevent caching of the main page which may show auth-dependent content
 	c.Header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 	c.Header("Pragma", "no-cache")
@@ -84,9 +95,20 @@ func (h *Handler) Index(c *gin.Context) {
 }
 
 func (h *Handler) BookPage(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	b, _ := h.svc.GetBook(id)
-	reviews, _ := h.svc.ListReviews(id)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	b, err := h.svc.GetBook(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
+		return
+	}
+	reviews, err := h.svc.ListReviews(id)
+	if err != nil {
+		reviews = []service.ReviewModel{} // allow page to render even if reviews fail, but handle error
+	}
 	c.HTML(http.StatusOK, "book.html", gin.H{"book": b, "reviews": reviews})
 }
 
@@ -134,12 +156,12 @@ func (h *Handler) ShelvesPage(c *gin.Context) {
 	// pagination params
 	pageStr := c.DefaultQuery("page", "1")
 	sizeStr := c.DefaultQuery("size", "10")
-	page, _ := strconv.Atoi(pageStr)
-	size, _ := strconv.Atoi(sizeStr)
-	if page < 1 {
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
 		page = 1
 	}
-	if size < 1 {
+	size, err := strconv.Atoi(sizeStr)
+	if err != nil || size < 1 {
 		size = 10
 	}
 
@@ -300,7 +322,11 @@ func (h *Handler) CreateBook(c *gin.Context) {
 
 // UpdateUserRole API handler (admin only)
 func (h *Handler) UpdateUserRole(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+		return
+	}
 	var req struct {
 		Role string `json:"role" binding:"required"`
 	}
@@ -325,7 +351,11 @@ func (h *Handler) UpdateUserRole(c *gin.Context) {
 // @Failure 404 {object} map[string]string
 // @Router /api/books/{id} [get]
 func (h *Handler) GetBook(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
 	b, err := h.svc.GetBook(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
@@ -348,7 +378,11 @@ func (h *Handler) GetBook(c *gin.Context) {
 // @Security bearerAuth
 // @Router /api/books/{id} [put]
 func (h *Handler) UpdateBook(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
 	var b struct {
 		Title       string `json:"title"`
 		Description string `json:"description"`
@@ -376,7 +410,11 @@ func (h *Handler) UpdateBook(c *gin.Context) {
 // @Security bearerAuth
 // @Router /api/books/{id} [delete]
 func (h *Handler) DeleteBook(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
 	if err := h.svc.DeleteBook(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -392,7 +430,11 @@ func (h *Handler) DeleteBook(c *gin.Context) {
 // @Success 200 {array} models.Shelf
 // @Router /api/shelves [get]
 func (h *Handler) ListShelves(c *gin.Context) {
-	s, _ := h.svc.ListShelves()
+	s, err := h.svc.ListShelves()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, s)
 }
 
@@ -416,8 +458,17 @@ func (h *Handler) CreateShelf(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	uid, _ := c.Get("user_id")
-	shelf := &service.ShelfModel{UserID: uid.(int), Name: sh.Name}
+	uidVal, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	uid, ok := uidVal.(int)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id"})
+		return
+	}
+	shelf := &service.ShelfModel{UserID: uid, Name: sh.Name}
 	if err := h.svc.CreateShelfFromModel(shelf); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -447,8 +498,17 @@ func (h *Handler) CreateReview(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	uid, _ := c.Get("user_id")
-	rev := &service.ReviewModel{UserID: uid.(int), BookID: r.BookID, Text: r.Text, Rating: r.Rating}
+	uidVal, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	uid, ok := uidVal.(int)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id"})
+		return
+	}
+	rev := &service.ReviewModel{UserID: uid, BookID: r.BookID, Text: r.Text, Rating: r.Rating}
 	if err := h.svc.CreateReviewFromModel(rev); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -458,7 +518,11 @@ func (h *Handler) CreateReview(c *gin.Context) {
 
 // AddBookToShelf API: POST /api/shelves/:id/books
 func (h *Handler) AddBookToShelf(c *gin.Context) {
-	sid, _ := strconv.Atoi(c.Param("id"))
+	sid, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid shelf id"})
+		return
+	}
 	var req struct {
 		BookID int `json:"book_id" binding:"required"`
 	}
@@ -475,21 +539,40 @@ func (h *Handler) AddBookToShelf(c *gin.Context) {
 
 // ShelfPage UI: show shelf and its books
 func (h *Handler) ShelfPage(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.String(http.StatusBadRequest, "invalid shelf id")
+		return
+	}
 	shelf, err := h.svc.GetShelf(id)
 	if err != nil {
 		c.String(http.StatusNotFound, "shelf not found")
 		return
 	}
-	books, _ := h.svc.ListBooksByShelf(id)
-	allBooks, _ := h.svc.ListBooks()
+	books, err := h.svc.ListBooksByShelf(id)
+	if err != nil {
+		books = []service.BookModel{}
+	}
+	allBooks, err := h.svc.ListBooks()
+	if err != nil {
+		allBooks = []service.BookModel{}
+	}
 	c.HTML(http.StatusOK, "shelf_detail.html", gin.H{"shelf": shelf, "books": books, "allBooks": allBooks})
 }
 
 // Me returns current authenticated user (API)
 func (h *Handler) Me(c *gin.Context) {
-	uid, _ := c.Get("user_id")
-	u, err := h.svc.GetUserByID(uid.(int))
+	uidVal, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	uid, ok := uidVal.(int)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id"})
+		return
+	}
+	u, err := h.svc.GetUserByID(uid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -545,4 +628,74 @@ func envOrDefault(k, def string) string {
 		return def
 	}
 	return v
+}
+
+func (h *Handler) ExportBooksJSON(c *gin.Context) {
+	data, err := h.svc.ExportBooksJSON()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.Header("Content-Disposition", "attachment; filename=books.json")
+	c.Data(http.StatusOK, "application/json", data)
+}
+
+func (h *Handler) ExportBooksCSV(c *gin.Context) {
+	data, err := h.svc.ExportBooksCSV()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.Header("Content-Disposition", "attachment; filename=books.csv")
+	c.Data(http.StatusOK, "text/csv", data)
+}
+
+func (h *Handler) ImportBooksJSON(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
+		return
+	}
+	f, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer f.Close()
+	content, err := io.ReadAll(f)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.svc.ImportBooksJSON(content); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "imported successfully"})
+}
+
+func (h *Handler) ImportBooksCSV(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
+		return
+	}
+	f, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer f.Close()
+	content, err := io.ReadAll(f)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.svc.ImportBooksCSV(content); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "imported successfully"})
 }

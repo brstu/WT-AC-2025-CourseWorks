@@ -39,4 +39,32 @@
       });
     }
   });
+    const importToggle = document.getElementById('import-toggle');
+    const importArea = document.getElementById('import-area');
+    const importForm = document.getElementById('import-form');
+    if(importToggle && importArea){
+      importToggle.addEventListener('click', ()=>{ importArea.classList.toggle('d-none'); });
+    }
+    if(importForm){
+      importForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const fileEl = document.getElementById('import-file');
+        const formatEl = document.getElementById('import-format');
+        if(!fileEl || !fileEl.files || fileEl.files.length === 0){ alert('Select a file to import'); return; }
+        const file = fileEl.files[0];
+        const format = formatEl && formatEl.value === 'csv' ? 'csv' : 'json';
+        const fd = new FormData();
+        fd.append('file', file, file.name);
+        const token = getToken();
+        try{
+          const res = await fetch('/api/books/import/' + format, {
+            method: 'POST',
+            headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+            body: fd
+          });
+          if(res.ok){ alert('Imported successfully'); location.reload(); }
+          else { const d = await res.json().catch(()=>({})); alert(d.error || 'Import failed'); }
+        }catch(err){ alert('Network error'); }
+      });
+    }
 })();

@@ -47,6 +47,12 @@ func (r *memRepo) ListReviewsByBook(bookID int) ([]models.Review, error) {
 	return []models.Review{}, nil
 }
 
+func (r *memRepo) GetShelf(id int) (*models.Shelf, error) { return nil, nil }
+func (r *memRepo) ListBooksByShelf(shelfID int) ([]models.Book, error) { return []models.Book{}, nil }
+func (r *memRepo) AddBookToShelf(shelfID int, bookID int) error { return nil }
+func (r *memRepo) GetUserByID(id int) (*models.User, error) { return nil, nil }
+func (r *memRepo) UpdateUserRole(userID int, role string) error { return nil }
+
 func TestRegisterLoginProtected(t *testing.T) {
 	r := newMemRepo()
 	svc := service.NewService(r)
@@ -60,7 +66,10 @@ func TestRegisterLoginProtected(t *testing.T) {
 	// register
 	w := httptest.NewRecorder()
 	reg := map[string]string{"email": "user@test.com", "password": "secret", "name": "User"}
-	b, _ := json.Marshal(reg)
+	b, err := json.Marshal(reg)
+	if err != nil {
+		t.Fatalf("marshal register payload: %v", err)
+	}
 	req := httptest.NewRequest("POST", "/api/register", bytes.NewReader(b))
 	req.Header.Set("Content-Type", "application/json")
 	router.ServeHTTP(w, req)
@@ -71,7 +80,10 @@ func TestRegisterLoginProtected(t *testing.T) {
 	// login
 	w = httptest.NewRecorder()
 	lg := map[string]string{"email": "user@test.com", "password": "secret"}
-	b, _ = json.Marshal(lg)
+	b, err = json.Marshal(lg)
+	if err != nil {
+		t.Fatalf("marshal login payload: %v", err)
+	}
 	req = httptest.NewRequest("POST", "/api/login", bytes.NewReader(b))
 	req.Header.Set("Content-Type", "application/json")
 	router.ServeHTTP(w, req)
@@ -79,7 +91,9 @@ func TestRegisterLoginProtected(t *testing.T) {
 		t.Fatalf("login failed: %d %s", w.Code, w.Body.String())
 	}
 	var res map[string]string
-	json.Unmarshal(w.Body.Bytes(), &res)
+	if err := json.Unmarshal(w.Body.Bytes(), &res); err != nil {
+		t.Fatalf("unmarshal login response: %v", err)
+	}
 	tok := res["token"]
 	if tok == "" {
 		t.Fatalf("no token returned")
@@ -88,7 +102,10 @@ func TestRegisterLoginProtected(t *testing.T) {
 	// create shelf with auth
 	w = httptest.NewRecorder()
 	shelf := map[string]string{"name": "Favorites"}
-	b, _ = json.Marshal(shelf)
+	b, err = json.Marshal(shelf)
+	if err != nil {
+		t.Fatalf("marshal shelf payload: %v", err)
+	}
 	req = httptest.NewRequest("POST", "/api/shelves", bytes.NewReader(b))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+tok)

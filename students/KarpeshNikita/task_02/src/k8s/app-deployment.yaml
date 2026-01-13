@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: books-app
+  namespace: books-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: books-app
+  template:
+    metadata:
+      labels:
+        app: books-app
+    spec:
+      containers:
+        - name: books
+          image: books:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: postgres://postgres:postgres@postgres:5432/books?sslmode=disable
+          # If your app expects files under /web or /migrations at runtime
+          # consider including them in the image or mounting a ConfigMap/Volume.

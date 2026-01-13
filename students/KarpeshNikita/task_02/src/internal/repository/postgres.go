@@ -54,11 +54,9 @@ func (r *PostgresRepository) ListBooks() ([]models.Book, error) {
 
 func (r *PostgresRepository) CreateBook(b *models.Book) error {
 	row := r.db.QueryRowx("INSERT INTO books (title, description, author_id) VALUES ($1,$2,$3) RETURNING id, created_at", b.Title, b.Description, b.AuthorID)
-	var t string
 	if err := row.Scan(&b.ID, &b.CreatedAt); err != nil {
 		return err
 	}
-	_ = t
 	return nil
 }
 

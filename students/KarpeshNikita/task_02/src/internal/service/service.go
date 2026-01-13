@@ -1,7 +1,12 @@
 package service
 
 import (
+	"bytes"
+	"encoding/csv"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/example/books/internal/repository"
 	"github.com/example/books/pkg/models"
@@ -18,10 +23,13 @@ func NewService(r repository.Repository) *Service {
 
 func (s *Service) RegisterUser(email, password, name string) (*models.User, error) {
 	// check existing
-	if u, _ := s.repo.GetUserByEmail(email); u != nil && u.ID != 0 {
+	if u, err := s.repo.GetUserByEmail(email); err == nil && u != nil && u.ID != 0 {
 		return nil, errors.New("user exists")
 	}
-	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
 	u := &models.User{Email: email, PasswordHash: string(hash), Name: name, Role: "user"}
 	if err := s.repo.CreateUser(u); err != nil {
 		return nil, err
@@ -135,4 +143,96 @@ func (s *Service) CreateReviewFromModel(m *ReviewModel) error {
 
 func (s *Service) ListReviews(bookID int) ([]models.Review, error) {
 	return s.repo.ListReviewsByBook(bookID)
+}
+	
+func (s *Service) ExportBooksJSON() ([]byte, error) {
+	books, err := s.repo.ListBooks()
+	if err != nil {
+		return nil, err
+	}
+	return json.MarshalIndent(books, "", "  ")
+}
+
+func (s *Service) ExportBooksCSV() ([]byte, error) {
+	books, err := s.repo.ListBooks()
+	if err != nil {
+		return nil, err
+	}
+
+	var buf bytes.Buffer
+	w := csv.NewWriter(&buf)
+
+	// header
+	if err := w.Write([]string{"ID", "Title", "Description", "AuthorID", "CreatedAt"}); err != nil {
+		return nil, err
+	}
+
+	for _, b := range books {
+		row := []string{
+			strconv.Itoa(b.ID),
+			b.Title,
+			b.Description,
+			strconv.Itoa(b.AuthorID),
+			b.CreatedAt.String(),
+		}
+		if err := w.Write(row); err != nil {
+			return nil, err
+		}
+	}
+	w.Flush()
+	if err := w.Error(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+func (s *Service) ImportBooksJSON(data []byte) error {
+	var books []models.Book
+	if err := json.Unmarshal(data, &books); err != nil {
+		return err
+	}
+	for _, b := range books {
+		// reset ID to let DB generate it if needed, or keep it if we want to preserve IDs?
+		// usually import creates new records.
+		b.ID = 0 
+		if err := s.repo.CreateBook(&b); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *Service) ImportBooksCSV(data []byte) error {
+	r := csv.NewReader(bytes.NewReader(data))
+	rows, err := r.ReadAll()
+	if err != nil {
+		return err
+	}
+	if len(rows) < 2 {
+		return nil
+	}
+
+	for i, row := range rows {
+		if i == 0 {
+			continue // skip header
+		}
+		if len(row) < 4 {
+			continue
+		}
+		title := row[1]
+		desc := row[2]
+		authorID, err := strconv.Atoi(row[3])
+		if err != nil {
+			return fmt.Errorf("invalid author id on row %d: %w", i+1, err)
+		}
+
+		b := &models.Book{
+			Title:       title,
+			Description: desc,
+			AuthorID:    authorID,
+		}
+		if err := s.repo.CreateBook(b); err != nil {
+			return err
+		}
+	}
+	return nil
 }

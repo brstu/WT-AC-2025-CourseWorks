@@ -30,6 +30,12 @@ func (r *tinyRepo) ListReviewsByBook(bookID int) ([]models.Review, error) {
 	return []models.Review{}, nil
 }
 
+func (r *tinyRepo) GetShelf(id int) (*models.Shelf, error)            { return nil, nil }
+func (r *tinyRepo) ListBooksByShelf(shelfID int) ([]models.Book, error) { return []models.Book{}, nil }
+func (r *tinyRepo) AddBookToShelf(shelfID int, bookID int) error        { return nil }
+func (r *tinyRepo) GetUserByID(id int) (*models.User, error)           { return nil, nil }
+func (r *tinyRepo) UpdateUserRole(userID int, role string) error       { return nil }
+
 func TestDocsPage(t *testing.T) {
 	r := &tinyRepo{}
 	svc := service.NewService(r)

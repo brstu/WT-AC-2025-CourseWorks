@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD029 MD031 MD009 MD024 -->
+<!-- markdownlint-disable-file MD029 MD031 MD009 MD024 -->
 # Микро-шоп «Добавь в корзину»
 
 Full-stack веб-приложение для электронной коммерции (вариант 13 курсового проекта).

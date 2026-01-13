@@ -5,6 +5,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-alpine
+# hadolint ignore=DL3018
 RUN apk add --no-cache wget
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar

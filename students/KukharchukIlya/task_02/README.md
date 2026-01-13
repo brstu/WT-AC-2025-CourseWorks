@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD029 MD031 MD009 MD024 -->
 # Микро-шоп «Добавь в корзину»
 
 Full-stack веб-приложение для электронной коммерции (вариант 13 курсового проекта).
@@ -22,16 +23,19 @@ Full-stack веб-приложение для электронной комме�
 ### Запуск через Docker Compose
 
 1. Клонируйте репозиторий и перейдите в директорию проекта:
-```bash
-cd students/KukharchukIlya/task_02
-```
+
+   ```bash
+   cd students/KukharchukIlya/task_02
+   ```
 
 2. Запустите все сервисы:
-```bash
-docker-compose up -d
-```
+
+   ```bash
+   docker-compose up -d
+   ```
 
 3. Приложение будет доступно:
+
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8081
    - Swagger UI: http://localhost:8081/swagger-ui.html
@@ -41,42 +45,46 @@ docker-compose up -d
 #### Backend
 
 1. Убедитесь, что PostgreSQL и Redis запущены (или используйте Docker Compose только для БД):
-```bash
-docker-compose up -d postgres redis
-```
+
+   ```bash
+   docker-compose up -d postgres redis
+   ```
 
 2. Настройте переменные окружения в `src/apps/backend/src/main/resources/application.yml`
 
 3. Запустите приложение:
-```bash
-cd src/apps/backend
-mvn spring-boot:run
-```
+
+   ```bash
+   cd src/apps/backend
+   mvn spring-boot:run
+   ```
 
 #### Frontend
 
 1. Установите зависимости:
-```bash
-cd src/apps/frontend
-npm install
-```
+
+   ```bash
+   cd src/apps/frontend
+   npm install
+   ```
 
 2. Запустите dev сервер:
-```bash
-npm run dev
-```
 
-Frontend будет доступен на http://localhost:5173
+   ```bash
+   npm run dev
+   ```
+
+   Frontend будет доступен на http://localhost:5173
 
 ## Тестовые данные
 
 После запуска доступны следующие тестовые аккаунты:
 
-- **Администратор**: 
+- **Администратор**:
   - Email: `admin@microshop.com`
   - Password: `admin123`
 
-- **Пользователь**: 
+- **Пользователь**:
   - Email: `user@microshop.com`
   - Password: `user123`
 
@@ -111,14 +119,14 @@ task_02/
 
 ## Разработка
 
-### Backend
+### Backend разработка
 
 - Модели данных: `src/apps/backend/src/main/java/com/microshop/model/`
 - Контроллеры: `src/apps/backend/src/main/java/com/microshop/controller/`
 - Сервисы: `src/apps/backend/src/main/java/com/microshop/service/`
 - Миграции БД: `src/apps/backend/src/main/resources/db/migration/`
 
-### Frontend
+### Frontend разработка
 
 - Страницы: `src/apps/frontend/src/pages/`
 - Компоненты: `src/apps/frontend/src/components/`

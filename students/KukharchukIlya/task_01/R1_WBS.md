@@ -2,7 +2,7 @@
 
 - Эпик A. Модель данных и миграции
   - Фичи: схемы User/Product/CartItem/Order/OrderItem/Address/Coupon/Payment; миграции Flyway
-  - Задачи: 
+  - Задачи:
     - A1. Описать JPA сущности и связи (User, Product, CartItem, Order, OrderItem, Address, Coupon, Payment)
     - A2. Написать Flyway миграции для создания таблиц
     - A3. Создать индексы для оптимизации запросов

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/example/books/internal/auth"
+	"github.com/example/books/internal/metrics"
 	"github.com/example/books/internal/service"
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,9 @@ func NewHandler(s *service.Service) *Handler {
 
 // RegisterRoutes registers all HTTP routes on the provided Gin engine.
 func (h *Handler) RegisterRoutes(r *gin.Engine) {
+	// instrumentation middleware (Prometheus)
+	r.Use(metrics.GinMiddleware())
+
 	// static assets & templates
 	r.Static("/assets", "./web/static")
 	r.LoadHTMLGlob("web/templates/*")

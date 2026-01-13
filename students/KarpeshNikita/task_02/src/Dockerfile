@@ -1,4 +1,4 @@
-FROM golang:1.25.5-alphine AS build
+FROM golang:1.25.5-alpine AS build
 WORKDIR /app
 COPY . .
 # build static binary for linux to avoid glibc mismatch in distroless base

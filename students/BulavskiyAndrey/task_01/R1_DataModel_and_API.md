@@ -94,7 +94,7 @@
 
 ### 1.7. Poll / Choice / Vote
 
-**Poll**
+## Poll
 
 - `id: UUID`
 - `group_id: reference -> Group.id`
@@ -105,14 +105,14 @@
 - `expires_at: datetime` — дедлайн голосования.
 - `created_at: datetime`
 
-**Choice**
+## Choice
 
 - `id: UUID`
 - `poll_id: reference -> Poll.id`
 - `text: string`
 - `order: integer`
 
-**Vote**
+## Vote
 
 - `id: UUID`
 - `poll_id: reference -> Poll.id`
@@ -127,7 +127,7 @@
 
 ### 1.8. Chat / Message
 
-**Chat**
+## Chat
 
 - `id: UUID`
 - `group_id: reference -> Group.id`
@@ -137,7 +137,7 @@
 - `created_by: reference -> User.id`
 - `created_at: datetime`
 
-**Message**
+## Message
 
 - `id: UUID`
 - `chat_id: reference -> Chat.id`
@@ -357,5 +357,3 @@ API может быть реализован как `/events`, но по усл�
 - **Тесты**:
   - unit‑тесты для бизнес‑логики (ограничения голосований, прав в чатах и т. д.).
   - интеграционные тесты для ключевых потоков: объявление → файловое хранилище → событие → опрос → чат.
-
-

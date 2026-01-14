@@ -295,5 +295,3 @@ CREATE INDEX idx_polls_group_id ON polls(group_id);
 CREATE INDEX idx_chats_group_id ON chats(group_id);
 CREATE INDEX idx_messages_chat_id ON messages(chat_id);
 ```
-
-

@@ -27,6 +27,29 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    Success:
+      description: Успешная операция
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: ok
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Conflict:
+      description: Конфликт (например, пользователь уже существует)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
   schemas:
     ApiResponse:
       type: object
@@ -875,27 +898,3 @@ paths:
       responses:
         '201':
           description: Сообщение отправлено
-components:
-  responses:
-    Success:
-      description: Успешная операция
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: ok
-    Unauthorized:
-      description: Не авторизован
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    Conflict:
-      description: Конфликт (например, пользователь уже существует)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'

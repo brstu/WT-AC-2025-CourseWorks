@@ -1,0 +1,902 @@
+---
+openapi: 3.0.3
+info:
+  title: "Органайзер группы «Без лишних чатов» API (Variant 33)"
+  version: 1.0.0
+  description: |
+    REST API для органайзера учебной/рабочей группы с объявлениями, файлами, календарём, опросами и чатами.
+
+    - JWT аутентификация (access token в заголовке Authorization)
+    - refresh token хранится в HttpOnly cookie (`refresh_token`)
+    - Роли в группах: admin, moderator, member, guest
+servers:
+  - url: http://localhost:3000/api
+    description: Local development
+tags:
+  - name: Auth
+  - name: Groups
+  - name: Announcements
+  - name: Files
+  - name: Calendar
+  - name: Polls
+  - name: Chats
+  - name: Health
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ApiResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          example: ok
+        data:
+          description: Полезная нагрузка
+          nullable: true
+        meta:
+          type: object
+          description: Метаданные (пагинация и т.д.)
+          nullable: true
+    ApiError:
+      type: object
+      required: [status, error]
+      properties:
+        status:
+          type: string
+          example: error
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              example: validation_failed
+            message:
+              type: string
+              example: Validation failed
+            fields:
+              description: Структура ошибок Zod (при валидации)
+              type: object
+    MembershipRole:
+      type: string
+      enum: [admin, moderator, member, guest]
+    User:
+      type: object
+      required: [id, email, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AuthTokens:
+      type: object
+      required: [accessToken, user]
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token (передаётся в Authorization)
+        user:
+          $ref: '#/components/schemas/User'
+    Group:
+      type: object
+      required: [id, name, isPrivate, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        isPrivate:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    Announcement:
+      type: object
+      required: [id, groupId, authorId, title, content, isPinned, isPublic, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        authorId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        isPinned:
+          type: boolean
+        isPublic:
+          type: boolean
+        publishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        author:
+          $ref: '#/components/schemas/User'
+    File:
+      type: object
+      required: [id, groupId, uploaderId, name, filePath, fileSize, mimeType, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        uploaderId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        filePath:
+          type: string
+        fileSize:
+          type: integer
+        mimeType:
+          type: string
+        category:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        uploader:
+          $ref: '#/components/schemas/User'
+    EventType:
+      type: string
+      enum: [lecture, deadline, exam, meeting, other]
+    Event:
+      type: object
+      required: [id, groupId, creatorId, title, startAt, endAt, type, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        creatorId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+        location:
+          type: string
+          nullable: true
+        type:
+          $ref: '#/components/schemas/EventType'
+        createdAt:
+          type: string
+          format: date-time
+        creator:
+          $ref: '#/components/schemas/User'
+    Poll:
+      type: object
+      required: [id, groupId, creatorId, question, isAnonymous, isMultipleChoice, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        creatorId:
+          type: string
+          format: uuid
+        question:
+          type: string
+        isAnonymous:
+          type: boolean
+        isMultipleChoice:
+          type: boolean
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        creator:
+          $ref: '#/components/schemas/User'
+        choices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Choice'
+    Choice:
+      type: object
+      required: [id, pollId, text, order]
+      properties:
+        id:
+          type: string
+          format: uuid
+        pollId:
+          type: string
+          format: uuid
+        text:
+          type: string
+        order:
+          type: integer
+    ChatType:
+      type: string
+      enum: [group, private, topic]
+    Chat:
+      type: object
+      required: [id, groupId, title, type, isReadOnly, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        type:
+          $ref: '#/components/schemas/ChatType'
+        isReadOnly:
+          type: boolean
+        createdById:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: '#/components/schemas/User'
+    Message:
+      type: object
+      required: [id, chatId, authorId, content, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        chatId:
+          type: string
+          format: uuid
+        authorId:
+          type: string
+          format: uuid
+        content:
+          type: string
+        attachments:
+          type: array
+          items: {}
+        createdAt:
+          type: string
+          format: date-time
+        editedAt:
+          type: string
+          format: date-time
+          nullable: true
+        isDeleted:
+          type: boolean
+        author:
+          $ref: '#/components/schemas/User'
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+  /ready:
+    get:
+      tags: [Health]
+      summary: Readiness check
+      responses:
+        '200':
+          description: Server is ready
+        '503':
+          description: Server is not ready
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '201':
+          description: Пользователь зарегистрирован
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AuthTokens'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Вход в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AuthTokens'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Обновление access token
+      responses:
+        '200':
+          description: Токен обновлён
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AuthTokens'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Выход из системы
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+  /groups/{groupId}/announcements:
+    get:
+      tags: [Announcements]
+      summary: Список объявлений группы
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Список объявлений
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Announcement'
+    post:
+      tags: [Announcements]
+      summary: Создать объявление
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, content]
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 5000
+                isPinned:
+                  type: boolean
+                  default: false
+                isPublic:
+                  type: boolean
+                  default: false
+      responses:
+        '201':
+          description: Объявление создано
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Announcement'
+  /groups/{groupId}/announcements/{id}:
+    get:
+      tags: [Announcements]
+      summary: Получить объявление
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Объявление
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Announcement'
+    put:
+      tags: [Announcements]
+      summary: Обновить объявление
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                isPinned:
+                  type: boolean
+                isPublic:
+                  type: boolean
+      responses:
+        '200':
+          description: Объявление обновлено
+    delete:
+      tags: [Announcements]
+      summary: Удалить объявление
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: id
+          in: path
+          required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+  /groups/{groupId}/files:
+    get:
+      tags: [Files]
+      summary: Список файлов группы
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список файлов
+    post:
+      tags: [Files]
+      summary: Загрузить файл
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, filePath, fileSize, mimeType]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                filePath:
+                  type: string
+                fileSize:
+                  type: integer
+                mimeType:
+                  type: string
+                category:
+                  type: string
+      responses:
+        '201':
+          description: Файл загружен
+  /groups/{groupId}/calendar:
+    get:
+      tags: [Calendar]
+      summary: Список событий группы
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Список событий
+    post:
+      tags: [Calendar]
+      summary: Создать событие
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, startAt, endAt, type]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                startAt:
+                  type: string
+                  format: date-time
+                endAt:
+                  type: string
+                  format: date-time
+                location:
+                  type: string
+                type:
+                  $ref: '#/components/schemas/EventType'
+      responses:
+        '201':
+          description: Событие создано
+  /groups/{groupId}/polls:
+    get:
+      tags: [Polls]
+      summary: Список опросов группы
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Список опросов
+    post:
+      tags: [Polls]
+      summary: Создать опрос
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question, choices]
+              properties:
+                question:
+                  type: string
+                isAnonymous:
+                  type: boolean
+                isMultipleChoice:
+                  type: boolean
+                expiresAt:
+                  type: string
+                  format: date-time
+                choices:
+                  type: array
+                  items:
+                    type: object
+                    required: [text]
+                    properties:
+                      text:
+                        type: string
+      responses:
+        '201':
+          description: Опрос создан
+  /groups/{groupId}/polls/{pollId}/votes:
+    post:
+      tags: [Polls]
+      summary: Голосовать в опросе
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: pollId
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [choiceIds]
+              properties:
+                choiceIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: Голос засчитан
+  /groups/{groupId}/chats:
+    get:
+      tags: [Chats]
+      summary: Список чатов группы
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Список чатов
+    post:
+      tags: [Chats]
+      summary: Создать чат
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, type]
+              properties:
+                title:
+                  type: string
+                type:
+                  $ref: '#/components/schemas/ChatType'
+                isReadOnly:
+                  type: boolean
+      responses:
+        '201':
+          description: Чат создан
+  /groups/{groupId}/chats/{chatId}/messages:
+    get:
+      tags: [Chats]
+      summary: Список сообщений чата
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: chatId
+          in: path
+          required: true
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список сообщений
+    post:
+      tags: [Chats]
+      summary: Отправить сообщение
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+        - name: chatId
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+                attachments:
+                  type: array
+                  items: {}
+      responses:
+        '201':
+          description: Сообщение отправлено
+components:
+  responses:
+    Success:
+      description: Успешная операция
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: ok
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Conflict:
+      description: Конфликт (например, пользователь уже существует)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+

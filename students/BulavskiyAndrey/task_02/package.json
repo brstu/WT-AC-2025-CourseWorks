@@ -1,0 +1,17 @@
+{
+  "name": "wt-ac-2025-courseworks-task-02-variant-33",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Full-stack course project scaffold (variant 33 — Органайзер группы «Без лишних чатов»)",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @app/server --filter @app/web dev",
+    "dev:server": "pnpm --filter @app/server dev",
+    "dev:web": "pnpm --filter @app/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test"
+  },
+  "packageManager": "pnpm@8.15.4"
+}
+
+

@@ -1,0 +1,22 @@
+node_modules
+.pnp*
+dist
+build
+coverage
+.env
+.env.local
+*.log
+.DS_Store
+
+# Playwright
+playwright-report
+test-results
+.playwright
+playwright/.cache
+
+# Kubernetes secrets (local-only)
+k8s/**/secret.yaml
+k8s/**/secret.yml
+k8s/**/secrets.yaml
+k8s/**/secrets.yml
+

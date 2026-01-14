@@ -65,4 +65,3 @@ kubectl get events -n <namespace> --sort-by='.lastTimestamp'
 kubectl get ingress -n <namespace>
 kubectl describe ingress app-ingress -n <namespace>
 ```
-

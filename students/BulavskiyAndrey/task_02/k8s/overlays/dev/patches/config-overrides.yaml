@@ -6,4 +6,3 @@ metadata:
 data:
   NODE_ENV: "development"
   LOG_LEVEL: "debug"
-

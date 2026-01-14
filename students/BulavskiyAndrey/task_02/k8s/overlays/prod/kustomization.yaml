@@ -12,4 +12,3 @@ patches:
 namePrefix: prod-
 commonLabels:
   environment: production
-

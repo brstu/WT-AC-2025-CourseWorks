@@ -6,4 +6,3 @@ metadata:
 spec:
   rules:
     - host: app-dev.local
-

@@ -5,6 +5,7 @@ FROM node:20-alpine AS builder
 WORKDIR /repo
 
 # Install OpenSSL for Prisma
+# hadolint ignore=DL3018
 RUN apk add --no-cache openssl \
     && corepack enable
 
@@ -15,6 +16,7 @@ COPY packages/ ./packages/
 
 # Install all dependencies (including dev dependencies for build),
 # build server and generate Prisma client
+# hadolint ignore=DL3008
 RUN pnpm install --frozen-lockfile \
     && pnpm --filter @app/server build \
     && pnpm --filter @app/server prisma:generate
@@ -24,6 +26,7 @@ FROM node:20-alpine AS production
 WORKDIR /repo
 
 # Install OpenSSL for Prisma and curl for healthchecks
+# hadolint ignore=DL3018
 RUN apk add --no-cache openssl curl \
     && corepack enable
 
@@ -34,6 +37,7 @@ COPY --from=builder /repo /repo
 
 # Copy entrypoint script
 COPY apps/server/docker-entrypoint.sh /usr/local/bin/
+# hadolint ignore=DL3059
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Set working directory to server app

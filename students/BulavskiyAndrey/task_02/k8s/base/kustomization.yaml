@@ -20,4 +20,3 @@ resources:
   - redis/deployment.yaml
   - redis/service.yaml
   - ingress.yaml
-

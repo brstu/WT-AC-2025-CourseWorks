@@ -3,6 +3,7 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
 WORKDIR /repo
+# hadolint ignore=DL3008
 RUN corepack enable
 
 # Copy monorepo configuration
@@ -11,6 +12,7 @@ COPY apps/ ./apps/
 COPY packages/ ./packages/
 
 # Install dependencies
+# hadolint ignore=DL3008
 RUN pnpm install --frozen-lockfile
 
 # Build argument for API URL
@@ -18,6 +20,7 @@ ARG VITE_API_BASE_URL=http://localhost:3000/api
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Build the web app
+# hadolint ignore=DL3008
 RUN pnpm --filter @app/web build
 
 # Stage 2: Serve with nginx

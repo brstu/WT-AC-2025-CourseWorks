@@ -160,5 +160,3 @@ pnpm dev:web
 - `POST /api/groups/:groupId/chats/:chatId/messages` - Отправить сообщение
 
 API эндпоинты и модель данных согласованы с `R1_DataModel_and_API.md` (вариант 33).
-
-

@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "color-hex-case": null,
+    "color-hex-length": null,
+    "declaration-empty-line-before": null,
+    "no-descending-specificity": null,
+    "selector-class-pattern": null,
+    "value-keyword-case": null,
+    "property-no-vendor-prefix": null
+  }
+}

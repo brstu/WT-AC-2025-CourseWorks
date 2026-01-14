@@ -7,7 +7,7 @@ info:
     REST API для органайзера учебной/рабочей группы с объявлениями, файлами, календарём, опросами и чатами.
 
     - JWT аутентификация (access token в заголовке Authorization)
-    - refresh token хранится в HttpOnly cookie (`refresh_token`)
+    - refresh token хранится в HttpOnly cookie refresh_token
     - Роли в группах: admin, moderator, member, guest
 servers:
   - url: http://localhost:3000/api

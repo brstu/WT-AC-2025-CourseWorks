@@ -30,9 +30,12 @@ export const editLocationFormFields: {
         placeholder: 'type',
         validationOptions: {
             required: LOCATION_ERRORS.TYPE_REQUIRED,
-            setValueAs: (v) => (v === '' || v === null || typeof v === 'undefined' ? undefined : Number(v)),
-            validate: (v) =>
-                Number.isInteger(v) && v >= 0 && v <= 4 ? true : LOCATION_ERRORS.INVALID_TYPE,
+            setValueAs: (v) =>
+                v === '' || v === null || typeof v === 'undefined' ? undefined : Number(v),
+            validate: (v) => {
+                if (!v) return
+                return Number.isInteger(v) && v >= 0 && v <= 4 ? true : LOCATION_ERRORS.INVALID_TYPE
+            },
         },
     },
     label: {

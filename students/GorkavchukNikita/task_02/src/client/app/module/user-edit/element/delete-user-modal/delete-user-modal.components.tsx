@@ -35,7 +35,7 @@ export const DeleteUserModal = ({ open, onClose, selectedUser, onSuccess }: IPro
 
                     <p className="text-center py-3.5">
                         Are you sure you want to remove the speaker:{' '}
-                        <strong>{selectedUser?.name}</strong>?
+                        <strong>{selectedUser?.firstname}</strong>?
                     </p>
 
                     {thisService.apiError && (

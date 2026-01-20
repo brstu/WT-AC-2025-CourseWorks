@@ -6,7 +6,7 @@
 - password: string, не пустое, min 6 → ошибка: «Password must be more than 6 characters long!»
 - firstname: string, обязателен для signup → ошибка: «All fields must be filled in!»
 
-2) Карточка пользователя (User)
+1) Карточка пользователя (User)
 
 - _id: ObjectId, автогенерируется
 - email: string, уникальный, не пустое → ошибка: «This user already exists!» / «A user with this email already exists»
@@ -16,20 +16,20 @@
 - phone: string | null, опционально → ошибка при коллизии: «A user with this phone number already exists»
 - role: enum ['user','admin'], default 'user' → ошибка: «Invalid user role!»
 
-3) Карточка страны (Country)
+1) Карточка страны (Country)
 
 - _id: ObjectId
 - name: string, не пустое → ошибка: «All fields must be filled in!»
 - countryCode: string, 2–3 латинские буквы, uppercase, уникально → ошибка: «Invalid country code!» / «Country with this code already exists!»
 
-4) Карточка города (City)
+1) Карточка города (City)
 
 - _id: ObjectId
 - name: string, не пустое → ошибка: «All fields must be filled in!»
 - cityCode: string, uppercase, уникально → ошибка: «City with this code already exists!»
 - countryId: reference -> Country._id, не пустое → ошибка: «All fields must be filled in!»
 
-5) Карточка адреса/узла логистики (Address/Location)
+1) Карточка адреса/узла логистики (Address/Location)
 
 В проекте «адрес» представлен сущностью Location (склады/ПВЗ/сорт-центры и т.п.).
 
@@ -46,7 +46,7 @@
 - postalCode: string, не пустое → ошибка: «All fields must be filled in!: postalCode»
 - street: string, не пустое → ошибка: «All fields must be filled in!: street»
 
-6) Карточка заказа (Order)
+1) Карточка заказа (Order)
 
 - _id: ObjectId
 - name: string, не пустое → ошибка: «All fields must be filled in!: name»
@@ -61,7 +61,7 @@
 - pickupLocation: reference -> Location._id, не пустое
 - currentLocation: reference -> Location._id, не пустое
 
-7) Карточка события трекинга (TrackingEvent / Event)
+1) Карточка события трекинга (TrackingEvent / Event)
 
 - _id: ObjectId
 - orderId: reference -> Order._id, не пустое → ошибка: «All fields must be filled in!: orderId»

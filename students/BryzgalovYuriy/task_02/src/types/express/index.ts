@@ -1,0 +1,2 @@
+// runtime no-op
+export {};

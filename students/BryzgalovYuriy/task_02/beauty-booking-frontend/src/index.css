@@ -1,0 +1,101 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Dark palette */
+  --bg: #0f172a;        /* общий фон */
+  --panel: #020617;     /* хедер / панели */
+  --card: #020617;      /* карточки */
+  --border: #1e293b;    /* границы */
+  --text: #e5e7eb;      /* основной текст */
+  --muted: #94a3b8;     /* вторичный текст */
+  --accent: #22c55e;    /* зелёный успех */
+  --danger: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* links */
+a {
+  color: var(--text);
+  text-decoration: none;
+  opacity: 0.9;
+}
+a:hover {
+  opacity: 1;
+}
+
+/* inputs */
+input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+input:focus {
+  border-color: #38bdf8;
+}
+
+/* buttons */
+button {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #020617;
+  color: var(--text);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #020617;
+  border-color: #334155;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* utility */
+code {
+  background: #020617;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* scrollbar (optional, looks premium) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}

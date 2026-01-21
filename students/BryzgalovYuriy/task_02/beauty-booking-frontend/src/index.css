@@ -37,6 +37,7 @@ a {
   text-decoration: none;
   opacity: 0.9;
 }
+
 a:hover {
   opacity: 1;
 }
@@ -69,14 +70,14 @@ button {
   cursor: pointer;
 }
 
-button:hover:not(:disabled) {
-  background: #020617;
-  border-color: #334155;
-}
-
 button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: #020617;
+  border-color: #334155;
 }
 
 /* utility */
@@ -92,9 +93,11 @@ code {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #020617;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 10px;

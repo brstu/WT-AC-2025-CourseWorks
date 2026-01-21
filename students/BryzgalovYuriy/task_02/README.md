@@ -12,4 +12,3 @@ npm i
 copy .env.example .env
 npm run dev
 ```
-
